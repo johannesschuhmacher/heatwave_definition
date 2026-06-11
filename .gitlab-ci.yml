@@ -1,0 +1,13 @@
+stages:
+  - test
+
+unit_tests:
+  image: python:3.11-slim
+  stage: test
+  script:
+    - apt-get update && apt-get install -y --no-install-recommends git && rm -rf /var/lib/apt/lists/*
+    - python -m pip install --upgrade pip
+    - python -m pip install numpy pandas openpyxl pytest
+    - python scripts/check_public_release.py
+    - python -m py_compile $(git ls-files '*.py')
+    - python -m pytest -q

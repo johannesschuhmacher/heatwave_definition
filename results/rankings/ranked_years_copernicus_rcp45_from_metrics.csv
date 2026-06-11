@@ -1,0 +1,11 @@
+rank,year,hwmid_sum,country_cells,aggregation,run_name,source_metrics
+1,2043,30300.037330324016,1779,sum,copernicus_rcp45_from_metrics,metrics_copernicus_45.pkl
+2,2070,27046.410113893136,1779,sum,copernicus_rcp45_from_metrics,metrics_copernicus_45.pkl
+3,2079,21658.65159724301,1779,sum,copernicus_rcp45_from_metrics,metrics_copernicus_45.pkl
+4,2065,20755.635407513662,1779,sum,copernicus_rcp45_from_metrics,metrics_copernicus_45.pkl
+5,2040,19286.95502763423,1779,sum,copernicus_rcp45_from_metrics,metrics_copernicus_45.pkl
+6,2039,19214.85909511326,1779,sum,copernicus_rcp45_from_metrics,metrics_copernicus_45.pkl
+7,2041,18736.967677767832,1779,sum,copernicus_rcp45_from_metrics,metrics_copernicus_45.pkl
+8,2038,16062.930702259615,1779,sum,copernicus_rcp45_from_metrics,metrics_copernicus_45.pkl
+9,2088,13655.789373980173,1779,sum,copernicus_rcp45_from_metrics,metrics_copernicus_45.pkl
+10,2086,13471.699133323427,1779,sum,copernicus_rcp45_from_metrics,metrics_copernicus_45.pkl

@@ -1,0 +1,7 @@
+[run]
+name = "copernicus_rcp45_from_metrics"
+data_kind = "metrics_pickle"
+input_file = "metrics_copernicus_45.pkl"
+output_dir = "outputs/ranking_from_config"
+countries = ["Germany", "France"]
+top_years = 10

@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.venv/
+venv/
+*.egg-info/
+
+# Local data and generated outputs
+data/
+outputs/
+out/
+*.nc
+*.nc4
+*.pkl
+*.npz
+*.csv
+!configs/*.example.csv
+*.pdf
+*.png
+*.jpg
+*.jpeg
+
+# Curated derived result snapshot for publication/review
+!results/
+!results/**/
+!results/**/*.csv
+!results/**/*.png
+!results/**/*.md
+
+# Local/editor files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Local config copies may contain absolute paths
+*.local.toml

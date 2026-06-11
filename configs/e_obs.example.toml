@@ -1,0 +1,14 @@
+[run]
+name = "e_obs"
+data_kind = "e_obs"
+input_file = "data/tx_ens_mean_0.25deg_reg_v27.0e.nc"
+output_dir = "outputs/e_obs"
+countries = ["Germany", "France"]
+reference_period = [1981, 2010]
+threshold_quantile = 0.90
+min_heatwave_days = 3
+top_years = 10
+
+[e_obs]
+variable = "tx"
+temperature_unit = "degC"
