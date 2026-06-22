@@ -1,5 +1,7 @@
 # Heatwave scenario definition
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20793874.svg)](https://doi.org/10.5281/zenodo.20793874)
+
 This repository contains the reproducible code used to identify heatwave
 scenario years for energy-system stress testing. The method follows the
 Heat Wave Magnitude Index daily (HWMId) approach by Russo et al. (2015):
