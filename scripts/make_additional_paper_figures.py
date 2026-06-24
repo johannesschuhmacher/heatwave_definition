@@ -222,17 +222,21 @@ def plot_weighting_heatmap(weighted: pd.DataFrame, primary_top10: pd.DataFrame, 
             labels[row_idx][col_idx] = f"{candidate_top2[0]}\n({candidate_top2[1]})"
 
     fig_height = max(4.6, 0.5 * len(row_labels) + 1.8)
+    plot_left = 0.28
+    plot_right = 0.98
+    plot_center = (plot_left + plot_right) / 2
     fig, ax = plt.subplots(figsize=(9.2, fig_height))
     ax.imshow(codes, cmap=STABILITY_CMAP, norm=STABILITY_NORM, aspect="auto")
     fig.suptitle(
         "TYNDP 2024 capacity-weight sensitivity",
+        x=plot_center,
         fontsize=14,
         fontweight="bold",
-        y=0.975,
+        y=0.985,
     )
     fig.text(
-        0.5,
-        0.925,
+        plot_center,
+        0.912,
         "Reference: DE+FR, unweighted HWMId sum",
         ha="center",
         va="center",
@@ -269,7 +273,7 @@ def plot_weighting_heatmap(weighted: pd.DataFrame, primary_top10: pd.DataFrame, 
         loc="upper center",
         bbox_to_anchor=(0.5, -0.16),
     )
-    fig.subplots_adjust(left=0.28, right=0.98, top=0.86, bottom=0.25)
+    fig.subplots_adjust(left=plot_left, right=plot_right, top=0.87, bottom=0.25)
     fig.savefig(output, dpi=220)
     plt.close(fig)
     return output
