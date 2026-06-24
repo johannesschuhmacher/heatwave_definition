@@ -29,9 +29,10 @@ raw E-OBS and Copernicus/CORDEX files are available in one documented location.
 
 ## Repository contents
 
-Only source code, configuration examples, and tests are stored in Git. Raw
-meteorological data, generated metric arrays, figures, PDFs, and debug files
-are intentionally excluded because of file size and data-licence constraints.
+Source code, configuration examples, tests, and curated derived result tables
+and figures are stored in Git. Raw meteorological data, generated metric
+arrays, local full-output directories, PDFs, and debug files are intentionally
+excluded because of file size and data-licence constraints.
 
 ```text
 heatwave_definition/      Reusable Python package
@@ -194,6 +195,9 @@ python scripts\build_appendix_tables.py
 python scripts\make_additional_paper_figures.py
 ```
 
+Manuscript figure colors, line styles, and categorical heatmap legends are
+defined centrally in `heatwave_definition/plot_style.py`.
+
 The derived result snapshot committed with the repository is refreshed from the
 local `outputs/` directory with:
 
@@ -220,18 +224,6 @@ paper scenario definition, use grid-cell HWMId over Germany and France and
 report the GCM/RCM model chain together with the emission pathway. The local
 ensemble run shows, for example, that IPSL-WRF RCP8.5 ranks 2094/2093 highest,
 whereas MPI-CLM RCP8.5 ranks 2092/2082 highest.
-
-## Legacy compatibility
-
-Small top-level wrappers keep the old function names available:
-
-- `calc_hwmid.py`
-- `load_copernicus.py`
-- `load_e_obs_data.py`
-- `classify_countries_matrix.py`
-- `rank_years_by_hwmid.py`
-
-New code should import from the `heatwave_definition` package directly.
 
 ## Testing
 

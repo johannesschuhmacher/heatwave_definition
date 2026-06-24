@@ -127,13 +127,20 @@ def plot_heatmap(top2: pd.DataFrame, output: Path) -> None:
 
     for row in range(values.shape[0]):
         for col in range(values.shape[1]):
-            ax.text(col, row, labels.iloc[row, col], ha="center", va="center", color="white", fontsize=8)
+            text_color = heatmap_text_color(values.iloc[row, col], image)
+            ax.text(col, row, labels.iloc[row, col], ha="center", va="center", color=text_color, fontsize=8)
 
     cbar = fig.colorbar(image, ax=ax, shrink=0.82)
     cbar.set_label("Rank-1 year")
     output.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(output, dpi=220)
     plt.close(fig)
+
+
+def heatmap_text_color(value: float, image) -> str:
+    red, green, blue, _ = image.cmap(image.norm(value))
+    luminance = 0.2126 * red + 0.7152 * green + 0.0722 * blue
+    return "black" if luminance > 0.55 else "white"
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:

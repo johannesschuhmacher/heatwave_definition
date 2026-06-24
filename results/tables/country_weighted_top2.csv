@@ -19,6 +19,8 @@ Historical / E-OBS,storage_total_tyndp2024_pemmdb_nt2040,1,2003,7.81932650814449
 Historical / E-OBS,storage_total_tyndp2024_pemmdb_nt2040,2,2019,4.919845804567872,Austria+Belgium+Czechia+France+Germany+Italy+Luxembourg+Netherlands+Poland+Spain+Switzerland
 Historical / E-OBS,storage_tyndp2024_pemmdb_nt2040,1,2003,7.562979811300575,Austria+Belgium+Czechia+France+Germany+Italy+Luxembourg+Netherlands+Spain+Switzerland
 Historical / E-OBS,storage_tyndp2024_pemmdb_nt2040,2,2019,4.965916566041646,Austria+Belgium+Czechia+France+Germany+Italy+Luxembourg+Netherlands+Spain+Switzerland
+Historical / E-OBS,thermal_nuclear_tyndp2024_pemmdb_nt2040,1,2003,9.38975914804689,Austria+Belgium+Czechia+France+Germany+Italy+Luxembourg+Netherlands+Poland+Spain+Switzerland
+Historical / E-OBS,thermal_nuclear_tyndp2024_pemmdb_nt2040,2,2019,4.921517776231672,Austria+Belgium+Czechia+France+Germany+Italy+Luxembourg+Netherlands+Poland+Spain+Switzerland
 Historical / E-OBS,thermal_tyndp2024_pemmdb_nt2040,1,2003,6.591658081766317,Austria+Belgium+Czechia+France+Germany+Italy+Luxembourg+Netherlands+Poland+Spain+Switzerland
 Historical / E-OBS,thermal_tyndp2024_pemmdb_nt2040,2,2015,5.122601138374496,Austria+Belgium+Czechia+France+Germany+Italy+Luxembourg+Netherlands+Poland+Spain+Switzerland
 Historical / E-OBS,wind_offshore_tyndp2024_pemmdb_nt2040,1,2003,7.700952252961336,Belgium+France+Germany+Italy+Netherlands+Poland+Spain
@@ -47,6 +49,8 @@ RCP4.5 / IPSL-WRF,storage_total_tyndp2024_pemmdb_nt2040,1,2070,16.25588841836235
 RCP4.5 / IPSL-WRF,storage_total_tyndp2024_pemmdb_nt2040,2,2039,16.01946393820265,Austria+Belgium+Czechia+France+Germany+Italy+Luxembourg+Netherlands+Poland+Spain+Switzerland
 RCP4.5 / IPSL-WRF,storage_tyndp2024_pemmdb_nt2040,1,2070,16.362839504696318,Austria+Belgium+Czechia+France+Germany+Italy+Luxembourg+Netherlands+Spain+Switzerland
 RCP4.5 / IPSL-WRF,storage_tyndp2024_pemmdb_nt2040,2,2039,15.88922395985443,Austria+Belgium+Czechia+France+Germany+Italy+Luxembourg+Netherlands+Spain+Switzerland
+RCP4.5 / IPSL-WRF,thermal_nuclear_tyndp2024_pemmdb_nt2040,1,2043,16.00296383383266,Austria+Belgium+Czechia+France+Germany+Italy+Luxembourg+Netherlands+Poland+Spain+Switzerland
+RCP4.5 / IPSL-WRF,thermal_nuclear_tyndp2024_pemmdb_nt2040,2,2041,15.426325291284227,Austria+Belgium+Czechia+France+Germany+Italy+Luxembourg+Netherlands+Poland+Spain+Switzerland
 RCP4.5 / IPSL-WRF,thermal_tyndp2024_pemmdb_nt2040,1,2041,17.14512250694706,Austria+Belgium+Czechia+France+Germany+Italy+Luxembourg+Netherlands+Poland+Spain+Switzerland
 RCP4.5 / IPSL-WRF,thermal_tyndp2024_pemmdb_nt2040,2,2070,16.032292207818763,Austria+Belgium+Czechia+France+Germany+Italy+Luxembourg+Netherlands+Poland+Spain+Switzerland
 RCP4.5 / IPSL-WRF,wind_offshore_tyndp2024_pemmdb_nt2040,1,2070,15.38858149947067,Belgium+France+Germany+Italy+Netherlands+Poland+Spain
@@ -75,6 +79,8 @@ RCP8.5 / MPI-CLM,storage_total_tyndp2024_pemmdb_nt2040,1,2092,33.51102091611115,
 RCP8.5 / MPI-CLM,storage_total_tyndp2024_pemmdb_nt2040,2,2090,28.057960856373885,Austria+Belgium+Czechia+France+Germany+Italy+Luxembourg+Netherlands+Poland+Spain+Switzerland
 RCP8.5 / MPI-CLM,storage_tyndp2024_pemmdb_nt2040,1,2092,32.797935330410574,Austria+Belgium+Czechia+France+Germany+Italy+Luxembourg+Netherlands+Spain+Switzerland
 RCP8.5 / MPI-CLM,storage_tyndp2024_pemmdb_nt2040,2,2090,26.5207369213515,Austria+Belgium+Czechia+France+Germany+Italy+Luxembourg+Netherlands+Spain+Switzerland
+RCP8.5 / MPI-CLM,thermal_nuclear_tyndp2024_pemmdb_nt2040,1,2092,34.261364680685844,Austria+Belgium+Czechia+France+Germany+Italy+Luxembourg+Netherlands+Poland+Spain+Switzerland
+RCP8.5 / MPI-CLM,thermal_nuclear_tyndp2024_pemmdb_nt2040,2,2090,34.045964322961844,Austria+Belgium+Czechia+France+Germany+Italy+Luxembourg+Netherlands+Poland+Spain+Switzerland
 RCP8.5 / MPI-CLM,thermal_tyndp2024_pemmdb_nt2040,1,2090,37.25390869763804,Austria+Belgium+Czechia+France+Germany+Italy+Luxembourg+Netherlands+Poland+Spain+Switzerland
 RCP8.5 / MPI-CLM,thermal_tyndp2024_pemmdb_nt2040,2,2092,34.58500387975281,Austria+Belgium+Czechia+France+Germany+Italy+Luxembourg+Netherlands+Poland+Spain+Switzerland
 RCP8.5 / MPI-CLM,wind_offshore_tyndp2024_pemmdb_nt2040,1,2092,31.790732143242888,Belgium+France+Germany+Italy+Netherlands+Poland+Spain

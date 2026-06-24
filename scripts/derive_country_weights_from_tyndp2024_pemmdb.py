@@ -44,6 +44,7 @@ WEIGHTING_ORDER = [
     "nuclear",
     "storage",
     "thermal",
+    "thermal_nuclear",
 ]
 
 
@@ -270,6 +271,7 @@ def aggregate_components(components: dict[str, float]) -> dict[str, float]:
     renewables = wind + solar + components["hydro"] + components["other_res"]
     storage_total = components["storage"] + components["pumped_hydro"]
     thermal = components["thermal"] + components["other_non_res"]
+    thermal_nuclear = thermal + components["nuclear"]
     capacity = renewables + thermal + components["nuclear"] + storage_total
     return {
         "capacity": capacity,
@@ -286,6 +288,7 @@ def aggregate_components(components: dict[str, float]) -> dict[str, float]:
         "storage": components["storage"],
         "storage_total": storage_total,
         "thermal": thermal,
+        "thermal_nuclear": thermal_nuclear,
     }
 
 

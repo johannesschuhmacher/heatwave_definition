@@ -7,6 +7,7 @@ import pandas as pd
 
 from heatwave_definition.hwmid import calc_hwmid, canonical_day_of_year
 from heatwave_definition.legacy import load_legacy_metrics_pickle
+from heatwave_definition.plot_style import classify_top2_stability
 from heatwave_definition.regions import normalize_country_names
 from heatwave_definition.ranking import rank_years_by_country_weighted_hwmid, rank_years_by_grid_metric
 
@@ -223,4 +224,14 @@ def test_tyndp2024_pemmdb_weight_helpers_map_nodes_and_aggregate_components():
     assert result["pumped_hydro"] == 12.0
     assert result["storage_total"] == 23.0
     assert result["thermal"] == 12.0
+    assert result["thermal_nuclear"] == 15.0
     assert result["capacity"] == 78.0
+
+
+def test_top2_stability_classification_matches_figure_legend():
+    reference = (2043, 2070)
+
+    assert classify_top2_stability(reference, (2043, 2070)).key == "match_both"
+    assert classify_top2_stability(reference, (2043, 2041)).key == "rank1_match"
+    assert classify_top2_stability(reference, (2070, 2043)).key == "rank1_changes_reference_retained"
+    assert classify_top2_stability(reference, (2041, 2039)).key == "no_reference_top2"
