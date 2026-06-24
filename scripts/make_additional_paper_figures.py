@@ -224,14 +224,18 @@ def plot_weighting_heatmap(weighted: pd.DataFrame, primary_top10: pd.DataFrame, 
     fig_height = max(4.6, 0.5 * len(row_labels) + 1.8)
     fig, ax = plt.subplots(figsize=(9.2, fig_height))
     ax.imshow(codes, cmap=STABILITY_CMAP, norm=STABILITY_NORM, aspect="auto")
-    ax.set_title("TYNDP 2024 capacity-weight sensitivity", fontsize=14, fontweight="bold", pad=16)
-    ax.text(
+    fig.suptitle(
+        "TYNDP 2024 capacity-weight sensitivity",
+        fontsize=14,
+        fontweight="bold",
+        y=0.975,
+    )
+    fig.text(
         0.5,
-        1.025,
+        0.925,
         "Reference: DE+FR, unweighted HWMId sum",
-        transform=ax.transAxes,
         ha="center",
-        va="bottom",
+        va="center",
         fontsize=10,
         color="#5A5A5A",
     )
