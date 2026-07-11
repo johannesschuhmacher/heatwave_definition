@@ -1,181 +1,181 @@
 dataset,criterion,criterion_label,metric,rank,year,score,country_cells,aggregation
-Historical / E-OBS,hwmid_sum,HWMId sum,hwmid,1,2003,25220.982343491924,1790,sum
-Historical / E-OBS,hwmid_sum,HWMId sum,hwmid,2,2019,10851.125050015222,1790,sum
-Historical / E-OBS,hwmid_sum,HWMId sum,hwmid,3,2022,8392.80018039723,1790,sum
-Historical / E-OBS,hwmid_sum,HWMId sum,hwmid,4,2020,8185.660680155808,1790,sum
-Historical / E-OBS,hwmid_sum,HWMId sum,hwmid,5,2015,7190.378936633775,1790,sum
-Historical / E-OBS,hwmid_sum,HWMId sum,hwmid,6,2018,6172.226375896484,1790,sum
-Historical / E-OBS,hwmid_sum,HWMId sum,hwmid,7,1976,5328.440219339638,1790,sum
-Historical / E-OBS,hwmid_sum,HWMId sum,hwmid,8,1952,5325.76072203093,1790,sum
-Historical / E-OBS,hwmid_sum,HWMId sum,hwmid,9,2006,4886.616972112097,1790,sum
-Historical / E-OBS,hwmid_sum,HWMId sum,hwmid,10,1998,4433.448685070442,1790,sum
-Historical / E-OBS,hwmid_area_mean,Area-weighted HWMId mean,hwmid,1,2003,14.81294023555869,1790,area_weighted_mean
-Historical / E-OBS,hwmid_area_mean,Area-weighted HWMId mean,hwmid,2,2019,6.310772049328773,1790,area_weighted_mean
-Historical / E-OBS,hwmid_area_mean,Area-weighted HWMId mean,hwmid,3,2022,4.909654678904229,1790,area_weighted_mean
-Historical / E-OBS,hwmid_area_mean,Area-weighted HWMId mean,hwmid,4,2020,4.724471724563354,1790,area_weighted_mean
-Historical / E-OBS,hwmid_area_mean,Area-weighted HWMId mean,hwmid,5,2015,4.1371869777586445,1790,area_weighted_mean
-Historical / E-OBS,hwmid_area_mean,Area-weighted HWMId mean,hwmid,6,2018,3.517799832412437,1790,area_weighted_mean
-Historical / E-OBS,hwmid_area_mean,Area-weighted HWMId mean,hwmid,7,1952,3.0983756713307926,1790,area_weighted_mean
-Historical / E-OBS,hwmid_area_mean,Area-weighted HWMId mean,hwmid,8,1976,3.045215565715303,1790,area_weighted_mean
-Historical / E-OBS,hwmid_area_mean,Area-weighted HWMId mean,hwmid,9,2006,2.7946813316864163,1790,area_weighted_mean
-Historical / E-OBS,hwmid_area_mean,Area-weighted HWMId mean,hwmid,10,1998,2.592721426846913,1790,area_weighted_mean
-Historical / E-OBS,hwmid_mean,Mean HWMId,hwmid,1,2003,14.494817438788461,1790,mean
-Historical / E-OBS,hwmid_mean,Mean HWMId,hwmid,2,2019,6.236278764376564,1790,mean
-Historical / E-OBS,hwmid_mean,Mean HWMId,hwmid,3,2022,4.823448379538638,1790,mean
-Historical / E-OBS,hwmid_mean,Mean HWMId,hwmid,4,2020,4.704402689744717,1790,mean
-Historical / E-OBS,hwmid_mean,Mean HWMId,hwmid,5,2015,4.13240168772056,1790,mean
-Historical / E-OBS,hwmid_mean,Mean HWMId,hwmid,6,2018,3.5472565378715424,1790,mean
-Historical / E-OBS,hwmid_mean,Mean HWMId,hwmid,7,1976,3.062321965137723,1790,mean
-Historical / E-OBS,hwmid_mean,Mean HWMId,hwmid,8,1952,3.060782024155707,1790,mean
-Historical / E-OBS,hwmid_mean,Mean HWMId,hwmid,9,2006,2.808400558685113,1790,mean
-Historical / E-OBS,hwmid_mean,Mean HWMId,hwmid,10,1998,2.5479590144083,1790,mean
-Historical / E-OBS,hwmid_max,Maximum grid-cell HWMId,hwmid,1,2003,52.10559344291687,1790,max
-Historical / E-OBS,hwmid_max,Maximum grid-cell HWMId,hwmid,2,1983,27.993153423070908,1790,max
-Historical / E-OBS,hwmid_max,Maximum grid-cell HWMId,hwmid,3,2022,24.808864891529083,1790,max
-Historical / E-OBS,hwmid_max,Maximum grid-cell HWMId,hwmid,4,1976,24.24544309079647,1790,max
-Historical / E-OBS,hwmid_max,Maximum grid-cell HWMId,hwmid,5,2019,22.80751883983612,1790,max
-Historical / E-OBS,hwmid_max,Maximum grid-cell HWMId,hwmid,6,2015,21.51716786623001,1790,max
-Historical / E-OBS,hwmid_max,Maximum grid-cell HWMId,hwmid,7,2017,20.60883539915085,1790,max
-Historical / E-OBS,hwmid_max,Maximum grid-cell HWMId,hwmid,8,1952,18.05479335784912,1790,max
-Historical / E-OBS,hwmid_max,Maximum grid-cell HWMId,hwmid,9,2020,17.314658522605896,1790,max
-Historical / E-OBS,hwmid_max,Maximum grid-cell HWMId,hwmid,10,2012,15.905982941389084,1790,max
-Historical / E-OBS,duration_area_mean,Area-weighted heatwave duration,heatwave_duration,1,2003,10.650060145008565,1790,area_weighted_mean
-Historical / E-OBS,duration_area_mean,Area-weighted heatwave duration,heatwave_duration,2,1976,8.90137157779034,1790,area_weighted_mean
-Historical / E-OBS,duration_area_mean,Area-weighted heatwave duration,heatwave_duration,3,2020,6.115301462049729,1790,area_weighted_mean
-Historical / E-OBS,duration_area_mean,Area-weighted heatwave duration,heatwave_duration,4,1952,6.098196868687476,1790,area_weighted_mean
-Historical / E-OBS,duration_area_mean,Area-weighted heatwave duration,heatwave_duration,5,2002,5.96514845160835,1790,area_weighted_mean
-Historical / E-OBS,duration_area_mean,Area-weighted heatwave duration,heatwave_duration,6,2018,5.868891123906879,1790,area_weighted_mean
-Historical / E-OBS,duration_area_mean,Area-weighted heatwave duration,heatwave_duration,7,1958,5.753145165346022,1790,area_weighted_mean
-Historical / E-OBS,duration_area_mean,Area-weighted heatwave duration,heatwave_duration,8,2006,5.627180410949976,1790,area_weighted_mean
-Historical / E-OBS,duration_area_mean,Area-weighted heatwave duration,heatwave_duration,9,2015,5.597360123718339,1790,area_weighted_mean
-Historical / E-OBS,duration_area_mean,Area-weighted heatwave duration,heatwave_duration,10,1985,5.502309604498779,1790,area_weighted_mean
-Historical / E-OBS,tmax_anomaly_area_mean,Area-weighted annual Tmax anomaly,temp_anomaly,1,2019,4.610630607537976,1790,area_weighted_mean
-Historical / E-OBS,tmax_anomaly_area_mean,Area-weighted annual Tmax anomaly,temp_anomaly,2,2022,4.0919165840568335,1790,area_weighted_mean
-Historical / E-OBS,tmax_anomaly_area_mean,Area-weighted annual Tmax anomaly,temp_anomaly,3,2003,3.9903492567513217,1790,area_weighted_mean
-Historical / E-OBS,tmax_anomaly_area_mean,Area-weighted annual Tmax anomaly,temp_anomaly,4,2015,3.0203725846077694,1790,area_weighted_mean
-Historical / E-OBS,tmax_anomaly_area_mean,Area-weighted annual Tmax anomaly,temp_anomaly,5,2020,2.9017757621061815,1790,area_weighted_mean
-Historical / E-OBS,tmax_anomaly_area_mean,Area-weighted annual Tmax anomaly,temp_anomaly,6,2012,2.069847189555819,1790,area_weighted_mean
-Historical / E-OBS,tmax_anomaly_area_mean,Area-weighted annual Tmax anomaly,temp_anomaly,7,1952,1.8617963531217272,1790,area_weighted_mean
-Historical / E-OBS,tmax_anomaly_area_mean,Area-weighted annual Tmax anomaly,temp_anomaly,8,2006,1.8409549971581742,1790,area_weighted_mean
-Historical / E-OBS,tmax_anomaly_area_mean,Area-weighted annual Tmax anomaly,temp_anomaly,9,2018,1.8385749479835336,1790,area_weighted_mean
-Historical / E-OBS,tmax_anomaly_area_mean,Area-weighted annual Tmax anomaly,temp_anomaly,10,1998,1.5591729143246011,1790,area_weighted_mean
-RCP4.5 / IPSL-WRF,hwmid_sum,HWMId sum,hwmid,1,2043,30300.037330324016,1779,sum
-RCP4.5 / IPSL-WRF,hwmid_sum,HWMId sum,hwmid,2,2070,27046.410113893136,1779,sum
-RCP4.5 / IPSL-WRF,hwmid_sum,HWMId sum,hwmid,3,2079,21658.65159724301,1779,sum
-RCP4.5 / IPSL-WRF,hwmid_sum,HWMId sum,hwmid,4,2065,20755.635407513662,1779,sum
-RCP4.5 / IPSL-WRF,hwmid_sum,HWMId sum,hwmid,5,2040,19286.95502763423,1779,sum
-RCP4.5 / IPSL-WRF,hwmid_sum,HWMId sum,hwmid,6,2039,19214.85909511326,1779,sum
-RCP4.5 / IPSL-WRF,hwmid_sum,HWMId sum,hwmid,7,2041,18736.967677767832,1779,sum
-RCP4.5 / IPSL-WRF,hwmid_sum,HWMId sum,hwmid,8,2038,16062.930702259615,1779,sum
-RCP4.5 / IPSL-WRF,hwmid_sum,HWMId sum,hwmid,9,2088,13655.789373980173,1779,sum
-RCP4.5 / IPSL-WRF,hwmid_sum,HWMId sum,hwmid,10,2086,13471.699133323427,1779,sum
-RCP4.5 / IPSL-WRF,hwmid_area_mean,Area-weighted HWMId mean,hwmid,1,2043,17.09159587294006,1779,area_weighted_mean
-RCP4.5 / IPSL-WRF,hwmid_area_mean,Area-weighted HWMId mean,hwmid,2,2070,15.040107561683259,1779,area_weighted_mean
-RCP4.5 / IPSL-WRF,hwmid_area_mean,Area-weighted HWMId mean,hwmid,3,2079,12.419483004337977,1779,area_weighted_mean
-RCP4.5 / IPSL-WRF,hwmid_area_mean,Area-weighted HWMId mean,hwmid,4,2065,11.367781907409997,1779,area_weighted_mean
-RCP4.5 / IPSL-WRF,hwmid_area_mean,Area-weighted HWMId mean,hwmid,5,2041,10.660089211391917,1779,area_weighted_mean
-RCP4.5 / IPSL-WRF,hwmid_area_mean,Area-weighted HWMId mean,hwmid,6,2039,10.522574859656485,1779,area_weighted_mean
-RCP4.5 / IPSL-WRF,hwmid_area_mean,Area-weighted HWMId mean,hwmid,7,2040,10.507669648835058,1779,area_weighted_mean
-RCP4.5 / IPSL-WRF,hwmid_area_mean,Area-weighted HWMId mean,hwmid,8,2038,9.32089429402878,1779,area_weighted_mean
-RCP4.5 / IPSL-WRF,hwmid_area_mean,Area-weighted HWMId mean,hwmid,9,2086,7.623775596757335,1779,area_weighted_mean
-RCP4.5 / IPSL-WRF,hwmid_area_mean,Area-weighted HWMId mean,hwmid,10,2088,7.50436469295227,1779,area_weighted_mean
-RCP4.5 / IPSL-WRF,hwmid_mean,Mean HWMId,hwmid,1,2043,17.03206145605622,1779,mean
-RCP4.5 / IPSL-WRF,hwmid_mean,Mean HWMId,hwmid,2,2070,15.203153521019189,1779,mean
-RCP4.5 / IPSL-WRF,hwmid_mean,Mean HWMId,hwmid,3,2079,12.174621471187752,1779,mean
-RCP4.5 / IPSL-WRF,hwmid_mean,Mean HWMId,hwmid,4,2065,11.667023837837922,1779,mean
-RCP4.5 / IPSL-WRF,hwmid_mean,Mean HWMId,hwmid,5,2040,10.841458700187875,1779,mean
-RCP4.5 / IPSL-WRF,hwmid_mean,Mean HWMId,hwmid,6,2039,10.80093259983882,1779,mean
-RCP4.5 / IPSL-WRF,hwmid_mean,Mean HWMId,hwmid,7,2041,10.53230336018428,1779,mean
-RCP4.5 / IPSL-WRF,hwmid_mean,Mean HWMId,hwmid,8,2038,9.029190951242054,1779,mean
-RCP4.5 / IPSL-WRF,hwmid_mean,Mean HWMId,hwmid,9,2088,7.676104201225505,1779,mean
-RCP4.5 / IPSL-WRF,hwmid_mean,Mean HWMId,hwmid,10,2086,7.5726245830935515,1779,mean
-RCP4.5 / IPSL-WRF,hwmid_max,Maximum grid-cell HWMId,hwmid,1,2041,124.81748890191808,1779,max
-RCP4.5 / IPSL-WRF,hwmid_max,Maximum grid-cell HWMId,hwmid,2,2089,100.0418829117922,1779,max
-RCP4.5 / IPSL-WRF,hwmid_max,Maximum grid-cell HWMId,hwmid,3,2088,90.30048765697248,1779,max
-RCP4.5 / IPSL-WRF,hwmid_max,Maximum grid-cell HWMId,hwmid,4,2039,87.06387906641369,1779,max
-RCP4.5 / IPSL-WRF,hwmid_max,Maximum grid-cell HWMId,hwmid,5,2082,83.68892824463532,1779,max
-RCP4.5 / IPSL-WRF,hwmid_max,Maximum grid-cell HWMId,hwmid,6,2086,83.2593996280882,1779,max
-RCP4.5 / IPSL-WRF,hwmid_max,Maximum grid-cell HWMId,hwmid,7,2079,81.99173232698047,1779,max
-RCP4.5 / IPSL-WRF,hwmid_max,Maximum grid-cell HWMId,hwmid,8,2043,78.33794251211776,1779,max
-RCP4.5 / IPSL-WRF,hwmid_max,Maximum grid-cell HWMId,hwmid,9,2080,71.58086941954937,1779,max
-RCP4.5 / IPSL-WRF,hwmid_max,Maximum grid-cell HWMId,hwmid,10,2062,63.36592935781755,1779,max
+Historical / E-OBS,hwmid_sum,HWMId sum,hwmid,1,2003,25280.482421875,1790,sum
+Historical / E-OBS,hwmid_sum,HWMId sum,hwmid,2,2019,10910.7978515625,1790,sum
+Historical / E-OBS,hwmid_sum,HWMId sum,hwmid,3,2025,9277.841796875,1790,sum
+Historical / E-OBS,hwmid_sum,HWMId sum,hwmid,4,2020,8200.0478515625,1790,sum
+Historical / E-OBS,hwmid_sum,HWMId sum,hwmid,5,2022,7692.693359375,1790,sum
+Historical / E-OBS,hwmid_sum,HWMId sum,hwmid,6,2015,7209.80810546875,1790,sum
+Historical / E-OBS,hwmid_sum,HWMId sum,hwmid,7,2023,7103.09765625,1790,sum
+Historical / E-OBS,hwmid_sum,HWMId sum,hwmid,8,2018,6189.08203125,1790,sum
+Historical / E-OBS,hwmid_sum,HWMId sum,hwmid,9,1952,5374.1328125,1790,sum
+Historical / E-OBS,hwmid_sum,HWMId sum,hwmid,10,1976,5298.50439453125,1790,sum
+Historical / E-OBS,hwmid_area_mean,Area-weighted HWMId mean,hwmid,1,2003,14.443033194689797,1790,area_weighted_mean
+Historical / E-OBS,hwmid_area_mean,Area-weighted HWMId mean,hwmid,2,2019,6.173525156633108,1790,area_weighted_mean
+Historical / E-OBS,hwmid_area_mean,Area-weighted HWMId mean,hwmid,3,2025,5.391262794140926,1790,area_weighted_mean
+Historical / E-OBS,hwmid_area_mean,Area-weighted HWMId mean,hwmid,4,2020,4.604402980922715,1790,area_weighted_mean
+Historical / E-OBS,hwmid_area_mean,Area-weighted HWMId mean,hwmid,5,2022,4.380226463260943,1790,area_weighted_mean
+Historical / E-OBS,hwmid_area_mean,Area-weighted HWMId mean,hwmid,6,2023,4.170633941321415,1790,area_weighted_mean
+Historical / E-OBS,hwmid_area_mean,Area-weighted HWMId mean,hwmid,7,2015,4.035492295763366,1790,area_weighted_mean
+Historical / E-OBS,hwmid_area_mean,Area-weighted HWMId mean,hwmid,8,2018,3.430499547175551,1790,area_weighted_mean
+Historical / E-OBS,hwmid_area_mean,Area-weighted HWMId mean,hwmid,9,1952,3.04224119566049,1790,area_weighted_mean
+Historical / E-OBS,hwmid_area_mean,Area-weighted HWMId mean,hwmid,10,1976,2.9456562691931154,1790,area_weighted_mean
+Historical / E-OBS,hwmid_mean,Mean HWMId,hwmid,1,2003,14.123174667358398,1790,mean
+Historical / E-OBS,hwmid_mean,Mean HWMId,hwmid,2,2019,6.0954179763793945,1790,mean
+Historical / E-OBS,hwmid_mean,Mean HWMId,hwmid,3,2025,5.183151721954346,1790,mean
+Historical / E-OBS,hwmid_mean,Mean HWMId,hwmid,4,2020,4.5810322761535645,1790,mean
+Historical / E-OBS,hwmid_mean,Mean HWMId,hwmid,5,2022,4.29759407043457,1790,mean
+Historical / E-OBS,hwmid_mean,Mean HWMId,hwmid,6,2015,4.027825832366943,1790,mean
+Historical / E-OBS,hwmid_mean,Mean HWMId,hwmid,7,2023,3.9682109355926514,1790,mean
+Historical / E-OBS,hwmid_mean,Mean HWMId,hwmid,8,2018,3.457587718963623,1790,mean
+Historical / E-OBS,hwmid_mean,Mean HWMId,hwmid,9,1952,3.0023088455200195,1790,mean
+Historical / E-OBS,hwmid_mean,Mean HWMId,hwmid,10,1976,2.960058212280273,1790,mean
+Historical / E-OBS,hwmid_max,Maximum grid-cell HWMId,hwmid,1,2003,49.426300048828125,1790,max
+Historical / E-OBS,hwmid_max,Maximum grid-cell HWMId,hwmid,2,2024,47.78745651245117,1790,max
+Historical / E-OBS,hwmid_max,Maximum grid-cell HWMId,hwmid,3,2022,35.36366653442383,1790,max
+Historical / E-OBS,hwmid_max,Maximum grid-cell HWMId,hwmid,4,2023,30.90631103515625,1790,max
+Historical / E-OBS,hwmid_max,Maximum grid-cell HWMId,hwmid,5,1983,29.164295196533203,1790,max
+Historical / E-OBS,hwmid_max,Maximum grid-cell HWMId,hwmid,6,1976,23.23815155029297,1790,max
+Historical / E-OBS,hwmid_max,Maximum grid-cell HWMId,hwmid,7,2025,21.53628730773925,1790,max
+Historical / E-OBS,hwmid_max,Maximum grid-cell HWMId,hwmid,8,2019,20.70348358154297,1790,max
+Historical / E-OBS,hwmid_max,Maximum grid-cell HWMId,hwmid,9,2017,19.972047805786133,1790,max
+Historical / E-OBS,hwmid_max,Maximum grid-cell HWMId,hwmid,10,1952,18.88036346435547,1790,max
+Historical / E-OBS,duration_area_mean,Area-weighted heatwave duration,heatwave_duration,1,2003,10.277837047583716,1790,area_weighted_mean
+Historical / E-OBS,duration_area_mean,Area-weighted heatwave duration,heatwave_duration,2,1976,7.897073953838448,1790,area_weighted_mean
+Historical / E-OBS,duration_area_mean,Area-weighted heatwave duration,heatwave_duration,3,2023,6.210441993506325,1790,area_weighted_mean
+Historical / E-OBS,duration_area_mean,Area-weighted heatwave duration,heatwave_duration,4,2025,5.835328979467252,1790,area_weighted_mean
+Historical / E-OBS,duration_area_mean,Area-weighted heatwave duration,heatwave_duration,5,2020,5.737438472840202,1790,area_weighted_mean
+Historical / E-OBS,duration_area_mean,Area-weighted heatwave duration,heatwave_duration,6,2018,5.431056239687869,1790,area_weighted_mean
+Historical / E-OBS,duration_area_mean,Area-weighted heatwave duration,heatwave_duration,7,2006,5.371978056536464,1790,area_weighted_mean
+Historical / E-OBS,duration_area_mean,Area-weighted heatwave duration,heatwave_duration,8,1952,5.080774960971633,1790,area_weighted_mean
+Historical / E-OBS,duration_area_mean,Area-weighted heatwave duration,heatwave_duration,9,2019,5.078543732233409,1790,area_weighted_mean
+Historical / E-OBS,duration_area_mean,Area-weighted heatwave duration,heatwave_duration,10,2022,4.939458268038665,1790,area_weighted_mean
+Historical / E-OBS,tmax_anomaly_area_mean,Area-weighted annual maximum temperature anomaly,temp_anomaly,1,2019,4.6142257142506615,1790,area_weighted_mean
+Historical / E-OBS,tmax_anomaly_area_mean,Area-weighted annual maximum temperature anomaly,temp_anomaly,2,2022,4.207182408882853,1790,area_weighted_mean
+Historical / E-OBS,tmax_anomaly_area_mean,Area-weighted annual maximum temperature anomaly,temp_anomaly,3,2003,3.999499736375947,1790,area_weighted_mean
+Historical / E-OBS,tmax_anomaly_area_mean,Area-weighted annual maximum temperature anomaly,temp_anomaly,4,2025,3.4401546518108392,1790,area_weighted_mean
+Historical / E-OBS,tmax_anomaly_area_mean,Area-weighted annual maximum temperature anomaly,temp_anomaly,5,2015,3.016308223136717,1790,area_weighted_mean
+Historical / E-OBS,tmax_anomaly_area_mean,Area-weighted annual maximum temperature anomaly,temp_anomaly,6,2020,2.910771343413104,1790,area_weighted_mean
+Historical / E-OBS,tmax_anomaly_area_mean,Area-weighted annual maximum temperature anomaly,temp_anomaly,7,2023,2.105825900932325,1790,area_weighted_mean
+Historical / E-OBS,tmax_anomaly_area_mean,Area-weighted annual maximum temperature anomaly,temp_anomaly,8,2012,2.06007345167708,1790,area_weighted_mean
+Historical / E-OBS,tmax_anomaly_area_mean,Area-weighted annual maximum temperature anomaly,temp_anomaly,9,1952,1.894706033389664,1790,area_weighted_mean
+Historical / E-OBS,tmax_anomaly_area_mean,Area-weighted annual maximum temperature anomaly,temp_anomaly,10,2006,1.8444485606869776,1790,area_weighted_mean
+RCP4.5 / IPSL-WRF,hwmid_sum,HWMId sum,hwmid,1,2043,30300.048828125,1779,sum
+RCP4.5 / IPSL-WRF,hwmid_sum,HWMId sum,hwmid,2,2070,27046.4140625,1779,sum
+RCP4.5 / IPSL-WRF,hwmid_sum,HWMId sum,hwmid,3,2079,21658.66796875,1779,sum
+RCP4.5 / IPSL-WRF,hwmid_sum,HWMId sum,hwmid,4,2065,20755.640625,1779,sum
+RCP4.5 / IPSL-WRF,hwmid_sum,HWMId sum,hwmid,5,2040,19286.95703125,1779,sum
+RCP4.5 / IPSL-WRF,hwmid_sum,HWMId sum,hwmid,6,2039,19214.861328125,1779,sum
+RCP4.5 / IPSL-WRF,hwmid_sum,HWMId sum,hwmid,7,2041,18736.990234375,1779,sum
+RCP4.5 / IPSL-WRF,hwmid_sum,HWMId sum,hwmid,8,2038,16062.92578125,1779,sum
+RCP4.5 / IPSL-WRF,hwmid_sum,HWMId sum,hwmid,9,2088,13655.7958984375,1779,sum
+RCP4.5 / IPSL-WRF,hwmid_sum,HWMId sum,hwmid,10,2086,13471.6962890625,1779,sum
+RCP4.5 / IPSL-WRF,hwmid_area_mean,Area-weighted HWMId mean,hwmid,1,2043,17.091595867721033,1779,area_weighted_mean
+RCP4.5 / IPSL-WRF,hwmid_area_mean,Area-weighted HWMId mean,hwmid,2,2070,15.040107577992082,1779,area_weighted_mean
+RCP4.5 / IPSL-WRF,hwmid_area_mean,Area-weighted HWMId mean,hwmid,3,2079,12.41948299655554,1779,area_weighted_mean
+RCP4.5 / IPSL-WRF,hwmid_area_mean,Area-weighted HWMId mean,hwmid,4,2065,11.367781912623094,1779,area_weighted_mean
+RCP4.5 / IPSL-WRF,hwmid_area_mean,Area-weighted HWMId mean,hwmid,5,2041,10.6600891907828,1779,area_weighted_mean
+RCP4.5 / IPSL-WRF,hwmid_area_mean,Area-weighted HWMId mean,hwmid,6,2039,10.522574856783503,1779,area_weighted_mean
+RCP4.5 / IPSL-WRF,hwmid_area_mean,Area-weighted HWMId mean,hwmid,7,2040,10.507669646835016,1779,area_weighted_mean
+RCP4.5 / IPSL-WRF,hwmid_area_mean,Area-weighted HWMId mean,hwmid,8,2038,9.320894280810204,1779,area_weighted_mean
+RCP4.5 / IPSL-WRF,hwmid_area_mean,Area-weighted HWMId mean,hwmid,9,2086,7.623775589380284,1779,area_weighted_mean
+RCP4.5 / IPSL-WRF,hwmid_area_mean,Area-weighted HWMId mean,hwmid,10,2088,7.504364693474334,1779,area_weighted_mean
+RCP4.5 / IPSL-WRF,hwmid_mean,Mean HWMId,hwmid,1,2043,17.032068252563477,1779,mean
+RCP4.5 / IPSL-WRF,hwmid_mean,Mean HWMId,hwmid,2,2070,15.203155517578123,1779,mean
+RCP4.5 / IPSL-WRF,hwmid_mean,Mean HWMId,hwmid,3,2079,12.174631118774414,1779,mean
+RCP4.5 / IPSL-WRF,hwmid_mean,Mean HWMId,hwmid,4,2065,11.66702651977539,1779,mean
+RCP4.5 / IPSL-WRF,hwmid_mean,Mean HWMId,hwmid,5,2040,10.841460227966309,1779,mean
+RCP4.5 / IPSL-WRF,hwmid_mean,Mean HWMId,hwmid,6,2039,10.800933837890623,1779,mean
+RCP4.5 / IPSL-WRF,hwmid_mean,Mean HWMId,hwmid,7,2041,10.532316207885742,1779,mean
+RCP4.5 / IPSL-WRF,hwmid_mean,Mean HWMId,hwmid,8,2038,9.02918815612793,1779,mean
+RCP4.5 / IPSL-WRF,hwmid_mean,Mean HWMId,hwmid,9,2088,7.676107883453369,1779,mean
+RCP4.5 / IPSL-WRF,hwmid_mean,Mean HWMId,hwmid,10,2086,7.572622776031494,1779,mean
+RCP4.5 / IPSL-WRF,hwmid_max,Maximum grid-cell HWMId,hwmid,1,2041,124.81748962402344,1779,max
+RCP4.5 / IPSL-WRF,hwmid_max,Maximum grid-cell HWMId,hwmid,2,2089,100.04188537597656,1779,max
+RCP4.5 / IPSL-WRF,hwmid_max,Maximum grid-cell HWMId,hwmid,3,2088,90.3004913330078,1779,max
+RCP4.5 / IPSL-WRF,hwmid_max,Maximum grid-cell HWMId,hwmid,4,2039,87.06388092041016,1779,max
+RCP4.5 / IPSL-WRF,hwmid_max,Maximum grid-cell HWMId,hwmid,5,2082,83.68892669677734,1779,max
+RCP4.5 / IPSL-WRF,hwmid_max,Maximum grid-cell HWMId,hwmid,6,2086,83.2593994140625,1779,max
+RCP4.5 / IPSL-WRF,hwmid_max,Maximum grid-cell HWMId,hwmid,7,2079,81.99172973632812,1779,max
+RCP4.5 / IPSL-WRF,hwmid_max,Maximum grid-cell HWMId,hwmid,8,2043,78.33794403076172,1779,max
+RCP4.5 / IPSL-WRF,hwmid_max,Maximum grid-cell HWMId,hwmid,9,2080,71.58087158203125,1779,max
+RCP4.5 / IPSL-WRF,hwmid_max,Maximum grid-cell HWMId,hwmid,10,2062,63.36592864990234,1779,max
 RCP4.5 / IPSL-WRF,duration_area_mean,Area-weighted heatwave duration,heatwave_duration,1,2040,20.165611215012312,1779,area_weighted_mean
 RCP4.5 / IPSL-WRF,duration_area_mean,Area-weighted heatwave duration,heatwave_duration,2,2070,17.615114943047253,1779,area_weighted_mean
 RCP4.5 / IPSL-WRF,duration_area_mean,Area-weighted heatwave duration,heatwave_duration,3,2043,17.052439390123197,1779,area_weighted_mean
 RCP4.5 / IPSL-WRF,duration_area_mean,Area-weighted heatwave duration,heatwave_duration,4,2079,14.97097885679583,1779,area_weighted_mean
-RCP4.5 / IPSL-WRF,duration_area_mean,Area-weighted heatwave duration,heatwave_duration,5,2041,12.299433658228141,1779,area_weighted_mean
+RCP4.5 / IPSL-WRF,duration_area_mean,Area-weighted heatwave duration,heatwave_duration,5,2041,12.29943365822814,1779,area_weighted_mean
 RCP4.5 / IPSL-WRF,duration_area_mean,Area-weighted heatwave duration,heatwave_duration,6,2062,12.255601463017786,1779,area_weighted_mean
-RCP4.5 / IPSL-WRF,duration_area_mean,Area-weighted heatwave duration,heatwave_duration,7,2086,10.778883716328359,1779,area_weighted_mean
-RCP4.5 / IPSL-WRF,duration_area_mean,Area-weighted heatwave duration,heatwave_duration,8,2039,10.61786408458767,1779,area_weighted_mean
+RCP4.5 / IPSL-WRF,duration_area_mean,Area-weighted heatwave duration,heatwave_duration,7,2086,10.760440175820692,1779,area_weighted_mean
+RCP4.5 / IPSL-WRF,duration_area_mean,Area-weighted heatwave duration,heatwave_duration,8,2039,10.579771927890658,1779,area_weighted_mean
 RCP4.5 / IPSL-WRF,duration_area_mean,Area-weighted heatwave duration,heatwave_duration,9,2064,10.567260358496766,1779,area_weighted_mean
 RCP4.5 / IPSL-WRF,duration_area_mean,Area-weighted heatwave duration,heatwave_duration,10,2080,9.830257210719136,1779,area_weighted_mean
-RCP4.5 / IPSL-WRF,tmax_anomaly_area_mean,Area-weighted annual Tmax anomaly,temp_anomaly,1,2043,5.051804184618907,1779,area_weighted_mean
-RCP4.5 / IPSL-WRF,tmax_anomaly_area_mean,Area-weighted annual Tmax anomaly,temp_anomaly,2,2065,4.759959865402961,1779,area_weighted_mean
-RCP4.5 / IPSL-WRF,tmax_anomaly_area_mean,Area-weighted annual Tmax anomaly,temp_anomaly,3,2086,4.441605033265692,1779,area_weighted_mean
-RCP4.5 / IPSL-WRF,tmax_anomaly_area_mean,Area-weighted annual Tmax anomaly,temp_anomaly,4,2070,4.058905853863013,1779,area_weighted_mean
-RCP4.5 / IPSL-WRF,tmax_anomaly_area_mean,Area-weighted annual Tmax anomaly,temp_anomaly,5,2079,4.024504775686073,1779,area_weighted_mean
-RCP4.5 / IPSL-WRF,tmax_anomaly_area_mean,Area-weighted annual Tmax anomaly,temp_anomaly,6,2039,4.020907479709515,1779,area_weighted_mean
-RCP4.5 / IPSL-WRF,tmax_anomaly_area_mean,Area-weighted annual Tmax anomaly,temp_anomaly,7,2095,3.9937224287072426,1779,area_weighted_mean
-RCP4.5 / IPSL-WRF,tmax_anomaly_area_mean,Area-weighted annual Tmax anomaly,temp_anomaly,8,2088,3.7965742461445813,1779,area_weighted_mean
-RCP4.5 / IPSL-WRF,tmax_anomaly_area_mean,Area-weighted annual Tmax anomaly,temp_anomaly,9,2041,3.7078756023015225,1779,area_weighted_mean
-RCP4.5 / IPSL-WRF,tmax_anomaly_area_mean,Area-weighted annual Tmax anomaly,temp_anomaly,10,2038,3.652669807661741,1779,area_weighted_mean
-RCP8.5 / MPI-CLM,hwmid_sum,HWMId sum,hwmid,1,2092,56896.78090959696,1779,sum
-RCP8.5 / MPI-CLM,hwmid_sum,HWMId sum,hwmid,2,2082,50705.96902280109,1779,sum
-RCP8.5 / MPI-CLM,hwmid_sum,HWMId sum,hwmid,3,2085,41900.84785074872,1779,sum
-RCP8.5 / MPI-CLM,hwmid_sum,HWMId sum,hwmid,4,2098,41622.375359128244,1779,sum
-RCP8.5 / MPI-CLM,hwmid_sum,HWMId sum,hwmid,5,2090,39484.461140506945,1779,sum
-RCP8.5 / MPI-CLM,hwmid_sum,HWMId sum,hwmid,6,2072,37221.732530701905,1779,sum
-RCP8.5 / MPI-CLM,hwmid_sum,HWMId sum,hwmid,7,2096,33344.72681934983,1779,sum
-RCP8.5 / MPI-CLM,hwmid_sum,HWMId sum,hwmid,8,2086,31007.45236533664,1779,sum
-RCP8.5 / MPI-CLM,hwmid_sum,HWMId sum,hwmid,9,2094,30986.033948023964,1779,sum
-RCP8.5 / MPI-CLM,hwmid_sum,HWMId sum,hwmid,10,2095,29128.767930224967,1779,sum
-RCP8.5 / MPI-CLM,hwmid_area_mean,Area-weighted HWMId mean,hwmid,1,2092,32.45176198244353,1779,area_weighted_mean
-RCP8.5 / MPI-CLM,hwmid_area_mean,Area-weighted HWMId mean,hwmid,2,2082,29.32897045722487,1779,area_weighted_mean
-RCP8.5 / MPI-CLM,hwmid_area_mean,Area-weighted HWMId mean,hwmid,3,2098,24.700487525275335,1779,area_weighted_mean
-RCP8.5 / MPI-CLM,hwmid_area_mean,Area-weighted HWMId mean,hwmid,4,2085,24.35396253476682,1779,area_weighted_mean
-RCP8.5 / MPI-CLM,hwmid_area_mean,Area-weighted HWMId mean,hwmid,5,2090,22.92677855618584,1779,area_weighted_mean
-RCP8.5 / MPI-CLM,hwmid_area_mean,Area-weighted HWMId mean,hwmid,6,2072,21.180764048271005,1779,area_weighted_mean
-RCP8.5 / MPI-CLM,hwmid_area_mean,Area-weighted HWMId mean,hwmid,7,2096,19.383572531388293,1779,area_weighted_mean
-RCP8.5 / MPI-CLM,hwmid_area_mean,Area-weighted HWMId mean,hwmid,8,2086,18.51502499185986,1779,area_weighted_mean
-RCP8.5 / MPI-CLM,hwmid_area_mean,Area-weighted HWMId mean,hwmid,9,2094,17.85670815801793,1779,area_weighted_mean
-RCP8.5 / MPI-CLM,hwmid_area_mean,Area-weighted HWMId mean,hwmid,10,2095,17.427894890013466,1779,area_weighted_mean
-RCP8.5 / MPI-CLM,hwmid_mean,Mean HWMId,hwmid,1,2092,31.982451326361414,1779,mean
-RCP8.5 / MPI-CLM,hwmid_mean,Mean HWMId,hwmid,2,2082,28.50251209825806,1779,mean
-RCP8.5 / MPI-CLM,hwmid_mean,Mean HWMId,hwmid,3,2085,23.553034205030198,1779,mean
-RCP8.5 / MPI-CLM,hwmid_mean,Mean HWMId,hwmid,4,2098,23.39650104504117,1779,mean
-RCP8.5 / MPI-CLM,hwmid_mean,Mean HWMId,hwmid,5,2090,22.194750500566016,1779,mean
-RCP8.5 / MPI-CLM,hwmid_mean,Mean HWMId,hwmid,6,2072,20.922840095953852,1779,mean
-RCP8.5 / MPI-CLM,hwmid_mean,Mean HWMId,hwmid,7,2096,18.743522664052744,1779,mean
-RCP8.5 / MPI-CLM,hwmid_mean,Mean HWMId,hwmid,8,2086,17.42970903054336,1779,mean
-RCP8.5 / MPI-CLM,hwmid_mean,Mean HWMId,hwmid,9,2094,17.417669448017968,1779,mean
-RCP8.5 / MPI-CLM,hwmid_mean,Mean HWMId,hwmid,10,2095,16.37367505914838,1779,mean
-RCP8.5 / MPI-CLM,hwmid_max,Maximum grid-cell HWMId,hwmid,1,2086,293.5682590496516,1779,max
-RCP8.5 / MPI-CLM,hwmid_max,Maximum grid-cell HWMId,hwmid,2,2090,289.0989874747934,1779,max
-RCP8.5 / MPI-CLM,hwmid_max,Maximum grid-cell HWMId,hwmid,3,2099,242.96004115932087,1779,max
-RCP8.5 / MPI-CLM,hwmid_max,Maximum grid-cell HWMId,hwmid,4,2098,241.98586397302637,1779,max
-RCP8.5 / MPI-CLM,hwmid_max,Maximum grid-cell HWMId,hwmid,5,2096,236.19097162674595,1779,max
-RCP8.5 / MPI-CLM,hwmid_max,Maximum grid-cell HWMId,hwmid,6,2095,233.7337328523957,1779,max
-RCP8.5 / MPI-CLM,hwmid_max,Maximum grid-cell HWMId,hwmid,7,2082,218.33357238206142,1779,max
-RCP8.5 / MPI-CLM,hwmid_max,Maximum grid-cell HWMId,hwmid,8,2092,207.5059195340487,1779,max
-RCP8.5 / MPI-CLM,hwmid_max,Maximum grid-cell HWMId,hwmid,9,2089,198.77262651092184,1779,max
-RCP8.5 / MPI-CLM,hwmid_max,Maximum grid-cell HWMId,hwmid,10,2088,175.8225152018297,1779,max
+RCP4.5 / IPSL-WRF,tmax_anomaly_area_mean,Area-weighted annual maximum temperature anomaly,temp_anomaly,1,2043,5.051804122605132,1779,area_weighted_mean
+RCP4.5 / IPSL-WRF,tmax_anomaly_area_mean,Area-weighted annual maximum temperature anomaly,temp_anomaly,2,2065,4.759959803389156,1779,area_weighted_mean
+RCP4.5 / IPSL-WRF,tmax_anomaly_area_mean,Area-weighted annual maximum temperature anomaly,temp_anomaly,3,2086,4.441604971251883,1779,area_weighted_mean
+RCP4.5 / IPSL-WRF,tmax_anomaly_area_mean,Area-weighted annual maximum temperature anomaly,temp_anomaly,4,2070,4.058905791849213,1779,area_weighted_mean
+RCP4.5 / IPSL-WRF,tmax_anomaly_area_mean,Area-weighted annual maximum temperature anomaly,temp_anomaly,5,2079,4.024504713672275,1779,area_weighted_mean
+RCP4.5 / IPSL-WRF,tmax_anomaly_area_mean,Area-weighted annual maximum temperature anomaly,temp_anomaly,6,2039,4.020907417695711,1779,area_weighted_mean
+RCP4.5 / IPSL-WRF,tmax_anomaly_area_mean,Area-weighted annual maximum temperature anomaly,temp_anomaly,7,2095,3.993722366693456,1779,area_weighted_mean
+RCP4.5 / IPSL-WRF,tmax_anomaly_area_mean,Area-weighted annual maximum temperature anomaly,temp_anomaly,8,2088,3.79657418413078,1779,area_weighted_mean
+RCP4.5 / IPSL-WRF,tmax_anomaly_area_mean,Area-weighted annual maximum temperature anomaly,temp_anomaly,9,2041,3.707875540287705,1779,area_weighted_mean
+RCP4.5 / IPSL-WRF,tmax_anomaly_area_mean,Area-weighted annual maximum temperature anomaly,temp_anomaly,10,2038,3.652669745647931,1779,area_weighted_mean
+RCP8.5 / MPI-CLM,hwmid_sum,HWMId sum,hwmid,1,2092,56896.7890625,1779,sum
+RCP8.5 / MPI-CLM,hwmid_sum,HWMId sum,hwmid,2,2082,50706.01171875,1779,sum
+RCP8.5 / MPI-CLM,hwmid_sum,HWMId sum,hwmid,3,2085,41900.77734375,1779,sum
+RCP8.5 / MPI-CLM,hwmid_sum,HWMId sum,hwmid,4,2098,41622.4375,1779,sum
+RCP8.5 / MPI-CLM,hwmid_sum,HWMId sum,hwmid,5,2090,39484.42578125,1779,sum
+RCP8.5 / MPI-CLM,hwmid_sum,HWMId sum,hwmid,6,2072,37221.72265625,1779,sum
+RCP8.5 / MPI-CLM,hwmid_sum,HWMId sum,hwmid,7,2096,33344.72265625,1779,sum
+RCP8.5 / MPI-CLM,hwmid_sum,HWMId sum,hwmid,8,2086,31007.48046875,1779,sum
+RCP8.5 / MPI-CLM,hwmid_sum,HWMId sum,hwmid,9,2094,30986.048828125,1779,sum
+RCP8.5 / MPI-CLM,hwmid_sum,HWMId sum,hwmid,10,2095,29128.763671875,1779,sum
+RCP8.5 / MPI-CLM,hwmid_area_mean,Area-weighted HWMId mean,hwmid,1,2092,32.45176195272337,1779,area_weighted_mean
+RCP8.5 / MPI-CLM,hwmid_area_mean,Area-weighted HWMId mean,hwmid,2,2082,29.328970446304112,1779,area_weighted_mean
+RCP8.5 / MPI-CLM,hwmid_area_mean,Area-weighted HWMId mean,hwmid,3,2098,24.70048754181808,1779,area_weighted_mean
+RCP8.5 / MPI-CLM,hwmid_area_mean,Area-weighted HWMId mean,hwmid,4,2085,24.353962509786886,1779,area_weighted_mean
+RCP8.5 / MPI-CLM,hwmid_area_mean,Area-weighted HWMId mean,hwmid,5,2090,22.926778592629642,1779,area_weighted_mean
+RCP8.5 / MPI-CLM,hwmid_area_mean,Area-weighted HWMId mean,hwmid,6,2072,21.180764021738423,1779,area_weighted_mean
+RCP8.5 / MPI-CLM,hwmid_area_mean,Area-weighted HWMId mean,hwmid,7,2096,19.383572534815997,1779,area_weighted_mean
+RCP8.5 / MPI-CLM,hwmid_area_mean,Area-weighted HWMId mean,hwmid,8,2086,18.51502500985266,1779,area_weighted_mean
+RCP8.5 / MPI-CLM,hwmid_area_mean,Area-weighted HWMId mean,hwmid,9,2094,17.856708165661022,1779,area_weighted_mean
+RCP8.5 / MPI-CLM,hwmid_area_mean,Area-weighted HWMId mean,hwmid,10,2095,17.427894888728236,1779,area_weighted_mean
+RCP8.5 / MPI-CLM,hwmid_mean,Mean HWMId,hwmid,1,2092,31.98245620727539,1779,mean
+RCP8.5 / MPI-CLM,hwmid_mean,Mean HWMId,hwmid,2,2082,28.50253677368164,1779,mean
+RCP8.5 / MPI-CLM,hwmid_mean,Mean HWMId,hwmid,3,2085,23.552993774414062,1779,mean
+RCP8.5 / MPI-CLM,hwmid_mean,Mean HWMId,hwmid,4,2098,23.396535873413086,1779,mean
+RCP8.5 / MPI-CLM,hwmid_mean,Mean HWMId,hwmid,5,2090,22.194730758666992,1779,mean
+RCP8.5 / MPI-CLM,hwmid_mean,Mean HWMId,hwmid,6,2072,20.922834396362305,1779,mean
+RCP8.5 / MPI-CLM,hwmid_mean,Mean HWMId,hwmid,7,2096,18.743520736694336,1779,mean
+RCP8.5 / MPI-CLM,hwmid_mean,Mean HWMId,hwmid,8,2086,17.429725646972656,1779,mean
+RCP8.5 / MPI-CLM,hwmid_mean,Mean HWMId,hwmid,9,2094,17.41767692565918,1779,mean
+RCP8.5 / MPI-CLM,hwmid_mean,Mean HWMId,hwmid,10,2095,16.373672485351562,1779,mean
+RCP8.5 / MPI-CLM,hwmid_max,Maximum grid-cell HWMId,hwmid,1,2086,293.5682678222656,1779,max
+RCP8.5 / MPI-CLM,hwmid_max,Maximum grid-cell HWMId,hwmid,2,2090,289.0989990234375,1779,max
+RCP8.5 / MPI-CLM,hwmid_max,Maximum grid-cell HWMId,hwmid,3,2099,242.9600372314453,1779,max
+RCP8.5 / MPI-CLM,hwmid_max,Maximum grid-cell HWMId,hwmid,4,2098,241.98587036132812,1779,max
+RCP8.5 / MPI-CLM,hwmid_max,Maximum grid-cell HWMId,hwmid,5,2096,236.19097900390625,1779,max
+RCP8.5 / MPI-CLM,hwmid_max,Maximum grid-cell HWMId,hwmid,6,2095,233.73373413085938,1779,max
+RCP8.5 / MPI-CLM,hwmid_max,Maximum grid-cell HWMId,hwmid,7,2082,218.3335723876953,1779,max
+RCP8.5 / MPI-CLM,hwmid_max,Maximum grid-cell HWMId,hwmid,8,2092,207.50592041015625,1779,max
+RCP8.5 / MPI-CLM,hwmid_max,Maximum grid-cell HWMId,hwmid,9,2089,198.7726287841797,1779,max
+RCP8.5 / MPI-CLM,hwmid_max,Maximum grid-cell HWMId,hwmid,10,2088,175.822509765625,1779,max
 RCP8.5 / MPI-CLM,duration_area_mean,Area-weighted heatwave duration,heatwave_duration,1,2092,20.95331839504559,1779,area_weighted_mean
 RCP8.5 / MPI-CLM,duration_area_mean,Area-weighted heatwave duration,heatwave_duration,2,2085,19.525679084004967,1779,area_weighted_mean
 RCP8.5 / MPI-CLM,duration_area_mean,Area-weighted heatwave duration,heatwave_duration,3,2082,18.176216547232936,1779,area_weighted_mean
 RCP8.5 / MPI-CLM,duration_area_mean,Area-weighted heatwave duration,heatwave_duration,4,2090,17.034245564093485,1779,area_weighted_mean
 RCP8.5 / MPI-CLM,duration_area_mean,Area-weighted heatwave duration,heatwave_duration,5,2098,16.810647590896288,1779,area_weighted_mean
 RCP8.5 / MPI-CLM,duration_area_mean,Area-weighted heatwave duration,heatwave_duration,6,2072,16.072387062004548,1779,area_weighted_mean
-RCP8.5 / MPI-CLM,duration_area_mean,Area-weighted heatwave duration,heatwave_duration,7,2086,14.653619695240055,1779,area_weighted_mean
+RCP8.5 / MPI-CLM,duration_area_mean,Area-weighted heatwave duration,heatwave_duration,7,2086,14.641872829782974,1779,area_weighted_mean
 RCP8.5 / MPI-CLM,duration_area_mean,Area-weighted heatwave duration,heatwave_duration,8,2100,13.752429473858875,1779,area_weighted_mean
 RCP8.5 / MPI-CLM,duration_area_mean,Area-weighted heatwave duration,heatwave_duration,9,2089,13.120205204712171,1779,area_weighted_mean
 RCP8.5 / MPI-CLM,duration_area_mean,Area-weighted heatwave duration,heatwave_duration,10,2095,12.827679723825486,1779,area_weighted_mean
-RCP8.5 / MPI-CLM,tmax_anomaly_area_mean,Area-weighted annual Tmax anomaly,temp_anomaly,1,2083,8.695554943674491,1779,area_weighted_mean
-RCP8.5 / MPI-CLM,tmax_anomaly_area_mean,Area-weighted annual Tmax anomaly,temp_anomaly,2,2085,8.654592714739431,1779,area_weighted_mean
-RCP8.5 / MPI-CLM,tmax_anomaly_area_mean,Area-weighted annual Tmax anomaly,temp_anomaly,3,2082,8.370546239375445,1779,area_weighted_mean
-RCP8.5 / MPI-CLM,tmax_anomaly_area_mean,Area-weighted annual Tmax anomaly,temp_anomaly,4,2096,7.869640594941086,1779,area_weighted_mean
-RCP8.5 / MPI-CLM,tmax_anomaly_area_mean,Area-weighted annual Tmax anomaly,temp_anomaly,5,2080,7.6414901934839135,1779,area_weighted_mean
-RCP8.5 / MPI-CLM,tmax_anomaly_area_mean,Area-weighted annual Tmax anomaly,temp_anomaly,6,2094,7.593804703693397,1779,area_weighted_mean
-RCP8.5 / MPI-CLM,tmax_anomaly_area_mean,Area-weighted annual Tmax anomaly,temp_anomaly,7,2092,7.49328005181975,1779,area_weighted_mean
-RCP8.5 / MPI-CLM,tmax_anomaly_area_mean,Area-weighted annual Tmax anomaly,temp_anomaly,8,2072,7.485252608062254,1779,area_weighted_mean
-RCP8.5 / MPI-CLM,tmax_anomaly_area_mean,Area-weighted annual Tmax anomaly,temp_anomaly,9,2097,7.315743274882868,1779,area_weighted_mean
-RCP8.5 / MPI-CLM,tmax_anomaly_area_mean,Area-weighted annual Tmax anomaly,temp_anomaly,10,2098,7.227021314221072,1779,area_weighted_mean
+RCP8.5 / MPI-CLM,tmax_anomaly_area_mean,Area-weighted annual maximum temperature anomaly,temp_anomaly,1,2083,8.69555488726525,1779,area_weighted_mean
+RCP8.5 / MPI-CLM,tmax_anomaly_area_mean,Area-weighted annual maximum temperature anomaly,temp_anomaly,2,2085,8.654592658330182,1779,area_weighted_mean
+RCP8.5 / MPI-CLM,tmax_anomaly_area_mean,Area-weighted annual maximum temperature anomaly,temp_anomaly,3,2082,8.370546182966194,1779,area_weighted_mean
+RCP8.5 / MPI-CLM,tmax_anomaly_area_mean,Area-weighted annual maximum temperature anomaly,temp_anomaly,4,2096,7.869640538531797,1779,area_weighted_mean
+RCP8.5 / MPI-CLM,tmax_anomaly_area_mean,Area-weighted annual maximum temperature anomaly,temp_anomaly,5,2080,7.641490137074647,1779,area_weighted_mean
+RCP8.5 / MPI-CLM,tmax_anomaly_area_mean,Area-weighted annual maximum temperature anomaly,temp_anomaly,6,2094,7.593804647284138,1779,area_weighted_mean
+RCP8.5 / MPI-CLM,tmax_anomaly_area_mean,Area-weighted annual maximum temperature anomaly,temp_anomaly,7,2092,7.493279995410496,1779,area_weighted_mean
+RCP8.5 / MPI-CLM,tmax_anomaly_area_mean,Area-weighted annual maximum temperature anomaly,temp_anomaly,8,2072,7.485252551652997,1779,area_weighted_mean
+RCP8.5 / MPI-CLM,tmax_anomaly_area_mean,Area-weighted annual maximum temperature anomaly,temp_anomaly,9,2097,7.315743218473605,1779,area_weighted_mean
+RCP8.5 / MPI-CLM,tmax_anomaly_area_mean,Area-weighted annual maximum temperature anomaly,temp_anomaly,10,2098,7.227021257811822,1779,area_weighted_mean

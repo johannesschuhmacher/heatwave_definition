@@ -1,0 +1,9 @@
+timestamp_utc,role,dataset,period,file_name,local_path,size_bytes,sha256,note
+2026-07-10T23:17:20.429888+00:00,raw_input,E-OBS v33.0e tx,1950-2025,tx_ens_mean_0.25deg_reg_v33.0e.nc,,898580164,617175993b43d345b743992143979111bd40c0f63f3d980befaef8903cfed460,Historical main basis; raw data kept outside Git.
+2026-07-10T23:17:20.430957+00:00,raw_input_directory,ERA5 hourly t2m,1950-2026,t2m_europe,,33077987134,b80321cdedb55cb35fb31dec1c12ccf70cb22ff3049a97ca2b1bd79d6044c26d,Reanalysis comparison; 77 annual files in common-period local inventory. Use --hash-era5-raw for a directory checksum.
+2026-07-10T23:18:06.456787+00:00,derived_artifact,Historical / E-OBS,1950-2025,ranked_years_e_obs.csv,,1564,a02aa86a8ec6331085eeca7bf2dd3952301d811f6ebaafba1a009d65a267165a,Versioned historical main ranking.
+2026-07-10T23:18:06.458082+00:00,derived_artifact,Historical / ERA5,1950-2026,ranked_years_era5.csv,,1361,8a2d81d0ed9e049037297460b592cd3d8fa233604f1ea20f868ce8f18259a66f,Versioned reanalysis ranking; 2026 is an incomplete current-year file.
+2026-07-10T23:18:06.459213+00:00,derived_artifact,E-OBS and ERA5,1950-2025,historical_data_product_top10_common_period.csv,,1557,d818aecd6079dd2f2786cb7f472cffc56267c01d5d452d90b3bfefa167422326,Top-10 common-period comparison table.
+2026-07-10T23:18:06.471382+00:00,derived_artifact,E-OBS and ERA5,1950-2025,historical_data_product_top2_comparison.csv,,271,93d1ca2a3b1bde079f0a6d5999c90d4b70c77a240cc8418f2f61024146aa4a54,Top-2 value comparison table.
+2026-07-10T23:18:06.486265+00:00,derived_artifact,E-OBS and ERA5,1950-2025,historical_data_product_top10_comparison.png,,137531,33b9405d185a5ed79264eab94cb38d104e46a7eae85f8c9803fc9f1a3e5248a5,Manuscript appendix comparison figure.
+2026-07-10T23:18:06.496213+00:00,script,derived workflow,1950-2025,make_historical_data_product_comparison.py,,6174,4ebe3d866618bb040888cb5231d3ee458ab7bd44a7a5a4b171405a5b5d1a4e11,Script generating comparison tables and figure.

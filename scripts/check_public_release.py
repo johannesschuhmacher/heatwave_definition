@@ -74,6 +74,8 @@ def main() -> int:
             problems.append(f"unexpected file type for public source tree: {rel}")
         if is_text_file(path):
             problems.extend(scan_text_file(path, rel))
+        if rel.parts and rel.parts[0] == "results" and path.suffix.lower() in {".csv", ".md"}:
+            problems.extend(scan_result_provenance(path, rel))
 
     if problems:
         print("Public release check failed:")
@@ -121,6 +123,20 @@ def scan_text_file(path: Path, rel: Path) -> list[str]:
     for pattern in LOCAL_PATH_PATTERNS:
         if pattern.search(content):
             problems.append(f"local/private path or user marker in {rel}: {pattern.pattern}")
+    return problems
+
+
+def scan_result_provenance(path: Path, rel: Path) -> list[str]:
+    try:
+        content = path.read_text(encoding="utf-8")
+    except UnicodeDecodeError:
+        return []
+
+    problems = []
+    if "_from_metrics" in content:
+        problems.append(f"versioned result still references legacy metric rerun: {rel}")
+    if ".pkl" in content:
+        problems.append(f"versioned result still references pickle input: {rel}")
     return problems
 
 

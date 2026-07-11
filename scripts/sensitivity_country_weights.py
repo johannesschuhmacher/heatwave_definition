@@ -1,4 +1,4 @@
-"""Run country-weighted sensitivity rankings from trusted metric pickles."""
+"""Run country-weighted sensitivity rankings from metric arrays."""
 
 from __future__ import annotations
 
@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from heatwave_definition.legacy import load_legacy_metrics_pickle
+from heatwave_definition.metrics import load_metrics_file, resolve_metrics_file
 from heatwave_definition.ranking import rank_years_by_country_weighted_hwmid
 
 
@@ -16,9 +16,9 @@ DEFAULT_OUTPUT_DIR = REPO / "outputs" / "sensitivity"
 DEFAULT_WEIGHTS = REPO / "configs" / "country_weights.example.csv"
 
 DATASETS = [
-    ("Historical / E-OBS", "metrics_e_obs.pkl"),
-    ("RCP4.5 / IPSL-WRF", "metrics_copernicus_45.pkl"),
-    ("RCP8.5 / MPI-CLM", "metrics_copernicus_85.pkl"),
+    ("Historical / E-OBS", ["metrics_e_obs.npz", "metrics_e_obs.pkl"]),
+    ("RCP4.5 / IPSL-WRF", ["metrics_copernicus_rcp45.npz", "metrics_copernicus_45.pkl"]),
+    ("RCP8.5 / MPI-CLM", ["metrics_copernicus_rcp85.npz", "metrics_copernicus_85.pkl"]),
 ]
 
 
@@ -28,8 +28,8 @@ def main(argv: list[str] | None = None) -> None:
     weights = read_weight_sets(args.weights)
 
     rows = []
-    for dataset, filename in DATASETS:
-        data = load_legacy_metrics_pickle(args.repo / filename)
+    for dataset, filenames in DATASETS:
+        data = load_metrics_file(resolve_metrics_file(args.repo, filenames))
         for weighting, country_weights in weights.items():
             ranking = rank_years_by_country_weighted_hwmid(
                 data.latitude,

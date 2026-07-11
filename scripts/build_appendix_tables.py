@@ -12,9 +12,30 @@ REPO = Path(__file__).resolve().parents[1]
 DEFAULT_OUTPUT_DIR = REPO / "outputs" / "appendix"
 
 PRIMARY_RANKINGS = [
-    ("Historical / E-OBS", REPO / "outputs" / "ranking_from_config" / "ranked_years_e_obs_from_metrics.csv"),
-    ("RCP4.5 / IPSL-WRF", REPO / "outputs" / "ranking_from_config" / "ranked_years_copernicus_rcp45_from_metrics.csv"),
-    ("RCP8.5 / MPI-CLM", REPO / "outputs" / "ranking_from_config" / "ranked_years_copernicus_rcp85_from_metrics.csv"),
+    (
+        "Historical / E-OBS",
+        [
+            REPO / "outputs" / "ranking_from_config" / "ranked_years_e_obs.csv",
+        ],
+    ),
+    (
+        "Historical / ERA5",
+        [
+            REPO / "outputs" / "ranking_from_config" / "ranked_years_era5.csv",
+        ],
+    ),
+    (
+        "RCP4.5 / IPSL-WRF",
+        [
+            REPO / "outputs" / "ranking_from_config" / "ranked_years_copernicus_rcp45.csv",
+        ],
+    ),
+    (
+        "RCP8.5 / MPI-CLM",
+        [
+            REPO / "outputs" / "ranking_from_config" / "ranked_years_copernicus_rcp85.csv",
+        ],
+    ),
 ]
 
 
@@ -23,7 +44,8 @@ def main(argv: list[str] | None = None) -> None:
     args.output_dir.mkdir(parents=True, exist_ok=True)
 
     top10 = []
-    for dataset, path in PRIMARY_RANKINGS:
+    for dataset, paths in PRIMARY_RANKINGS:
+        path = resolve_input(paths)
         table = pd.read_csv(path).head(10)
         table.insert(0, "dataset", dataset)
         top10.append(table[["dataset", "rank", "year", "hwmid_sum", "country_cells"]])
@@ -43,6 +65,14 @@ def main(argv: list[str] | None = None) -> None:
     print(mask_path)
     print(weighted_path)
     print(criteria_path)
+
+
+def resolve_input(paths: list[Path]) -> Path:
+    for path in paths:
+        if path.exists():
+            return path
+    formatted = "\n".join(f"- {path}" for path in paths)
+    raise FileNotFoundError(f"No ranking input found. Tried:\n{formatted}")
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:

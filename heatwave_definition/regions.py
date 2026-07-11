@@ -60,7 +60,15 @@ def classify_countries_matrix(latitudes, longitudes, country_list) -> np.ndarray
         raise ValueError(f"No Natural Earth polygons found for countries: {names}")
 
     region = prep(sgeom.MultiPolygon(polygons))
-    lon_grid, lat_grid = np.meshgrid(np.asarray(longitudes), np.asarray(latitudes))
+    latitude_values = np.asarray(latitudes)
+    longitude_values = np.asarray(longitudes)
+    if latitude_values.ndim == 2 and longitude_values.ndim == 2:
+        if latitude_values.shape != longitude_values.shape:
+            raise ValueError("2D latitude and longitude arrays must have the same shape")
+        lat_grid = latitude_values
+        lon_grid = longitude_values
+    else:
+        lon_grid, lat_grid = np.meshgrid(longitude_values, latitude_values)
     points = np.column_stack([lon_grid.ravel(), lat_grid.ravel()])
     mask = np.array([region.covers(sgeom.Point(x, y)) for x, y in points], dtype=bool)
     return mask.reshape(lon_grid.shape)

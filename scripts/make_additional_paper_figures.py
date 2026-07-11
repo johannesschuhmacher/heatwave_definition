@@ -12,14 +12,20 @@ import numpy as np
 import pandas as pd
 
 from heatwave_definition.plot_style import (
+    ANNOTATION_SIZE,
     DATASET_COLORS,
     DATASET_DISPLAY,
     DATASET_LINESTYLES,
     DATASET_MARKERS,
     DATASET_ORDER,
+    LEGEND_SIZE,
+    PANEL_TITLE_SIZE,
+    SMALL_TEXT_SIZE,
     STABILITY_BY_CODE,
     STABILITY_CMAP,
     STABILITY_NORM,
+    SUBTITLE_SIZE,
+    TITLE_SIZE,
     apply_manuscript_style,
     classify_top2_stability,
     stability_legend_handles,
@@ -80,6 +86,12 @@ def plot_top10_rank_curve(top10: pd.DataFrame, output: Path) -> Path:
         group = top10[top10["dataset"] == dataset].sort_values("rank")
         if group.empty:
             continue
+        label_offsets = {
+            "Historical / E-OBS": (0, 8),
+            "Historical / ERA5": (0, -13),
+            "RCP4.5 / IPSL-WRF": (0, 8),
+            "RCP8.5 / MPI-CLM": (0, 8),
+        }
         color = DATASET_COLORS[dataset]
         ax.plot(
             group["rank"],
@@ -96,15 +108,15 @@ def plot_top10_rank_curve(top10: pd.DataFrame, output: Path) -> Path:
                 str(int(row["year"])),
                 (row["rank"], row["hwmid_sum"]),
                 textcoords="offset points",
-                xytext=(0, 7),
+                xytext=label_offsets.get(dataset, (0, 7)),
                 ha="center",
-                fontsize=7,
+                fontsize=ANNOTATION_SIZE,
                 color=color,
             )
 
-    ax.set_title("Top-10 heatwave years by summed grid-cell HWMId")
+    ax.set_title("Top-10 heatwave years by summed grid-cell HWMId", fontsize=PANEL_TITLE_SIZE)
     ax.set_xlabel("Rank")
-    ax.set_ylabel("HWMId sum over Germany+France")
+    ax.set_ylabel("HWMId sum over Germany and France")
     ax.set_xticks(range(1, 11))
     ax.grid(axis="y", alpha=0.25)
     ax.spines[["top", "right"]].set_visible(False)
@@ -115,16 +127,7 @@ def plot_top10_rank_curve(top10: pd.DataFrame, output: Path) -> Path:
 
 
 def plot_country_mask_heatmap(country_mask: pd.DataFrame, output: Path) -> Path:
-    rank1 = country_mask[country_mask["rank"] == 1].pivot(
-        index="country_set",
-        columns="dataset",
-        values="year",
-    )
-    rank2 = country_mask[country_mask["rank"] == 2].pivot(
-        index="country_set",
-        columns="dataset",
-        values="year",
-    )
+    rank1, rank2 = top2_pivots(country_mask, "country_set")
 
     mask_order = [
         "DE_FR",
@@ -135,27 +138,38 @@ def plot_country_mask_heatmap(country_mask: pd.DataFrame, output: Path) -> Path:
     ]
     available_masks = [mask for mask in mask_order if mask in rank1.index]
     available_datasets = [dataset for dataset in DATASET_ORDER if dataset in rank1.columns]
-    values = rank1.loc[available_masks, available_datasets].astype(float)
+    codes, labels, text_colors = stability_matrix(
+        rank1=rank1,
+        rank2=rank2,
+        row_keys=available_masks,
+        datasets=available_datasets,
+        reference_row="DE_FR",
+    )
 
-    labels = values.copy().astype(str)
-    for row in labels.index:
-        for col in labels.columns:
-            labels.loc[row, col] = f"{int(rank1.loc[row, col])}\n({int(rank2.loc[row, col])})"
-
-    fig, ax = plt.subplots(figsize=(8.4, 4.8), constrained_layout=True)
-    image = ax.imshow(values.to_numpy(), cmap="viridis", aspect="auto")
-    ax.set_title("Top-ranked years by country mask (rank 2 in parentheses)")
-    ax.set_xticks(np.arange(len(available_datasets)), available_datasets, rotation=20, ha="right")
-    ax.set_yticks(np.arange(len(available_masks)), [mask_label(mask) for mask in available_masks])
+    fig, ax = plt.subplots(figsize=(9.3, 5.1), constrained_layout=True)
+    ax.imshow(codes, cmap=STABILITY_CMAP, norm=STABILITY_NORM, aspect="auto")
+    ax.set_title("Top-ranked years by country mask (rank 2 in parentheses)", fontsize=PANEL_TITLE_SIZE)
+    ax.set_xticks(
+        np.arange(len(available_datasets)),
+        [DATASET_DISPLAY[dataset] for dataset in available_datasets],
+    )
+    ax.set_yticks(np.arange(len(available_masks)), [wrap_label(mask_label(mask), 27) for mask in available_masks])
     ax.tick_params(length=0)
 
-    for row in range(values.shape[0]):
-        for col in range(values.shape[1]):
-            text_color = heatmap_text_color(values.iloc[row, col], image)
-            ax.text(col, row, labels.iloc[row, col], ha="center", va="center", color=text_color, fontsize=8)
+    for row in range(codes.shape[0]):
+        for col in range(codes.shape[1]):
+            ax.text(
+                col,
+                row,
+                labels[row][col],
+                ha="center",
+                va="center",
+                color=text_colors[row][col],
+                fontsize=ANNOTATION_SIZE,
+                fontweight="bold",
+            )
 
-    cbar = fig.colorbar(image, ax=ax, shrink=0.82)
-    cbar.set_label("Rank-1 year")
+    add_stability_legend(ax, y=-0.22)
     fig.savefig(output, dpi=220)
     plt.close(fig)
     return output
@@ -163,30 +177,41 @@ def plot_country_mask_heatmap(country_mask: pd.DataFrame, output: Path) -> Path:
 
 def plot_n_minus_1_heatmap(country_mask: pd.DataFrame, output: Path) -> Path:
     rank1, rank2 = top2_pivots(country_mask, "country_set")
-    available_masks = [mask for mask in WCE_N_MINUS_1_ORDER if mask in rank1.index]
+    available_masks = [mask for mask in ["Western_Central_Europe", *WCE_N_MINUS_1_ORDER] if mask in rank1.index]
     available_datasets = [dataset for dataset in DATASET_ORDER if dataset in rank1.columns]
-    values = rank1.loc[available_masks, available_datasets].astype(float)
+    codes, labels, text_colors = stability_matrix(
+        rank1=rank1,
+        rank2=rank2,
+        row_keys=available_masks,
+        datasets=available_datasets,
+        reference_row="Western_Central_Europe",
+    )
 
-    labels = values.copy().astype(str)
-    for row in labels.index:
-        for col in labels.columns:
-            labels.loc[row, col] = f"{int(rank1.loc[row, col])}\n({int(rank2.loc[row, col])})"
-
-    fig_height = max(5.0, 0.36 * len(available_masks) + 1.4)
-    fig, ax = plt.subplots(figsize=(8.6, fig_height), constrained_layout=True)
-    image = ax.imshow(values.to_numpy(), cmap="viridis", aspect="auto")
-    ax.set_title("Western/Central Europe N-1 sensitivity (rank 2 in parentheses)")
-    ax.set_xticks(np.arange(len(available_datasets)), available_datasets, rotation=20, ha="right")
-    ax.set_yticks(np.arange(len(available_masks)), [mask_label(mask) for mask in available_masks])
+    fig_height = max(5.9, 0.43 * len(available_masks) + 2.0)
+    fig, ax = plt.subplots(figsize=(10.2, fig_height), constrained_layout=True)
+    ax.imshow(codes, cmap=STABILITY_CMAP, norm=STABILITY_NORM, aspect="auto")
+    ax.set_title("Western/Central Europe N-1 sensitivity (rank 2 in parentheses)", fontsize=PANEL_TITLE_SIZE)
+    ax.set_xticks(
+        np.arange(len(available_datasets)),
+        [DATASET_DISPLAY[dataset] for dataset in available_datasets],
+    )
+    ax.set_yticks(np.arange(len(available_masks)), [wrap_label(mask_label(mask), 32) for mask in available_masks])
     ax.tick_params(length=0)
 
-    for row in range(values.shape[0]):
-        for col in range(values.shape[1]):
-            text_color = heatmap_text_color(values.iloc[row, col], image)
-            ax.text(col, row, labels.iloc[row, col], ha="center", va="center", color=text_color, fontsize=8)
+    for row in range(codes.shape[0]):
+        for col in range(codes.shape[1]):
+            ax.text(
+                col,
+                row,
+                labels[row][col],
+                ha="center",
+                va="center",
+                color=text_colors[row][col],
+                fontsize=ANNOTATION_SIZE,
+                fontweight="bold",
+            )
 
-    cbar = fig.colorbar(image, ax=ax, shrink=0.84)
-    cbar.set_label("Rank-1 year")
+    add_stability_legend(ax, y=-0.18)
     fig.savefig(output, dpi=220)
     plt.close(fig)
     return output
@@ -208,7 +233,9 @@ def plot_weighting_heatmap(weighted: pd.DataFrame, primary_top10: pd.DataFrame, 
         .astype(int)
     )
 
-    row_labels = ["Unweighted DE+FR reference"] + [weighting_label(weighting) for weighting in available_weightings]
+    row_labels = ["Unweighted Germany and France reference"] + [
+        weighting_label(weighting) for weighting in available_weightings
+    ]
     codes = np.zeros((len(row_labels), len(available_datasets)), dtype=int)
     labels = [["" for _ in available_datasets] for _ in row_labels]
 
@@ -221,30 +248,30 @@ def plot_weighting_heatmap(weighted: pd.DataFrame, primary_top10: pd.DataFrame, 
             codes[row_idx, col_idx] = category.code
             labels[row_idx][col_idx] = f"{candidate_top2[0]}\n({candidate_top2[1]})"
 
-    fig_height = max(4.6, 0.5 * len(row_labels) + 1.8)
-    plot_left = 0.28
+    fig_height = max(4.8, 0.5 * len(row_labels) + 1.8)
+    plot_left = 0.34
     plot_right = 0.98
     plot_center = (plot_left + plot_right) / 2
-    fig, ax = plt.subplots(figsize=(9.2, fig_height))
+    fig, ax = plt.subplots(figsize=(9.8, fig_height))
     ax.imshow(codes, cmap=STABILITY_CMAP, norm=STABILITY_NORM, aspect="auto")
     fig.suptitle(
         "TYNDP 2024 capacity-weight sensitivity",
         x=plot_center,
-        fontsize=14,
+        fontsize=TITLE_SIZE,
         fontweight="bold",
         y=0.985,
     )
     fig.text(
         plot_center,
         0.912,
-        "Reference: DE+FR, unweighted HWMId sum",
+        "Reference: Germany and France, unweighted HWMId sum",
         ha="center",
         va="center",
-        fontsize=10,
+        fontsize=SUBTITLE_SIZE,
         color="#5A5A5A",
     )
     ax.set_xticks(np.arange(len(available_datasets)), [DATASET_DISPLAY[dataset] for dataset in available_datasets])
-    ax.set_yticks(np.arange(len(row_labels)), row_labels)
+    ax.set_yticks(np.arange(len(row_labels)), [wrap_label(label, 29) for label in row_labels])
     ax.tick_params(length=0)
     ax.set_xticks(np.arange(-0.5, len(available_datasets), 1), minor=True)
     ax.set_yticks(np.arange(-0.5, len(row_labels), 1), minor=True)
@@ -262,7 +289,7 @@ def plot_weighting_heatmap(weighted: pd.DataFrame, primary_top10: pd.DataFrame, 
                 ha="center",
                 va="center",
                 color=category.text_color,
-                fontsize=8.5,
+                fontsize=ANNOTATION_SIZE,
                 fontweight="bold",
             )
 
@@ -270,6 +297,7 @@ def plot_weighting_heatmap(weighted: pd.DataFrame, primary_top10: pd.DataFrame, 
         handles=stability_legend_handles(),
         frameon=False,
         ncol=2,
+        fontsize=LEGEND_SIZE,
         loc="upper center",
         bbox_to_anchor=(0.5, -0.16),
     )
@@ -283,6 +311,38 @@ def top2_pivots(table: pd.DataFrame, index: str) -> tuple[pd.DataFrame, pd.DataF
     rank1 = table[table["rank"] == 1].pivot(index=index, columns="dataset", values="year")
     rank2 = table[table["rank"] == 2].pivot(index=index, columns="dataset", values="year")
     return rank1, rank2
+
+
+def stability_matrix(
+    rank1: pd.DataFrame,
+    rank2: pd.DataFrame,
+    row_keys: list[str],
+    datasets: list[str],
+    reference_row: str,
+) -> tuple[np.ndarray, list[list[str]], list[list[str]]]:
+    codes = np.zeros((len(row_keys), len(datasets)), dtype=int)
+    labels = [["" for _ in datasets] for _ in row_keys]
+    text_colors = [["" for _ in datasets] for _ in row_keys]
+    for col_idx, dataset in enumerate(datasets):
+        reference_top2 = (int(rank1.loc[reference_row, dataset]), int(rank2.loc[reference_row, dataset]))
+        for row_idx, row_key in enumerate(row_keys):
+            candidate_top2 = (int(rank1.loc[row_key, dataset]), int(rank2.loc[row_key, dataset]))
+            category = classify_top2_stability(reference_top2, candidate_top2)
+            codes[row_idx, col_idx] = category.code
+            labels[row_idx][col_idx] = f"{candidate_top2[0]}\n({candidate_top2[1]})"
+            text_colors[row_idx][col_idx] = category.text_color
+    return codes, labels, text_colors
+
+
+def add_stability_legend(ax, y: float) -> None:
+    ax.legend(
+        handles=stability_legend_handles(),
+        frameon=False,
+        ncol=2,
+        loc="upper center",
+        bbox_to_anchor=(0.5, y),
+        fontsize=LEGEND_SIZE,
+    )
 
 
 def heatmap_text_color(value: float, image) -> str:
@@ -323,11 +383,11 @@ def plot_ensemble_dotplot(ensemble: pd.DataFrame, output: Path) -> Path:
             textcoords="offset points",
             xytext=label_offset,
             va="center",
-            fontsize=7,
+            fontsize=ANNOTATION_SIZE,
             bbox={"boxstyle": "round,pad=0.12", "fc": "white", "ec": "none", "alpha": 0.75},
         )
 
-    ax.set_title("Copernicus ensemble sensitivity: top heatwave years")
+    ax.set_title("Copernicus ensemble sensitivity: top heatwave years", fontsize=PANEL_TITLE_SIZE)
     ax.set_xlabel("Scenario year")
     ax.set_yticks(np.arange(len(labels)), labels)
     ax.set_xlim(2025, 2103)
@@ -341,7 +401,14 @@ def plot_ensemble_dotplot(ensemble: pd.DataFrame, output: Path) -> Path:
         Line2D([0], [0], marker="o", color="w", markerfacecolor="#D55E00", markeredgecolor="black", label="RCP8.5 rank 1", markersize=7),
         Line2D([0], [0], marker="^", color="w", markerfacecolor="#D55E00", markeredgecolor="black", label="RCP8.5 rank 2", markersize=7),
     ]
-    ax.legend(handles=legend_handles, frameon=False, ncol=4, loc="lower center", bbox_to_anchor=(0.5, -0.16))
+    ax.legend(
+        handles=legend_handles,
+        frameon=False,
+        ncol=4,
+        loc="lower center",
+        bbox_to_anchor=(0.5, -0.16),
+        fontsize=LEGEND_SIZE,
+    )
     fig.savefig(output, dpi=220)
     plt.close(fig)
     return output
@@ -349,10 +416,10 @@ def plot_ensemble_dotplot(ensemble: pd.DataFrame, output: Path) -> Path:
 
 def plot_method_flow(output: Path) -> Path:
     steps = [
-        ("Input data", "E-OBS Tmax\nCopernicus tasAdjust"),
-        ("Daily Tmax", "Aggregate 3-hourly values\nto daily maximum"),
+        ("Input data", "E-OBS daily maximum\ntemperature\nCopernicus tasAdjust"),
+        ("Daily maximum\ntemperature", "Aggregate 3-hourly values\nto daily maximum"),
         ("HWMId", "90th percentile threshold\n1981-2010 reference"),
-        ("Country mask", "Germany+France\nplus sensitivities"),
+        ("Country mask", "Germany and France\nplus sensitivities"),
         ("Year ranking", "Aggregate grid-cell\nannual event scores"),
         ("Scenario years", "Stress-test year\nand sensitivity cases"),
     ]
@@ -382,8 +449,8 @@ def plot_method_flow(output: Path) -> Path:
             linewidth=1.0,
         )
         ax.add_patch(rect)
-        ax.text(x, y + 0.045, title, transform=ax.transAxes, ha="center", va="center", fontsize=9.5, fontweight="bold")
-        ax.text(x, y - 0.055, body, transform=ax.transAxes, ha="center", va="center", fontsize=7.6)
+        ax.text(x, y + 0.045, title, transform=ax.transAxes, ha="center", va="center", fontsize=9.0, fontweight="bold")
+        ax.text(x, y - 0.055, body, transform=ax.transAxes, ha="center", va="center", fontsize=SMALL_TEXT_SIZE)
         if idx < len(steps) - 1:
             next_x, next_y = positions[idx + 1]
             ax.annotate(
@@ -397,11 +464,11 @@ def plot_method_flow(output: Path) -> Path:
     ax.text(
         0.5,
         0.08,
-        "Baseline criterion: summed grid-cell HWMId over Germany+France; robustness is checked with area weighting, country masks and alternative metrics.",
+        "Baseline criterion: summed grid-cell HWMId over Germany and France; robustness is checked with area weighting, country masks and alternative metrics.",
         transform=ax.transAxes,
         ha="center",
         va="center",
-        fontsize=7.5,
+        fontsize=SMALL_TEXT_SIZE,
         color="#4a5568",
     )
     fig.savefig(output, dpi=220)
@@ -434,14 +501,27 @@ def shorten_ensemble_label(label: str) -> str:
 
 def mask_label(label: str) -> str:
     labels = {
-        "DE_FR": "DE+FR",
-        "DE_only": "DE",
-        "FR_only": "FR",
-        "DE_FR_Benelux_Alps": "DE+FR+Benelux+Alps",
+        "DE_FR": "Germany and France",
+        "DE_only": "Germany only",
+        "FR_only": "France only",
+        "DE_FR_Benelux_Alps": "Germany, France, Benelux and Alpine countries",
         "Western_Central_Europe": "Western/Central Europe",
     }
-    for code in ["DE", "FR", "BE", "NL", "LU", "CH", "AT", "IT", "ES", "PL", "CZ"]:
-        labels[f"WCE_minus_{code}"] = f"WCE minus {code}"
+    country_names = {
+        "DE": "Germany",
+        "FR": "France",
+        "BE": "Belgium",
+        "NL": "Netherlands",
+        "LU": "Luxembourg",
+        "CH": "Switzerland",
+        "AT": "Austria",
+        "IT": "Italy",
+        "ES": "Spain",
+        "PL": "Poland",
+        "CZ": "Czechia",
+    }
+    for code, country in country_names.items():
+        labels[f"WCE_minus_{code}"] = f"Western/Central Europe without {country}"
     return labels.get(label, label)
 
 
@@ -450,13 +530,13 @@ def weighting_label(label: str) -> str:
         "capacity_tyndp2024_pemmdb_nt2040": "All capacity",
         "renewables_tyndp2024_pemmdb_nt2040": "Renewables",
         "solar_tyndp2024_pemmdb_nt2040": "Solar",
-        "pv_tyndp2024_pemmdb_nt2040": "PV incl. rooftop",
+        "pv_tyndp2024_pemmdb_nt2040": "Photovoltaics including rooftop",
         "wind_tyndp2024_pemmdb_nt2040": "Wind",
         "wind_onshore_tyndp2024_pemmdb_nt2040": "Wind onshore",
         "wind_offshore_tyndp2024_pemmdb_nt2040": "Wind offshore",
-        "hydro_tyndp2024_pemmdb_nt2040": "Hydro excl. pumped",
+        "hydro_tyndp2024_pemmdb_nt2040": "Hydro without pumped storage",
         "pumped_hydro_tyndp2024_pemmdb_nt2040": "Pumped hydro",
-        "bio_tyndp2024_pemmdb_nt2040": "Bio/waste",
+        "bio_tyndp2024_pemmdb_nt2040": "Bioenergy and waste",
         "nuclear_tyndp2024_pemmdb_nt2040": "Nuclear",
         "storage_tyndp2024_pemmdb_nt2040": "Battery storage",
         "storage_total_tyndp2024_pemmdb_nt2040": "Battery + pumped hydro",

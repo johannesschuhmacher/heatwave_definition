@@ -1,7 +1,9 @@
 dataset,rank,year,hwmid_sum_de_fr,country_cells,source
-Historical / E-OBS,1,2003,25220.982343491924,1790,ranked_years_e_obs_from_metrics.csv
-Historical / E-OBS,2,2019,10851.125050015222,1790,ranked_years_e_obs_from_metrics.csv
-RCP4.5 / IPSL-WRF,1,2043,30300.037330324016,1779,ranked_years_copernicus_rcp45_from_metrics.csv
-RCP4.5 / IPSL-WRF,2,2070,27046.410113893136,1779,ranked_years_copernicus_rcp45_from_metrics.csv
-RCP8.5 / MPI-CLM,1,2092,56896.78090959696,1779,ranked_years_copernicus_rcp85_from_metrics.csv
-RCP8.5 / MPI-CLM,2,2082,50705.96902280109,1779,ranked_years_copernicus_rcp85_from_metrics.csv
+Historical / E-OBS,1,2003,25280.482,1790,ranked_years_e_obs.csv
+Historical / E-OBS,2,2019,10910.798,1790,ranked_years_e_obs.csv
+Historical / ERA5,1,2003,24902.809,1779,ranked_years_era5.csv
+Historical / ERA5,2,2026,24439.57,1779,ranked_years_era5.csv
+RCP4.5 / IPSL-WRF,1,2043,30300.049,1779,ranked_years_copernicus_rcp45.csv
+RCP4.5 / IPSL-WRF,2,2070,27046.414,1779,ranked_years_copernicus_rcp45.csv
+RCP8.5 / MPI-CLM,1,2092,56896.79,1779,ranked_years_copernicus_rcp85.csv
+RCP8.5 / MPI-CLM,2,2082,50706.01,1779,ranked_years_copernicus_rcp85.csv

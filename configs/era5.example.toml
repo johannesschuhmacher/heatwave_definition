@@ -1,0 +1,18 @@
+[run]
+name = "era5"
+data_kind = "era5"
+input_file = "data/era5/t2m"
+output_dir = "outputs/raw_metrics"
+countries = ["Germany", "France"]
+reference_period = [1981, 2010]
+threshold_quantile = 0.90
+min_heatwave_days = 3
+top_years = 10
+
+[era5]
+variable = "t2m"
+temperature_unit = "K"
+pattern = "t2m_era5_*.nc"
+
+# The manuscript comparison uses the common E-OBS/ERA5 period 1950-2022.
+# Set the years in scripts/rank_era5_t2m.py or scripts/run_publication_reproduction.py.

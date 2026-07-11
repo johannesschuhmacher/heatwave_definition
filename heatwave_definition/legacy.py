@@ -25,8 +25,8 @@ def load_legacy_metrics_pickle(filename: str | Path) -> LegacyMetricsData:
     """Load trusted legacy metric pickles created by the exploratory scripts.
 
     Pickle files can execute arbitrary code when loaded. This helper is only
-    for local, trusted legacy files and exists to make old results traceable
-    until the full raw-data rerun is available.
+    for local, trusted legacy files and exists only to make archived exploratory
+    results traceable.
     """
 
     with Path(filename).open("rb") as handle:

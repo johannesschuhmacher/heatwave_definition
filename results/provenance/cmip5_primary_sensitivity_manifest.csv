@@ -1,0 +1,3 @@
+dataset,source_file_name,metrics_file_name,year_start,year_end,cell_count
+RCP4.5 / IPSL-WRF,tasAdjust_EUR-25_IPSL-IPSL-CM5A-MR_rcp45_r1i1p1_IPSL-WRF381P_v1-IPSL-CDFT22-ERA5-1980-2018_3hr_1951010100-2100123121.nc,cmip5_rcp45_ipsl_wrf_wce_cell_metrics.npz,1951,2100,4410
+RCP8.5 / MPI-CLM,tasAdjust_EUR-25_MPI-M-MPI-ESM-LR_rcp85_r1i1p1_CLMcom-CCLM4-8-17_v1-IPSL-CDFT22-ERA5-1980-2018_3hr_1950010100-2100123121.nc,cmip5_rcp85_mpi_clm_wce_cell_metrics.npz,1950,2100,4410

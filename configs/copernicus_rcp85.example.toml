@@ -1,0 +1,14 @@
+[run]
+name = "copernicus_rcp85"
+data_kind = "copernicus"
+input_file = "data/tasAdjust_EUR-25_MPI-M-MPI-ESM-LR_rcp85_r1i1p1_CLMcom-CCLM4-8-17_v1-CDFT22-ERA5-1980-2018_3hr_1951010100-2100123121.nc"
+output_dir = "outputs/raw_metrics"
+countries = ["Germany", "France"]
+reference_period = [1981, 2010]
+threshold_quantile = 0.90
+min_heatwave_days = 3
+top_years = 10
+
+[copernicus]
+variable = "tasAdjust"
+temperature_unit = "K"

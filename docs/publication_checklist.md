@@ -5,9 +5,8 @@ tag for the scenario-definition paper.
 
 ## Repository hygiene
 
-- Keep raw meteorological data, metric arrays, figures, PDFs, and local debug
-  files outside Git.
-- Keep trusted legacy metric pickles local and ignored by Git.
+- Keep raw meteorological data, full metric arrays, PDFs, and local debug files
+  outside Git.
 - Run the public-release check:
 
 ```bash
@@ -21,36 +20,25 @@ python scripts\check_public_release.py
 
 ## Reproduction run
 
-- Document local data locations with:
+- Run the complete publication reproduction workflow:
 
 ```bash
-python scripts\write_data_manifest.py --copernicus-root "%HEATWAVE_COPERNICUS_ROOT%"
+python scripts\run_complete_climate_workflow.py
 ```
 
-- Rebuild the primary scenario tables from trusted local metric files:
-
-```bash
-python -m heatwave_definition.cli run configs\e_obs_metrics.local.toml
-python -m heatwave_definition.cli run configs\copernicus_rcp45_metrics.local.toml
-python -m heatwave_definition.cli run configs\copernicus_rcp85_metrics.local.toml
-python scripts\summarize_scenario_selection.py
-```
-
-- Rebuild sensitivity tables when inputs change:
-
-```bash
-python scripts\sensitivity_country_sets.py
-python scripts\sensitivity_ranking_criteria.py
-python scripts\derive_country_weights_from_tyndp2024_pemmdb.py --pemmdb-root "%HEATWAVE_TYNDP_PEMMDB_ROOT%" --year 2040
-python scripts\sensitivity_country_weights.py --weights outputs\sensitivity\country_weights_from_tyndp2024_pemmdb_nt2040.csv
-python scripts\build_appendix_tables.py
-python scripts\make_additional_paper_figures.py
-```
-
+- Archive the local run directory outside Git and keep
+  `outputs/provenance/*.local.csv` with raw-data paths. Commit only sanitized
+  manifests under `results/provenance/`.
+- Confirm that `results/rankings/scenario_selection_summary.csv`,
+  `results/tables/primary_top10.csv`, `results/ensemble/`, `results/cmip6/`,
+  and `results/figures/` were refreshed by the same run.
 - Confirm that the generated sensitivity outputs include the Western/Central
   Europe N-1 country masks and the TYNDP 2024 PEMMDB technology-weighted
   rankings, with PV including rooftop PV and pumped hydro separated from
   hydro.
+- Confirm that `results/provenance/era5_year_coverage.csv` marks 2026 as an
+  incomplete current-year ERA5 file before interpreting 2026 as an event
+  comparison.
 
 ## Paper update
 

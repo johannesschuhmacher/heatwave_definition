@@ -150,6 +150,51 @@ def rank_years_by_country_weighted_hwmid(
     )
 
 
+def rank_years_by_cell_weighted_hwmid(
+    hwmid: np.ndarray,
+    datetime_vector,
+    cell_weights: np.ndarray,
+    no_years: int | None = None,
+    score_column: str = "weighted_hwmid",
+) -> pd.DataFrame:
+    """Rank years by HWMId averaged with explicit grid-cell weights."""
+
+    years = np.array(sorted(pd.DatetimeIndex(datetime_vector).year.unique()), dtype=int)
+    if hwmid.shape[-1] != len(years):
+        raise ValueError("hwmid year dimension does not match datetime_vector years")
+    if cell_weights.shape != hwmid.shape[:2]:
+        raise ValueError("cell_weights must match the HWMId latitude-longitude grid")
+
+    weights = np.asarray(cell_weights, dtype=float)
+    weights = np.where(np.isfinite(weights) & (weights > 0), weights, 0.0)
+    if np.nansum(weights) <= 0:
+        raise ValueError("cell_weights must contain at least one positive finite weight")
+
+    finite = np.isfinite(hwmid)
+    weighted_values = np.where(finite, hwmid * weights[:, :, None], 0.0)
+    denominators = np.sum(np.where(finite, weights[:, :, None], 0.0), axis=(0, 1))
+    scores = np.divide(
+        np.sum(weighted_values, axis=(0, 1)),
+        denominators,
+        out=np.full(len(years), np.nan, dtype=float),
+        where=denominators > 0,
+    )
+
+    order = np.argsort(scores)[::-1]
+    if no_years is not None:
+        order = order[: int(no_years)]
+
+    return pd.DataFrame(
+        {
+            "rank": np.arange(1, len(order) + 1),
+            "year": years[order],
+            score_column: scores[order],
+            "weighted_cells": int(np.count_nonzero(weights > 0)),
+            "weight_sum": float(np.nansum(weights)),
+        }
+    )
+
+
 def write_ranked_years(path: str | Path, ranking: pd.DataFrame) -> None:
     Path(path).parent.mkdir(parents=True, exist_ok=True)
     ranking.to_csv(path, index=False)

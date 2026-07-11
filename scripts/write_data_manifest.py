@@ -13,6 +13,7 @@ from heatwave_definition.raw_copernicus import discover_tasadjust_runs
 
 REPO = Path(__file__).resolve().parents[1]
 DEFAULT_OUTPUT = REPO / "outputs" / "provenance" / "data_manifest.local.csv"
+DEFAULT_PUBLIC_OUTPUT = REPO / "results" / "provenance" / "raw_input_manifest.csv"
 
 
 def main(argv: list[str] | None = None) -> None:
@@ -80,6 +81,13 @@ def main(argv: list[str] | None = None) -> None:
     args.output.parent.mkdir(parents=True, exist_ok=True)
     manifest.to_csv(args.output, index=False)
     print(args.output)
+    if args.public_output is not None:
+        public = manifest.copy()
+        if "local_path" in public.columns:
+            public["local_path"] = ""
+        args.public_output.parent.mkdir(parents=True, exist_ok=True)
+        public.to_csv(args.public_output, index=False)
+        print(args.public_output)
 
 
 def file_record(
@@ -142,6 +150,7 @@ def infer_model_chain(path: Path) -> str:
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
+    parser.add_argument("--public-output", type=Path, default=DEFAULT_PUBLIC_OUTPUT)
     parser.add_argument("--copernicus-root", type=Path)
     parser.add_argument("--eobs-file", type=Path)
     parser.add_argument("--metrics-file", type=Path, action="append", default=[])

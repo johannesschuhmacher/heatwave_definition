@@ -16,12 +16,24 @@ FILES = [
     ("appendix/country_mask_top2.csv", "tables/country_mask_top2.csv"),
     ("appendix/country_weighted_top2.csv", "tables/country_weighted_top2.csv"),
     ("appendix/ranking_criteria_top2.csv", "tables/ranking_criteria_top2.csv"),
+    ("era5_current_heatwave/era5_de_fr_2003_2026_event_period_summary.csv", "tables/era5_event_period_summary.csv"),
+    ("appendix/historical_data_product_top10_common_period.csv", "tables/historical_data_product_top10_common_period.csv"),
+    ("appendix/historical_data_product_top2_comparison.csv", "tables/historical_data_product_top2_comparison.csv"),
+    (
+        "provenance/historical_data_product_comparison_manifest.local.csv",
+        "provenance/historical_data_product_comparison_manifest.csv",
+    ),
     ("ranking_from_config/scenario_selection_summary.csv", "rankings/scenario_selection_summary.csv"),
-    ("ranking_from_config/ranked_years_e_obs_from_metrics.csv", "rankings/ranked_years_e_obs_from_metrics.csv"),
-    ("ranking_from_config/ranked_years_copernicus_rcp45_from_metrics.csv", "rankings/ranked_years_copernicus_rcp45_from_metrics.csv"),
-    ("ranking_from_config/ranked_years_copernicus_rcp85_from_metrics.csv", "rankings/ranked_years_copernicus_rcp85_from_metrics.csv"),
+    ("ranking_from_config/ranked_years_e_obs.csv", "rankings/ranked_years_e_obs.csv"),
+    ("ranking_from_config/ranked_years_era5.csv", "rankings/ranked_years_era5.csv"),
+    ("ranking_from_config/eobs_v33_year_coverage.csv", "provenance/eobs_v33_year_coverage.csv"),
+    ("ranking_from_config/era5_year_coverage.csv", "provenance/era5_year_coverage.csv"),
+    ("ranking_from_config/ranked_years_copernicus_rcp45.csv", "rankings/ranked_years_copernicus_rcp45.csv"),
+    ("ranking_from_config/ranked_years_copernicus_rcp85.csv", "rankings/ranked_years_copernicus_rcp85.csv"),
     ("ensemble_rankings/copernicus2100_de_fr_top2_summary.csv", "ensemble/copernicus2100_de_fr_top2_summary.csv"),
     ("ensemble_rankings/copernicus2100_de_fr_top_years.csv", "ensemble/copernicus2100_de_fr_top_years.csv"),
+    ("cmip6_internal/cmip6_de_fr_run_inventory.csv", "cmip6/cmip6_de_fr_run_inventory.csv"),
+    ("cmip6_internal/cmip6_de_fr_top_years.csv", "cmip6/cmip6_de_fr_top_years.csv"),
     ("sensitivity/country_set_top2_summary.csv", "sensitivity/country_set_top2_summary.csv"),
     ("sensitivity/country_set_top_years.csv", "sensitivity/country_set_top_years.csv"),
     ("sensitivity/country_weighted_top2_summary.csv", "sensitivity/country_weighted_top2_summary.csv"),
@@ -29,32 +41,51 @@ FILES = [
     ("sensitivity/country_weights_from_tyndp2024_pemmdb_nt2040.csv", "sensitivity/country_weights_from_tyndp2024_pemmdb_nt2040.csv"),
     ("sensitivity/ranking_criteria_top2_summary.csv", "sensitivity/ranking_criteria_top2_summary.csv"),
     ("sensitivity/ranking_criteria_top_years.csv", "sensitivity/ranking_criteria_top_years.csv"),
+    ("sensitivity/population_weighting_top2_summary.csv", "sensitivity/population_weighting_top2_summary.csv"),
+    ("sensitivity/population_weighting_top_years.csv", "sensitivity/population_weighting_top_years.csv"),
+    ("sensitivity/population_weighting_diagnostics.csv", "sensitivity/population_weighting_diagnostics.csv"),
     ("sensitivity/tyndp_pemmdb_vs_eraa2024_wce_comparison.csv", "validation/tyndp_pemmdb_vs_eraa2024_wce_comparison.csv"),
     ("sensitivity/tyndp_pemmdb_vs_supply_inputs_comparison.csv", "validation/tyndp_pemmdb_vs_supply_inputs_comparison.csv"),
     ("sensitivity/tyndp_pemmdb_vs_supply_inputs_comparison_by_country.csv", "validation/tyndp_pemmdb_vs_supply_inputs_comparison_by_country.csv"),
+    ("cmip5_current/cmip5_primary_sensitivity_manifest.csv", "provenance/cmip5_primary_sensitivity_manifest.csv"),
     ("figures/top10_rank_curve_de_fr.png", "figures/top10_rank_curve_de_fr.png"),
-    ("figures/scenario_hwmid_top2_de_fr.png", "figures/scenario_hwmid_top2_de_fr.png"),
+    ("figures/hwmid_workflow_example_2003.png", "figures/hwmid_workflow_example_2003.png"),
+    ("figures/hwmid_timeseries_example_2003.png", "figures/hwmid_timeseries_example_2003.png"),
     ("figures/country_mask_top2_heatmap.png", "figures/country_mask_top2_heatmap.png"),
     ("figures/n_minus_1_top2_heatmap.png", "figures/n_minus_1_top2_heatmap.png"),
     ("figures/technology_weighting_top2_heatmap.png", "figures/technology_weighting_top2_heatmap.png"),
     ("figures/ranking_criteria_top2_heatmap_de_fr.png", "figures/ranking_criteria_top2_heatmap_de_fr.png"),
+    ("figures/population_weighting_top2_heatmap.png", "figures/population_weighting_top2_heatmap.png"),
     ("figures/ensemble_top2_dotplot.png", "figures/ensemble_top2_dotplot.png"),
     ("figures/method_flow_diagram.png", "figures/method_flow_diagram.png"),
+    ("figures/historical_data_product_top10_comparison.png", "figures/historical_data_product_top10_comparison.png"),
+    ("figures/climate_data_top10_rank_curve_with_cmip6.png", "figures/climate_data_top10_rank_curve_with_cmip6.png"),
+    ("figures/climate_data_top10_rank_curve_faceted_with_cmip6.png", "figures/climate_data_top10_rank_curve_faceted_with_cmip6.png"),
+    ("figures/climate_data_top10_rank_matrix_with_cmip6.png", "figures/climate_data_top10_rank_matrix_with_cmip6.png"),
+    ("figures/climate_data_heatwave_magnitude_timing_with_cmip6.png", "figures/climate_data_heatwave_magnitude_timing_with_cmip6.png"),
+    ("figures/climate_data_top10_with_cmip6.csv", "tables/climate_data_top10_with_cmip6.csv"),
+    ("figures/climate_data_timing_top2_with_cmip6.csv", "tables/climate_data_timing_top2_with_cmip6.csv"),
+    (
+        "era5_current_heatwave/era5_de_fr_2003_2026_event_period_comparison.png",
+        "figures/era5_2003_2026_event_period_comparison.png",
+    ),
 ]
 
 SANITIZED_CSVS = {
     "ensemble/copernicus2100_de_fr_top_years.csv",
+    "provenance/historical_data_product_comparison_manifest.csv",
+    "provenance/era5_year_coverage.csv",
 }
 
 
 README = """# Versioned results
 
-This directory contains a curated snapshot of derived result tables and figures
-used by the heatwave scenario-definition manuscript. Raw meteorological data,
-trusted legacy metric pickles, local data manifests, provider downloads and
-large intermediate arrays are intentionally not included.
-Local source paths are stripped from copied tables; where useful, only the
-source file name is retained for provenance.
+This directory contains a curated snapshot of derived result tables, figures
+and sanitized provenance files used by the heatwave scenario-definition
+manuscript. Raw meteorological data, local full manifests, provider downloads
+and large intermediate arrays are intentionally not included.
+Local source paths are stripped from copied tables and manifests; where useful,
+only the source file name is retained for provenance.
 
 The files are copied from `outputs/` with:
 
@@ -67,18 +98,20 @@ Contents:
 - `rankings/`: primary scenario-year rankings.
 - `sensitivity/`: country-mask, weighting and ranking-criterion sensitivity outputs.
 - `ensemble/`: Copernicus raw-data ensemble sensitivity summaries.
-- `tables/`: appendix-ready compact tables.
+- `cmip6/`: CORDEX-CMIP6 inventory and top-year rankings.
+- `tables/`: appendix-ready compact tables, including the E-OBS/ERA5 historical data-product comparison.
 - `figures/`: manuscript and supplementary figures.
 - `validation/`: TYNDP 2024 PEMMDB capacity cross-check tables.
+- `provenance/`: sanitized reproduction manifests with file names and checksums where available.
 """
 
 
 def main() -> None:
     missing = []
     for source, target in FILES:
-        source_path = OUTPUTS / source
+        source_path = resolve_source(source)
         target_path = RESULTS / target
-        if not source_path.exists():
+        if source_path is None:
             missing.append(source)
             continue
         target_path.parent.mkdir(parents=True, exist_ok=True)
@@ -114,6 +147,8 @@ def copy_sanitized_csv(source_path: Path, target_path: Path) -> None:
             source_file_value = row.pop("source_file", "")
             if source_file_value:
                 row["source_file_name"] = source_basename(source_file_value)
+            if "local_path" in row:
+                row["local_path"] = ""
             rows.append({name: row.get(name, "") for name in fieldnames})
 
     with target_path.open("w", encoding="utf-8", newline="") as target_file:
@@ -124,6 +159,16 @@ def copy_sanitized_csv(source_path: Path, target_path: Path) -> None:
 
 def source_basename(value: str) -> str:
     return PureWindowsPath(value).name if "\\" in value else Path(value).name
+
+
+def resolve_source(source: str | list[str] | tuple[str, ...]) -> Path | None:
+    if isinstance(source, str):
+        source = [source]
+    for candidate in source:
+        path = OUTPUTS / candidate
+        if path.exists():
+            return path
+    return None
 
 
 if __name__ == "__main__":

@@ -9,28 +9,43 @@ from matplotlib.patches import Patch
 import matplotlib.pyplot as plt
 
 
-DATASET_ORDER = ["Historical / E-OBS", "RCP4.5 / IPSL-WRF", "RCP8.5 / MPI-CLM"]
+DATASET_ORDER = ["Historical / E-OBS", "Historical / ERA5", "RCP4.5 / IPSL-WRF", "RCP8.5 / MPI-CLM"]
 DATASET_DISPLAY = {
     "Historical / E-OBS": "Historical\nE-OBS",
+    "Historical / ERA5": "Historical\nERA5",
     "RCP4.5 / IPSL-WRF": "RCP4.5\nIPSL-WRF",
     "RCP8.5 / MPI-CLM": "RCP8.5\nMPI-CLM",
 }
 
 DATASET_COLORS = {
     "Historical / E-OBS": "#000000",
+    "Historical / ERA5": "#009E73",
     "RCP4.5 / IPSL-WRF": "#0072B2",
     "RCP8.5 / MPI-CLM": "#D55E00",
 }
 DATASET_LINESTYLES = {
     "Historical / E-OBS": "-",
+    "Historical / ERA5": (0, (3, 1.5)),
     "RCP4.5 / IPSL-WRF": "--",
     "RCP8.5 / MPI-CLM": "-.",
 }
 DATASET_MARKERS = {
     "Historical / E-OBS": "o",
+    "Historical / ERA5": "D",
     "RCP4.5 / IPSL-WRF": "s",
     "RCP8.5 / MPI-CLM": "^",
 }
+
+TITLE_SIZE = 14
+SUBTITLE_SIZE = 9.5
+PANEL_TITLE_SIZE = 10.5
+AXIS_LABEL_SIZE = 10
+TICK_LABEL_SIZE = 8.8
+LEGEND_SIZE = 8.3
+ANNOTATION_SIZE = 7.8
+SMALL_TEXT_SIZE = 7.3
+TEXT_COLOR = "#172033"
+SECONDARY_TEXT_COLOR = "#555555"
 
 
 @dataclass(frozen=True)
@@ -81,16 +96,23 @@ STABILITY_NORM = BoundaryNorm(
     STABILITY_CMAP.N,
 )
 
+HWMID_BINS = [0, 3, 6, 9, 15, 24, 36, 48, 96]
+HWMID_COLORS = ["#F7F7F7", "#D9D9D9", "#BDBDBD", "#FEE391", "#FDB863", "#E66101", "#B2182B", "#67001F"]
+HWMID_CMAP = ListedColormap(HWMID_COLORS)
+HWMID_NORM = BoundaryNorm(HWMID_BINS, HWMID_CMAP.N)
+
 
 def apply_manuscript_style() -> None:
     plt.rcParams.update(
         {
             "font.family": "DejaVu Sans",
-            "axes.titlesize": 14,
-            "axes.labelsize": 10,
-            "xtick.labelsize": 9,
-            "ytick.labelsize": 9,
-            "legend.fontsize": 8.5,
+            "font.sans-serif": ["DejaVu Sans"],
+            "axes.titlesize": PANEL_TITLE_SIZE,
+            "axes.labelsize": AXIS_LABEL_SIZE,
+            "xtick.labelsize": TICK_LABEL_SIZE,
+            "ytick.labelsize": TICK_LABEL_SIZE,
+            "legend.fontsize": LEGEND_SIZE,
+            "figure.titlesize": TITLE_SIZE,
             "figure.dpi": 120,
             "savefig.dpi": 220,
             "savefig.bbox": "tight",

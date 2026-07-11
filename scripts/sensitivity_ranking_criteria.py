@@ -1,16 +1,28 @@
-"""Run DE+FR sensitivity checks for alternative ranking criteria."""
+"""Run Germany-France sensitivity checks for alternative ranking criteria."""
 
 from __future__ import annotations
 
 import argparse
 from dataclasses import dataclass
 from pathlib import Path
+import textwrap
 
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-from heatwave_definition.legacy import LegacyMetricsData, load_legacy_metrics_pickle
+from heatwave_definition.metrics import MetricsData, load_metrics_file, resolve_metrics_file
+from heatwave_definition.plot_style import (
+    ANNOTATION_SIZE,
+    DATASET_DISPLAY,
+    LEGEND_SIZE,
+    PANEL_TITLE_SIZE,
+    STABILITY_CMAP,
+    STABILITY_NORM,
+    apply_manuscript_style,
+    classify_top2_stability,
+    stability_legend_handles,
+)
 from heatwave_definition.ranking import rank_years_by_grid_metric
 
 
@@ -19,9 +31,9 @@ DEFAULT_OUTPUT_DIR = REPO / "outputs" / "sensitivity"
 DEFAULT_FIGURE_DIR = REPO / "outputs" / "figures"
 
 DATASETS = [
-    ("Historical / E-OBS", "metrics_e_obs.pkl"),
-    ("RCP4.5 / IPSL-WRF", "metrics_copernicus_45.pkl"),
-    ("RCP8.5 / MPI-CLM", "metrics_copernicus_85.pkl"),
+    ("Historical / E-OBS", ["metrics_e_obs.npz", "metrics_e_obs.pkl"]),
+    ("RCP4.5 / IPSL-WRF", ["metrics_copernicus_rcp45.npz", "metrics_copernicus_45.pkl"]),
+    ("RCP8.5 / MPI-CLM", ["metrics_copernicus_rcp85.npz", "metrics_copernicus_85.pkl"]),
 ]
 
 
@@ -46,7 +58,7 @@ CRITERIA = [
     ),
     Criterion(
         "tmax_anomaly_area_mean",
-        "Area-weighted annual Tmax anomaly",
+        "Area-weighted annual maximum temperature anomaly",
         "temp_anomaly",
         "area_weighted_mean",
     ),
@@ -55,12 +67,13 @@ CRITERIA = [
 
 def main(argv: list[str] | None = None) -> None:
     args = parse_args(argv)
+    apply_manuscript_style()
     args.output_dir.mkdir(parents=True, exist_ok=True)
     args.figure_dir.mkdir(parents=True, exist_ok=True)
 
     rows = []
-    for dataset, filename in DATASETS:
-        data = load_legacy_metrics_pickle(args.repo / filename)
+    for dataset, filenames in DATASETS:
+        data = load_metrics_file(resolve_metrics_file(args.repo, filenames))
         for criterion in CRITERIA:
             metric = metric_array(data, criterion.metric_name)
             if metric is None:
@@ -100,7 +113,7 @@ def main(argv: list[str] | None = None) -> None:
     print(heatmap_path)
 
 
-def metric_array(data: LegacyMetricsData, metric_name: str) -> np.ndarray | None:
+def metric_array(data: MetricsData, metric_name: str) -> np.ndarray | None:
     return getattr(data, metric_name)
 
 
@@ -114,24 +127,56 @@ def plot_heatmap(top2: pd.DataFrame, output: Path) -> None:
 
     criteria_order = [criterion.label for criterion in CRITERIA if criterion.label in rank1.index]
     dataset_order = [dataset for dataset, _ in DATASETS if dataset in rank1.columns]
-    values = rank1.loc[criteria_order, dataset_order].astype(float)
     labels = labels.loc[criteria_order, dataset_order]
+    codes = np.zeros((len(criteria_order), len(dataset_order)), dtype=int)
+    text_colors = [["" for _ in dataset_order] for _ in criteria_order]
 
-    fig_height = max(3.6, 0.52 * len(values.index) + 1.4)
-    fig, ax = plt.subplots(figsize=(8.4, fig_height), constrained_layout=True)
-    image = ax.imshow(values.to_numpy(), cmap="viridis", aspect="auto")
-    ax.set_xticks(np.arange(len(values.columns)), values.columns, rotation=20, ha="right")
-    ax.set_yticks(np.arange(len(values.index)), values.index)
-    ax.set_title("Top-ranked years by ranking criterion (rank 2 in parentheses)")
+    for col_idx, dataset in enumerate(dataset_order):
+        reference_top2 = (
+            int(rank1.loc["HWMId sum", dataset]),
+            int(rank2.loc["HWMId sum", dataset]),
+        )
+        for row_idx, criterion in enumerate(criteria_order):
+            candidate_top2 = (
+                int(rank1.loc[criterion, dataset]),
+                int(rank2.loc[criterion, dataset]),
+            )
+            category = classify_top2_stability(reference_top2, candidate_top2)
+            codes[row_idx, col_idx] = category.code
+            text_colors[row_idx][col_idx] = category.text_color
+
+    fig_height = max(3.6, 0.52 * len(criteria_order) + 1.4)
+    fig, ax = plt.subplots(figsize=(7.2, fig_height + 0.4), constrained_layout=True)
+    ax.imshow(codes, cmap=STABILITY_CMAP, norm=STABILITY_NORM, aspect="auto")
+    ax.set_xticks(
+        np.arange(len(dataset_order)),
+        [DATASET_DISPLAY.get(dataset, dataset) for dataset in dataset_order],
+    )
+    ax.set_yticks(np.arange(len(criteria_order)), [wrap_label(label, 22) for label in criteria_order])
+    ax.set_title("Top-ranked years by ranking criterion (rank 2 in parentheses)", fontsize=PANEL_TITLE_SIZE)
     ax.tick_params(length=0)
 
-    for row in range(values.shape[0]):
-        for col in range(values.shape[1]):
-            text_color = heatmap_text_color(values.iloc[row, col], image)
-            ax.text(col, row, labels.iloc[row, col], ha="center", va="center", color=text_color, fontsize=8)
+    for row in range(codes.shape[0]):
+        for col in range(codes.shape[1]):
+            ax.text(
+                col,
+                row,
+                labels.iloc[row, col],
+                ha="center",
+                va="center",
+                color=text_colors[row][col],
+                fontsize=ANNOTATION_SIZE,
+                fontweight="bold",
+            )
 
-    cbar = fig.colorbar(image, ax=ax, shrink=0.82)
-    cbar.set_label("Rank-1 year")
+    ax.legend(
+        handles=stability_legend_handles(),
+        frameon=False,
+        ncol=2,
+        loc="upper center",
+        bbox_to_anchor=(0.5, -0.16),
+        fontsize=LEGEND_SIZE,
+    )
     output.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(output, dpi=220)
     plt.close(fig)
@@ -141,6 +186,10 @@ def heatmap_text_color(value: float, image) -> str:
     red, green, blue, _ = image.cmap(image.norm(value))
     luminance = 0.2126 * red + 0.7152 * green + 0.0722 * blue
     return "black" if luminance > 0.55 else "white"
+
+
+def wrap_label(label: str, width: int) -> str:
+    return "\n".join(textwrap.wrap(label, width=width))
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:

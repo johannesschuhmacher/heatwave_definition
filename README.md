@@ -13,19 +13,23 @@ Heat Wave Magnitude Index daily (HWMId) approach by Russo et al. (2015):
 - event magnitude: sum of daily magnitudes normalized by the interquartile
   range of annual reference-period maxima
 
-The scenario selection used for the working paper ranks yearly HWMId over
-grid cells in Germany and France. With the current local metric files, the
-selected years are:
+The scenario selection used for the paper ranks yearly HWMId over grid cells in
+Germany and France. The versioned result snapshot selects:
 
 | Dataset | Rank 1 | HWMId sum | Rank 2 | HWMId sum |
 | --- | ---: | ---: | ---: | ---: |
-| Historical / E-OBS | 2003 | 25,220.98 | 2019 | 10,851.13 |
-| RCP4.5 / IPSL-WRF | 2043 | 30,300.04 | 2070 | 27,046.41 |
-| RCP8.5 / MPI-CLM | 2092 | 56,896.78 | 2082 | 50,705.97 |
+| Historical / E-OBS | 2003 | 25,280.48 | 2019 | 10,910.80 |
+| Historical / ERA5 | 2003 | 24,902.81 | 2026 | 24,439.57 |
+| RCP4.5 / IPSL-WRF | 2043 | 30,300.05 | 2070 | 27,046.41 |
+| RCP8.5 / MPI-CLM | 2092 | 56,896.79 | 2082 | 50,706.01 |
 
-These numbers come from the reproducible `metrics_pickle` reranking workflow
-described below. A full raw-NetCDF rerun should be performed once the complete
-raw E-OBS and Copernicus/CORDEX files are available in one documented location.
+The historical E-OBS ranking in the versioned snapshot uses E-OBS v33.0e daily
+maximum temperature for 1950-2025. ERA5 is included as a reanalysis-based
+historical data-product comparison; the common completed-year comparison with
+E-OBS uses 1950-2025, while the 2026 ERA5 file is treated as an incomplete
+current-year event comparison. CORDEX-CMIP5 and CORDEX-CMIP6 rankings are
+generated from local NetCDF archives and documented in the versioned result
+snapshot.
 
 ## Repository contents
 
@@ -48,22 +52,22 @@ pyproject.toml            Package metadata and test settings
 
 ## Data
 
-The code supports two data families:
+The code supports four data families:
 
-- E-OBS daily maximum temperature (`tx`) NetCDF files.
-- Copernicus/CORDEX `tasAdjust` 3-hourly NetCDF files, converted internally to
-  daily maximum temperature in deg C.
+- E-OBS daily maximum temperature (`tx`) NetCDF files. The manuscript snapshot
+  uses E-OBS v33.0e for 1950-2025.
+- ERA5 hourly 2 m temperature (`t2m`) NetCDF files, aggregated internally to
+  daily maximum temperature in deg C. The manuscript uses ERA5 as a historical
+  comparison to E-OBS and for the current 2026 heatwave event comparison.
+- Copernicus/CORDEX-CMIP5 `tasAdjust` 3-hourly NetCDF files, converted
+  internally to daily maximum temperature in deg C.
+- CORDEX-CMIP6 hourly `tas` NetCDF files, converted internally to daily maximum
+  temperature in deg C for ensemble comparison figures.
 
 Download data from the official providers and keep them outside Git, for
 example in a local `data/` directory. Before publication, cite and acknowledge
 the data providers according to the applicable licences. In particular, E-OBS
 data are not bundled here.
-
-The repository also contains a compatibility mode for the trusted legacy metric
-pickles used during the paper cleanup. Those files (`metrics_*.pkl`) are kept
-locally, ignored by Git, and must not be published. Pickle files are executable
-Python objects; only load metric pickles that were created in this project and
-that you trust.
 
 Document local data locations with a local manifest:
 
@@ -92,93 +96,62 @@ problematic on Windows, install the dependencies from conda-forge instead.
 
 ## Usage
 
-Copy one of the example configuration files and adapt `input_file` and
-`output_dir`:
+The complete manuscript workflow is run with:
 
 ```bash
-copy configs\copernicus_rcp45.example.toml configs\copernicus_rcp45.local.toml
-python -m heatwave_definition.cli run configs\copernicus_rcp45.local.toml
+python scripts\run_complete_climate_workflow.py ^
+  --eobs-file <local-eobs-v33-tx.nc> ^
+  --era5-root <local-era5-directory> ^
+  --cmip5-root <local-cordex-cmip5-directory> ^
+  --cmip6-root <local-cordex-cmip6-directory>
 ```
 
-The run writes:
+On the project machine, the same paths can also be provided through the
+environment variables `HEATWAVE_EOBS_FILE`, `HEATWAVE_ERA5_ROOT`,
+`HEATWAVE_CMIP5_ROOT`, and `HEATWAVE_CMIP6_ROOT`. The workflow:
 
-- `metrics_<run_name>.npz`: HWMId, annual temperature anomaly, heatwave
-  duration, threshold, annual Tmax, and start day/index arrays.
-- `ranked_years_<run_name>.csv`: scenario-year ranking over the configured
-  countries.
+- ranks E-OBS v33.0e from daily `tx`;
+- ranks ERA5 from annual hourly `t2m` files and writes a year-coverage table;
+- selects the 2003 and 2026 ERA5 event windows with the same automatic method;
+- ranks all local CORDEX-CMIP5 `tasAdjust` chains and exports the two primary
+  manuscript projection rankings from that ensemble table;
+- rebuilds the primary CMIP5 sensitivity tables from raw `tasAdjust` files;
+- ranks the local CORDEX-CMIP6 archive and updates the climate-data comparison
+  figures;
+- rebuilds appendix tables, manuscript figures, sanitized provenance files and
+  the curated `results/` snapshot;
+- runs the public-release check.
 
-The CLI does not write pickles. `npz` output is deterministic, portable, and
-safe to inspect without executing arbitrary code.
-
-For the current working-paper update, the full raw Copernicus input was not
-available locally for all scenarios. The paper numbers were therefore
-recomputed by reranking the existing trusted metric pickles with explicit TOML
-configs:
+The old entry point is kept as an alias:
 
 ```bash
-copy configs\metrics_pickle.example.toml configs\e_obs_metrics.local.toml
-copy configs\metrics_pickle.example.toml configs\copernicus_rcp45_metrics.local.toml
-copy configs\metrics_pickle.example.toml configs\copernicus_rcp85_metrics.local.toml
-
-python -m heatwave_definition.cli run configs\e_obs_metrics.local.toml
-python -m heatwave_definition.cli run configs\copernicus_rcp45_metrics.local.toml
-python -m heatwave_definition.cli run configs\copernicus_rcp85_metrics.local.toml
-python scripts\summarize_scenario_selection.py
-python scripts\make_scenario_figure.py
+python scripts\run_publication_reproduction.py
 ```
 
-Adapt each `.local.toml` copy before running it. The expected local metric
-files are `metrics_e_obs.pkl`, `metrics_copernicus_45.pkl`, and
-`metrics_copernicus_85.pkl`.
-
-The local Copernicus2100 raw-data ensemble sensitivity can be reproduced with:
+Individual building blocks can still be run for debugging or partial updates.
+The most useful ones are:
 
 ```bash
-set HEATWAVE_COPERNICUS_ROOT=<local-path-to-raw-Copernicus2100>
-python scripts\rank_copernicus_ensembles.py --scenario rcp45 rcp85
-python scripts\summarize_ensemble_rankings.py
+python scripts\rank_eobs_tx.py <eobs-v33-tx.nc> --top-years 20
+python scripts\rank_era5_t2m.py <era5-directory> --start-year 1950 --end-year 2026 --top-years 20
+python scripts\rank_copernicus_ensembles.py --root <cordex-cmip5-directory> --top-years 20
+python scripts\rank_cmip6_tas.py --root <cordex-cmip6-directory> --top-years 10
 ```
 
-This workflow reads only the selected country-mask subset from each large
-3-hourly NetCDF file. It is intended for scenario-year ranking and does not
-write full Europe-wide HWMId arrays.
-
-Country-set and top-N sensitivity checks from the trusted metric pickles can be
-run with:
+Missing ERA5 years can be requested from the Copernicus Climate Data Store after
+configuring CDS API credentials:
 
 ```bash
-python scripts\sensitivity_country_sets.py
-python scripts\sensitivity_ranking_criteria.py
+python scripts\download_era5_t2m.py --output-dir <local-era5-directory> --start-year 1981 --end-year 2010
 ```
-
-`sensitivity_country_sets.py` writes the Germany-France baseline, Germany-only,
-France-only, broader Western/Central European masks, and a Western/Central
-Europe N-1 sensitivity where one country is omitted at a time.
-
-The ranking-criteria sensitivity compares the baseline HWMId sum against
-area-weighted HWMId mean, unweighted mean HWMId, maximum grid-cell HWMId,
-area-weighted heatwave duration, and area-weighted annual Tmax anomaly. It also
-writes a compact heatmap to `outputs/figures/`.
-
-Country-weighted checks, for example capacity- or renewable-weighted rankings,
-are supported through a CSV with columns `weighting,country,weight`:
-
-```bash
-copy configs\country_weights.example.csv configs\country_weights.local.csv
-python scripts\sensitivity_country_weights.py --weights configs\country_weights.local.csv
-```
-
-Use project-specific installed-capacity or renewable-capacity weights in the
-local CSV before interpreting those weighted results.
 
 For TYNDP sensitivity inputs, country weights can be derived from the
 ENTSO-E/ENTSOG TYNDP 2024 Scenarios final package, PEMMDB 2.5. Download
 `PEMMDB2.zip` from the official TYNDP Scenarios download page, keep it outside
-Git, and point the script at the extracted PEMMDB root:
+Git, and point the derivation script at the extracted PEMMDB root:
 
 ```bash
 python scripts\derive_country_weights_from_tyndp2024_pemmdb.py --pemmdb-root "%HEATWAVE_TYNDP_PEMMDB_ROOT%" --year 2040
-python scripts\sensitivity_country_weights.py --weights outputs\sensitivity\country_weights_from_tyndp2024_pemmdb_nt2040.csv
 ```
 
 The TYNDP-derived file uses National Trends 2040 PEMMDB market-node capacities
@@ -188,11 +161,14 @@ storage, pumped hydro, bio/waste, nuclear, battery storage, battery plus pumped
 hydro, and thermal capacity. These weights are country-level sensitivities and
 do not represent intra-country plant locations or hourly availability.
 
-Appendix-ready CSV exports are built with:
+Appendix-ready CSV exports and figures are rebuilt by the complete workflow.
+They can also be refreshed manually with:
 
 ```bash
+python scripts\summarize_scenario_selection.py
 python scripts\build_appendix_tables.py
 python scripts\make_additional_paper_figures.py
+python scripts\make_cmip6_internal_figures.py --output-dir outputs\figures
 ```
 
 Manuscript figure colors, line styles, and categorical heatmap legends are
@@ -206,8 +182,9 @@ python scripts\snapshot_public_results.py
 ```
 
 The `results/` directory contains only curated CSV tables and PNG figures.
-Provider downloads, raw climate data, local manifests, trusted pickle files and
-large intermediate arrays remain excluded from Git.
+Provider downloads, raw climate data, local full manifests and large
+intermediate arrays remain excluded from Git. Sanitized manifests with file
+names, sizes and checksums are stored under `results/provenance/`.
 
 ## Method notes
 

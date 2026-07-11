@@ -2,14 +2,21 @@ import pickle
 import importlib.util
 from pathlib import Path
 
+import netCDF4 as nc
 import numpy as np
 import pandas as pd
 
 from heatwave_definition.hwmid import calc_hwmid, canonical_day_of_year
+from heatwave_definition.io import load_era5_t2m_daily_tmax
 from heatwave_definition.legacy import load_legacy_metrics_pickle
+from heatwave_definition.metrics import load_metrics_npz
 from heatwave_definition.plot_style import classify_top2_stability
 from heatwave_definition.regions import normalize_country_names
-from heatwave_definition.ranking import rank_years_by_country_weighted_hwmid, rank_years_by_grid_metric
+from heatwave_definition.ranking import (
+    rank_years_by_cell_weighted_hwmid,
+    rank_years_by_country_weighted_hwmid,
+    rank_years_by_grid_metric,
+)
 
 
 def load_script_module(name: str):
@@ -94,6 +101,79 @@ def test_load_legacy_metrics_pickle_supports_metadata_layout(tmp_path):
     np.testing.assert_array_equal(data.longitude, longitude)
     np.testing.assert_array_equal(data.latitude, latitude)
     assert data.dates.equals(dates)
+
+
+def test_load_metrics_npz_supports_raw_run_output(tmp_path):
+    dates = pd.date_range("2000-01-01", "2001-12-31", freq="D")
+    hwmid = np.ones((1, 2, 2))
+    temp_anomaly = np.full((1, 2, 2), 2.0)
+    heatwave_duration = np.full((1, 2, 2), 3.0)
+    annual_tmax = np.full((1, 2, 2), 35.0)
+    longitude = np.array([6.0, 7.0])
+    latitude = np.array([48.0])
+    path = tmp_path / "metrics_raw.npz"
+    np.savez_compressed(
+        path,
+        hwmid=hwmid,
+        temp_anomaly=temp_anomaly,
+        heatwave_duration=heatwave_duration,
+        annual_tmax=annual_tmax,
+        longitude=longitude,
+        latitude=latitude,
+        dates=dates.astype("datetime64[ns]").astype("int64"),
+    )
+
+    data = load_metrics_npz(path)
+
+    assert data.source_format == "npz"
+    np.testing.assert_array_equal(data.hwmid, hwmid)
+    np.testing.assert_array_equal(data.temp_anomaly, temp_anomaly)
+    np.testing.assert_array_equal(data.heatwave_duration, heatwave_duration)
+    np.testing.assert_array_equal(data.annual_tmax, annual_tmax)
+    np.testing.assert_array_equal(data.longitude, longitude)
+    np.testing.assert_array_equal(data.latitude, latitude)
+    assert data.dates.equals(dates)
+
+
+def test_load_era5_t2m_directory_aggregates_hourly_to_daily_tmax(tmp_path):
+    latitude = np.array([51.0, 50.0])
+    longitude = np.array([7.0, 8.0])
+
+    def write_era5_file(path: Path, start: str, base_celsius: float) -> None:
+        hours = pd.date_range(start, periods=48, freq="h")
+        seconds = (hours - pd.Timestamp("1970-01-01")) // pd.Timedelta(seconds=1)
+        values = 273.15 + base_celsius + np.arange(48, dtype=np.float32)[:, None, None]
+        values = values + np.zeros((48, len(latitude), len(longitude)), dtype=np.float32)
+
+        with nc.Dataset(path, "w") as dataset:
+            dataset.createDimension("valid_time", len(hours))
+            dataset.createDimension("latitude", len(latitude))
+            dataset.createDimension("longitude", len(longitude))
+            time_var = dataset.createVariable("valid_time", "i8", ("valid_time",))
+            time_var.units = "seconds since 1970-01-01"
+            dataset.createVariable("latitude", "f4", ("latitude",))[:] = latitude
+            dataset.createVariable("longitude", "f4", ("longitude",))[:] = longitude
+            t2m = dataset.createVariable("t2m", "f4", ("valid_time", "latitude", "longitude"))
+            t2m.units = "K"
+            time_var[:] = seconds
+            t2m[:] = values
+
+    write_era5_file(tmp_path / "t2m_era5_2001.nc", "2001-01-01", 10.0)
+    write_era5_file(tmp_path / "t2m_era5_2000.nc", "2000-01-01", 20.0)
+
+    data = load_era5_t2m_daily_tmax(tmp_path)
+
+    assert list(data.dates.strftime("%Y-%m-%d")) == [
+        "2000-01-01",
+        "2000-01-02",
+        "2001-01-01",
+        "2001-01-02",
+    ]
+    np.testing.assert_array_equal(data.latitude, latitude)
+    np.testing.assert_array_equal(data.longitude, longitude)
+    assert np.isclose(float(data.max_daily_temp[0, 0, 0]), 43.0)
+    assert np.isclose(float(data.max_daily_temp[1, 0, 0]), 67.0)
+    assert np.isclose(float(data.max_daily_temp[2, 0, 0]), 33.0)
 
 
 def test_calc_hwmid_detects_synthetic_heatwave():
@@ -189,6 +269,23 @@ def test_rank_years_by_grid_metric_supports_area_weighted_mean():
 
     assert result.loc[0, "year"] == 2001
     assert np.isclose(result.loc[0, "score"], (1.0 + 0.5 * 3.0) / 1.5)
+
+
+def test_rank_years_by_cell_weighted_hwmid_uses_explicit_weights():
+    dates = pd.date_range("2000-01-01", "2001-12-31", freq="D")
+    hwmid = np.array(
+        [
+            [[10.0, 0.0], [0.0, 0.0]],
+            [[0.0, 0.0], [0.0, 4.0]],
+        ]
+    )
+    weights = np.array([[0.1, 0.0], [0.0, 0.9]])
+
+    result = rank_years_by_cell_weighted_hwmid(hwmid, dates, weights, no_years=2)
+
+    assert result.loc[0, "year"] == 2001
+    assert np.isclose(result.loc[0, "weighted_hwmid"], 3.6)
+    assert np.isclose(result.loc[1, "weighted_hwmid"], 1.0)
 
 
 def test_tyndp2024_pemmdb_weight_helpers_map_nodes_and_aggregate_components():

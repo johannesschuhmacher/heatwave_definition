@@ -1,0 +1,3 @@
+rank,eobs_year,eobs_hwmid_sum,era5_year,era5_hwmid_sum,same_year,era5_minus_eobs_hwmid_sum,era5_minus_eobs_percent
+1,2003,25280.482,2003,24902.809,True,-377.67299999999886,-1.4939311679263034
+2,2019,10910.798,2025,12595.924,False,1685.1260000000002,15.444571515300714

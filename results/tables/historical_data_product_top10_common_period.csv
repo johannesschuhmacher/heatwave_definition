@@ -1,0 +1,21 @@
+dataset,data_product,comparison_period,rank,year,hwmid_sum,country_cells
+Historical / E-OBS,E-OBS v33.0e,1950-2025 common period,1,2003,25280.482,1790
+Historical / E-OBS,E-OBS v33.0e,1950-2025 common period,2,2019,10910.798,1790
+Historical / E-OBS,E-OBS v33.0e,1950-2025 common period,3,2025,9277.842,1790
+Historical / E-OBS,E-OBS v33.0e,1950-2025 common period,4,2020,8200.048,1790
+Historical / E-OBS,E-OBS v33.0e,1950-2025 common period,5,2022,7692.6934,1790
+Historical / E-OBS,E-OBS v33.0e,1950-2025 common period,6,2015,7209.808,1790
+Historical / E-OBS,E-OBS v33.0e,1950-2025 common period,7,2023,7103.0977,1790
+Historical / E-OBS,E-OBS v33.0e,1950-2025 common period,8,2018,6189.082,1790
+Historical / E-OBS,E-OBS v33.0e,1950-2025 common period,9,1952,5374.133,1790
+Historical / E-OBS,E-OBS v33.0e,1950-2025 common period,10,1976,5298.5044,1790
+Historical / ERA5,ERA5,1950-2025 common period,1,2003,24902.809,1779
+Historical / ERA5,ERA5,1950-2025 common period,2,2025,12595.924,1779
+Historical / ERA5,ERA5,1950-2025 common period,3,2019,11156.612,1779
+Historical / ERA5,ERA5,1950-2025 common period,4,2022,8656.989,1779
+Historical / ERA5,ERA5,1950-2025 common period,5,2023,7799.6865,1779
+Historical / ERA5,ERA5,1950-2025 common period,6,2015,7473.162,1779
+Historical / ERA5,ERA5,1950-2025 common period,7,2020,7377.1416,1779
+Historical / ERA5,ERA5,1950-2025 common period,8,2018,5660.7266,1779
+Historical / ERA5,ERA5,1950-2025 common period,9,1976,5134.453,1779
+Historical / ERA5,ERA5,1950-2025 common period,10,2006,4885.692,1779

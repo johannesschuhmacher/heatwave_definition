@@ -1,0 +1,3 @@
+year,event_period_start,event_period_end,event_period_days,event_period_hwmid,regional_core_start,regional_core_end,regional_core_days,regional_core_hwmid,fixed_17_day_start,fixed_17_day_end,fixed_17_day_hwmid,regional_core_mean_tmax_c,regional_core_max_tmax_c,regional_core_mean_cells_above_threshold,event_period_mean_cells_above_threshold
+2003,2003-08-01,2003-08-31,31,25327.25993688156,2003-08-02,2003-08-13,12,25021.909513638893,2003-08-02,2003-08-18,25193.73709103845,33.166578916666666,43.15103,0.9072044219599026,0.4504886761319335
+2026,2026-06-13,2026-07-01,19,24594.48619784051,2026-06-17,2026-06-28,12,24157.3435413361,2026-06-14,2026-06-30,24507.96343188416,32.633337166666664,43.58609,0.9149803260258573,0.6945356646253069

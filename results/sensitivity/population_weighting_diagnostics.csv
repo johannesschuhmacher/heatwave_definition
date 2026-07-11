@@ -1,0 +1,3 @@
+dataset,country,iso3,population_year,source_population,assigned_population,assigned_population_share,positive_worldpop_pixels,assigned_worldpop_pixels,weighted_hwmid_cells,worldpop_doi,worldpop_license,worldpop_url
+Historical / E-OBS,Germany,DEU,2020,83783945.00063398,83783945.00063398,1.0,658341,658341,845,10.5258/SOTON/WP00671,https://hub.worldpop.org/data/licence.txt,https://data.worldpop.org/GIS/Population/Global_2000_2020_1km_UNadj/2020/DEU/deu_ppp_2020_1km_UNadj_ASCII_XYZ.zip
+Historical / E-OBS,France,FRA,2020,65273511.99568581,65273511.99568581,1.0,932617,932617,1179,10.5258/SOTON/WP00671,https://hub.worldpop.org/data/licence.txt,https://data.worldpop.org/GIS/Population/Global_2000_2020_1km_UNadj/2020/FRA/fra_ppp_2020_1km_UNadj_ASCII_XYZ.zip

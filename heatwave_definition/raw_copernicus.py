@@ -69,6 +69,8 @@ def rank_copernicus_tasadjust_file(
     threshold_quantile: float = 0.90,
     variable: str = "tasAdjust",
     temperature_unit: str = "K",
+    rank_year_start: int | None = None,
+    rank_year_end: int | None = None,
 ) -> pd.DataFrame:
     """Rank years by summed HWMId over a country mask without loading Europe-wide arrays."""
 
@@ -96,10 +98,87 @@ def rank_copernicus_tasadjust_file(
         ref_period=ref_period,
         min_heatwave_days=min_heatwave_days,
         threshold_quantile=threshold_quantile,
+        rank_year_start=rank_year_start,
+        rank_year_end=rank_year_end,
     )
     ranking["country_cells"] = int(mask.sum())
     ranking["countries"] = "+".join(countries)
     ranking["source_file"] = str(path)
+    return ranking
+
+
+def rank_copernicus_tasadjust_directory(
+    directory: str | Path,
+    countries: list[str],
+    top_years: int = 10,
+    ref_period: tuple[int, int] = (1981, 2010),
+    min_heatwave_days: int = 3,
+    threshold_quantile: float = 0.90,
+    variable: str = "tasAdjust",
+    temperature_unit: str = "K",
+    pattern: str = "tasAdjust*.nc",
+    rank_year_start: int | None = None,
+    rank_year_end: int | None = None,
+) -> pd.DataFrame:
+    """Rank years from a directory of yearly Copernicus/CORDEX NetCDF files."""
+
+    directory = Path(directory)
+    files = sorted(directory.glob(pattern))
+    if not files:
+        raise FileNotFoundError(f"No {pattern!r} files found in {directory}")
+
+    daily_chunks = []
+    date_chunks = []
+    latitude = None
+    longitude = None
+    mask = None
+    for path in files:
+        with nc.Dataset(path, "r") as dataset:
+            dates_3h = _decode_time(dataset.variables["time"])
+            day_index = dates_3h.floor("D")
+            daily_dates = pd.DatetimeIndex(pd.unique(day_index))
+            file_latitude = np.asarray(dataset.variables["lat"][:])
+            file_longitude = np.asarray(dataset.variables["lon"][:])
+
+            if latitude is None:
+                latitude = file_latitude
+                longitude = file_longitude
+                mask = classify_countries_matrix(latitude, longitude, countries)
+            elif not (np.array_equal(latitude, file_latitude) and np.array_equal(longitude, file_longitude)):
+                raise ValueError(f"Grid coordinates changed in {path}")
+
+            daily_chunks.append(
+                _load_daily_tmax_for_mask(
+                    dataset.variables[variable],
+                    dates_3h,
+                    day_index,
+                    daily_dates,
+                    mask,
+                    temperature_unit=temperature_unit,
+                )
+            )
+            date_chunks.append(daily_dates)
+
+    daily_tmax = np.vstack(daily_chunks)
+    dates = pd.DatetimeIndex(np.concatenate([chunk.to_numpy() for chunk in date_chunks]))
+    order = np.argsort(dates.to_numpy())
+    dates = pd.DatetimeIndex(dates.to_numpy()[order])
+    daily_tmax = daily_tmax[order, :]
+
+    ranking = rank_daily_cells_by_hwmid(
+        daily_tmax=daily_tmax,
+        dates=dates,
+        top_years=top_years,
+        ref_period=ref_period,
+        min_heatwave_days=min_heatwave_days,
+        threshold_quantile=threshold_quantile,
+        rank_year_start=rank_year_start,
+        rank_year_end=rank_year_end,
+    )
+    ranking["country_cells"] = int(mask.sum())
+    ranking["countries"] = "+".join(countries)
+    ranking["source_file_count"] = len(files)
+    ranking["source_directory"] = str(directory)
     return ranking
 
 
@@ -111,6 +190,8 @@ def rank_daily_cells_by_hwmid(
     min_heatwave_days: int = 3,
     threshold_quantile: float = 0.90,
     weights: np.ndarray | None = None,
+    rank_year_start: int | None = None,
+    rank_year_end: int | None = None,
 ) -> pd.DataFrame:
     """Calculate HWMId for selected cells and return a ranked year table."""
 
@@ -189,7 +270,16 @@ def rank_daily_cells_by_hwmid(
             raise ValueError("weights must have one value per selected cell")
         scores = np.nansum(hwmid_cells * weights[:, None], axis=0)
 
-    order = np.argsort(scores)[::-1][:top_years]
+    candidate_mask = np.ones(len(years), dtype=bool)
+    if rank_year_start is not None:
+        candidate_mask &= years >= int(rank_year_start)
+    if rank_year_end is not None:
+        candidate_mask &= years <= int(rank_year_end)
+    candidate_positions = np.where(candidate_mask)[0]
+    if not len(candidate_positions):
+        raise ValueError("No candidate years remain after applying rank-year filters")
+
+    order = candidate_positions[np.argsort(scores[candidate_positions])[::-1][:top_years]]
     return pd.DataFrame(
         {
             "rank": np.arange(1, len(order) + 1),
@@ -226,18 +316,25 @@ def _load_daily_tmax_for_mask(
 
         days_in_year = day_index[year_steps]
         unique_days = pd.DatetimeIndex(pd.unique(days_in_year))
-        if len(year_steps) % len(unique_days) != 0:
-            raise ValueError(f"Unexpected non-regular time step count in year {year}")
-
-        steps_per_day = len(year_steps) // len(unique_days)
         raw = np.ma.masked_invalid(
             np.ma.array(
                 variable[int(year_steps[0]) : int(year_steps[-1]) + 1, lat_slice, lon_slice],
                 copy=True,
             )
         )
-        raw = raw.reshape((len(unique_days), steps_per_day, raw.shape[1], raw.shape[2]))
-        daily_box = np.ma.max(raw, axis=1).filled(np.nan).astype(np.float32)
+        if len(year_steps) % len(unique_days) == 0:
+            steps_per_day = len(year_steps) // len(unique_days)
+            daily_box = np.ma.max(
+                raw.reshape((len(unique_days), steps_per_day, raw.shape[1], raw.shape[2])),
+                axis=1,
+            ).filled(np.nan).astype(np.float32)
+        else:
+            daily_box = np.ma.masked_all((len(unique_days), raw.shape[1], raw.shape[2]), dtype=np.float32)
+            for day_pos, day in enumerate(unique_days):
+                local_idx = np.where(days_in_year == day)[0]
+                if len(local_idx):
+                    daily_box[day_pos, :, :] = np.ma.max(raw[local_idx, :, :], axis=0)
+            daily_box = daily_box.filled(np.nan).astype(np.float32)
         if temperature_unit == "K":
             daily_box = daily_box - np.float32(273.15)
         elif temperature_unit != "degC":

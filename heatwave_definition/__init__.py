@@ -3,6 +3,7 @@
 from .hwmid import HWMidResult, calc_hwmid
 from .ranking import (
     latitude_area_weights,
+    rank_years_by_cell_weighted_hwmid,
     rank_years_by_country_weighted_hwmid,
     rank_years_by_grid_metric,
     rank_years_by_hwmid,
@@ -16,7 +17,9 @@ __all__ = [
     "classify_countries_matrix",
     "load_copernicus_tasadjust_daily_tmax",
     "load_e_obs_tmax",
+    "load_era5_t2m_daily_tmax",
     "latitude_area_weights",
+    "rank_years_by_cell_weighted_hwmid",
     "normalize_country_names",
     "rank_years_by_country_weighted_hwmid",
     "rank_years_by_grid_metric",
@@ -29,6 +32,7 @@ def __getattr__(name):
         "DailyTemperatureData",
         "load_copernicus_tasadjust_daily_tmax",
         "load_e_obs_tmax",
+        "load_era5_t2m_daily_tmax",
     }:
         from . import io
 

@@ -57,6 +57,16 @@ def run_from_config(config_path: Path) -> None:
             variable=data_config.get("variable", "tx"),
             temperature_unit=data_config.get("temperature_unit", "degC"),
         )
+    elif data_kind == "era5":
+        from .io import load_era5_t2m_daily_tmax
+
+        data_config = config.get("era5", {})
+        data = load_era5_t2m_daily_tmax(
+            input_file,
+            variable=data_config.get("variable", "t2m"),
+            temperature_unit=data_config.get("temperature_unit", "K"),
+            pattern=data_config.get("pattern", "t2m_era5_*.nc"),
+        )
     elif data_kind == "metrics_pickle":
         run_existing_metrics(input_file, output_dir, run_name, run)
         return
