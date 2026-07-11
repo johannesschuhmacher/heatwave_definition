@@ -7,7 +7,7 @@ name available while avoiding the previous legacy-metrics path.
 
 from __future__ import annotations
 
-from scripts.run_complete_climate_workflow import main
+from run_complete_climate_workflow import main
 
 
 if __name__ == "__main__":

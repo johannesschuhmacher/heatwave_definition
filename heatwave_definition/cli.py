@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import sys
 import tomllib
+from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
 
 import numpy as np
@@ -16,6 +17,7 @@ from .ranking import rank_years_by_hwmid, write_ranked_years
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="heatwave-definition")
+    parser.add_argument("--version", action="version", version=package_version())
     sub = parser.add_subparsers(dest="command", required=True)
 
     run_parser = sub.add_parser("run", help="run HWMId analysis from a TOML config")
@@ -26,6 +28,13 @@ def main(argv: list[str] | None = None) -> int:
         run_from_config(args.config)
         return 0
     return 2
+
+
+def package_version() -> str:
+    try:
+        return version("heatwave-definition")
+    except PackageNotFoundError:
+        return "development"
 
 
 def run_from_config(config_path: Path) -> None:

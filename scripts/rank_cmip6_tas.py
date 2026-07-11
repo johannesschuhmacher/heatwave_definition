@@ -29,6 +29,7 @@ REPO = Path(__file__).resolve().parents[1]
 DEFAULT_ROOT = Path(os.environ.get("HEATWAVE_CMIP6_ROOT", "data/cordex_cmip6/netcdf"))
 DEFAULT_OUTPUT = REPO / "outputs" / "cmip6_internal" / "cmip6_de_fr_top_years.csv"
 DEFAULT_INVENTORY = REPO / "outputs" / "cmip6_internal" / "cmip6_de_fr_run_inventory.csv"
+DEFAULT_FILE_INVENTORY = REPO / "outputs" / "cmip6_internal" / "cmip6_de_fr_file_inventory.csv"
 DEFAULT_CACHE_DIR = REPO / "outputs" / "cmip6_internal" / "daily_cache"
 
 
@@ -66,6 +67,7 @@ def main(argv: list[str] | None = None) -> None:
     args = parse_args(argv)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.inventory.parent.mkdir(parents=True, exist_ok=True)
+    args.file_inventory.parent.mkdir(parents=True, exist_ok=True)
     if args.cache_dir is not None:
         args.cache_dir.mkdir(parents=True, exist_ok=True)
 
@@ -74,6 +76,8 @@ def main(argv: list[str] | None = None) -> None:
     inventory = inventory_table(groups)
     inventory.to_csv(args.inventory, index=False)
     print(args.inventory)
+    file_inventory_table(groups, args.root).to_csv(args.file_inventory, index=False)
+    print(args.file_inventory)
 
     historical_by_chain = {group.chain_key: group for group in groups if group.scenario == "historical"}
     future_groups = [group for group in groups if group.scenario != "historical"]
@@ -85,11 +89,23 @@ def main(argv: list[str] | None = None) -> None:
     if args.max_runs is not None:
         run_order = run_order[: args.max_runs]
 
-    all_rankings = []
+    all_rankings: list[pd.DataFrame] = []
     if args.output.exists() and args.resume:
         existing = pd.read_csv(args.output)
-        all_rankings.append(existing)
-        completed = set(existing["dataset"].unique())
+        completed, stale = classify_resume_groups(
+            existing,
+            run_order,
+            historical_by_chain,
+            tuple(args.reference_period),
+        )
+        existing = enrich_resumed_rows(
+            existing[~existing["dataset"].isin(stale)].copy(),
+            run_order,
+            historical_by_chain,
+            tuple(args.reference_period),
+        )
+        if not existing.empty:
+            all_rankings.append(existing)
     else:
         completed = set()
 
@@ -169,6 +185,10 @@ def main(argv: list[str] | None = None) -> None:
         ranking["country_cells"] = int(hist_subset.mask.sum())
         ranking["countries"] = "+".join(args.countries)
         ranking["source_file_count"] = source_file_count
+        reference_files = reference_files_for_group(group, historical, tuple(args.reference_period))
+        ranking["scenario_file_count"] = len(group.files)
+        ranking["reference_file_count"] = len(reference_files)
+        ranking["source_inventory_sha256"] = source_inventory_signature(group.files + reference_files)
         ranking["available_year_start"] = int(dates.year.min())
         ranking["available_year_end"] = int(dates.year.max())
         ranking["rank_year_start"] = rank_start
@@ -189,6 +209,69 @@ def main(argv: list[str] | None = None) -> None:
     result = pd.concat(all_rankings, ignore_index=True)
     result.to_csv(args.output, index=False)
     print(args.output)
+
+
+def classify_resume_groups(
+    existing: pd.DataFrame,
+    run_order: list[Cmip6Group],
+    historical_by_chain: dict[tuple[str, str, str, str, str, str], Cmip6Group],
+    reference_period: tuple[int, int],
+) -> tuple[set[str], set[str]]:
+    completed: set[str] = set()
+    stale: set[str] = set()
+    for group in run_order:
+        rows = existing[existing["dataset"] == group.label]
+        if rows.empty:
+            stale.add(group.label)
+            continue
+        expected_end = max(year_from_filename(path) for path in group.files)
+        recorded_end = int(pd.to_numeric(rows["available_year_end"], errors="coerce").max())
+        file_count_matches = True
+        if "scenario_file_count" in rows:
+            recorded_count = int(pd.to_numeric(rows["scenario_file_count"], errors="coerce").max())
+            file_count_matches = recorded_count == len(group.files)
+        if recorded_end == expected_end and file_count_matches:
+            completed.add(group.label)
+        else:
+            stale.add(group.label)
+    return completed, stale
+
+
+def enrich_resumed_rows(
+    existing: pd.DataFrame,
+    run_order: list[Cmip6Group],
+    historical_by_chain: dict[tuple[str, str, str, str, str, str], Cmip6Group],
+    reference_period: tuple[int, int],
+) -> pd.DataFrame:
+    for group in run_order:
+        mask = existing["dataset"] == group.label
+        if not mask.any():
+            continue
+        historical = historical_by_chain[group.chain_key]
+        reference_files = reference_files_for_group(group, historical, reference_period)
+        existing.loc[mask, "scenario_file_count"] = len(group.files)
+        existing.loc[mask, "reference_file_count"] = len(reference_files)
+        existing.loc[mask, "source_inventory_sha256"] = source_inventory_signature(group.files + reference_files)
+    return existing
+
+
+def reference_files_for_group(
+    group: Cmip6Group,
+    historical: Cmip6Group,
+    reference_period: tuple[int, int],
+) -> tuple[Path, ...]:
+    if group.scenario == "historical":
+        return ()
+    return files_for_year_range(historical.files, *reference_period)
+
+
+def source_inventory_signature(files: tuple[Path, ...]) -> str:
+    digest = hashlib.sha256()
+    for path in sorted(files):
+        stat = path.stat()
+        digest.update(path.name.encode("utf-8"))
+        digest.update(str(stat.st_size).encode("ascii"))
+    return digest.hexdigest()
 
 
 def discover_cmip6_tas_groups(root: Path, variable: str, frequency: str) -> list[Cmip6Group]:
@@ -367,6 +450,30 @@ def inventory_table(groups: list[Cmip6Group]) -> pd.DataFrame:
     return pd.DataFrame.from_records(rows)
 
 
+def file_inventory_table(groups: list[Cmip6Group], root: Path) -> pd.DataFrame:
+    rows = []
+    for group in groups:
+        for path in group.files:
+            rows.append(
+                {
+                    "dataset": group.label,
+                    "scenario": group.scenario.upper(),
+                    "gcm": group.gcm,
+                    "rcm": group.rcm,
+                    "variant": group.variant,
+                    "version": group.version,
+                    "frequency": group.frequency,
+                    "variable": group.variable,
+                    "year": year_from_filename(path),
+                    "relative_path": path.relative_to(root).as_posix(),
+                    "file_name": path.name,
+                    "size_bytes": path.stat().st_size,
+                    "sha256": "",
+                }
+            )
+    return pd.DataFrame.from_records(rows)
+
+
 def files_for_year_range(files: tuple[Path, ...], year_start: int, year_end: int) -> tuple[Path, ...]:
     filtered = tuple(path for path in files if year_start <= year_from_filename(path) <= year_end)
     if not filtered:
@@ -389,6 +496,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--root", type=Path, default=DEFAULT_ROOT)
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
     parser.add_argument("--inventory", type=Path, default=DEFAULT_INVENTORY)
+    parser.add_argument("--file-inventory", type=Path, default=DEFAULT_FILE_INVENTORY)
     parser.add_argument("--cache-dir", type=Path, default=DEFAULT_CACHE_DIR)
     parser.add_argument("--countries", nargs="+", default=["Germany", "France"])
     parser.add_argument("--variable", default="tas")

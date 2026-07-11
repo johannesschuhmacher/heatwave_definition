@@ -18,8 +18,8 @@ Contents:
 - `rankings/`: primary scenario-year rankings.
 - `sensitivity/`: country-mask, weighting and ranking-criterion sensitivity outputs.
 - `ensemble/`: Copernicus raw-data ensemble sensitivity summaries.
-- `cmip6/`: CORDEX-CMIP6 inventory and top-year rankings.
+- `cmip6/`: CORDEX-CMIP6 group/file inventories and top-year rankings.
 - `tables/`: appendix-ready compact tables, including the E-OBS/ERA5 historical data-product comparison.
 - `figures/`: manuscript and supplementary figures.
 - `validation/`: TYNDP 2024 PEMMDB capacity cross-check tables.
-- `provenance/`: sanitized reproduction manifests with file names and checksums where available.
+- `provenance/`: sanitized input and software manifests with file names and checksums where available.

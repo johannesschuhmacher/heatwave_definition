@@ -23,7 +23,12 @@ python scripts\check_public_release.py
 - Run the complete publication reproduction workflow:
 
 ```bash
-python scripts\run_complete_climate_workflow.py
+python scripts/run_complete_climate_workflow.py \
+  --eobs-file <eobs-file> \
+  --era5-root <era5-root> \
+  --cmip5-root <cmip5-root> \
+  --cmip6-root <cmip6-root> \
+  --tyndp-root <extracted-PEMMDB2-root>
 ```
 
 - Archive the local run directory outside Git and keep
@@ -39,6 +44,9 @@ python scripts\run_complete_climate_workflow.py
 - Confirm that `results/provenance/era5_year_coverage.csv` marks 2026 as an
   incomplete current-year ERA5 file before interpreting 2026 as an event
   comparison.
+- Confirm that `results/cmip6/cmip6_de_fr_file_inventory.csv` matches the
+  locally processed CMIP6 archive and documents any incomplete scenario range.
+- Confirm that `results/provenance/software_environment.csv` was refreshed.
 
 ## Paper update
 
@@ -52,6 +60,13 @@ python scripts\update_paper_with_ensemble_sensitivity.py --paper-dir "<local-pap
   for example `RCP4.5 / IPSL-WRF / 2043`.
 - Before submission, add formal data citations and acknowledgements required by
   E-OBS and Copernicus/CORDEX licences.
+
+## Version archive
+
+- Update `pyproject.toml`, `CITATION.cff` and `CHANGELOG.md` to the same version.
+- Create an annotated Git tag and a GitHub release from the tested commit.
+- Verify that Zenodo archived the new release and cite its version-specific DOI
+  in the manuscript. The README badge may use the concept DOI.
 
 ## Validation
 

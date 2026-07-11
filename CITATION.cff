@@ -1,10 +1,12 @@
 cff-version: 1.2.0
 message: "If you use this heatwave scenario definition code, please cite the repository and associated working paper."
 title: "Heatwave scenario definition for energy-system stress tests"
-version: "0.1.0"
-date-released: "2026-06-11"
+version: "1.1.0"
+date-released: "2026-07-11"
 license: MIT
-repository-code: "https://gitlab.kit.edu/kit/iip/energyeconomics/sem-fec/josc/heatwave_definition"
+doi: "10.5281/zenodo.20793872"
+repository-code: "https://github.com/johannesschuhmacher/heatwave_definition"
+url: "https://github.com/johannesschuhmacher/heatwave_definition"
 authors:
   - family-names: Kleinebrahm
     given-names: Max

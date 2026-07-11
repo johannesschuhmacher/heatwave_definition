@@ -1,5 +1,8 @@
 import pickle
 import importlib.util
+import subprocess
+import sys
+import warnings
 from pathlib import Path
 
 import netCDF4 as nc
@@ -156,7 +159,13 @@ def test_load_era5_t2m_directory_aggregates_hourly_to_daily_tmax(tmp_path):
             t2m = dataset.createVariable("t2m", "f4", ("valid_time", "latitude", "longitude"))
             t2m.units = "K"
             time_var[:] = seconds
-            t2m[:] = values
+            with warnings.catch_warnings():
+                warnings.filterwarnings(
+                    "ignore",
+                    message="Setting the shape on a NumPy array has been deprecated",
+                    category=DeprecationWarning,
+                )
+                t2m[:, :, :] = values
 
     write_era5_file(tmp_path / "t2m_era5_2001.nc", "2001-01-01", 10.0)
     write_era5_file(tmp_path / "t2m_era5_2000.nc", "2000-01-01", 20.0)
@@ -332,3 +341,33 @@ def test_top2_stability_classification_matches_figure_legend():
     assert classify_top2_stability(reference, (2043, 2041)).key == "rank1_match"
     assert classify_top2_stability(reference, (2070, 2043)).key == "rank1_changes_reference_retained"
     assert classify_top2_stability(reference, (2041, 2039)).key == "no_reference_top2"
+
+
+def test_demo_ranks_injected_events_first(tmp_path):
+    repo = Path(__file__).resolve().parents[1]
+    output = tmp_path / "demo.csv"
+    subprocess.run(
+        [sys.executable, str(repo / "scripts" / "run_demo.py"), "--output", str(output)],
+        cwd=repo,
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+
+    ranking = pd.read_csv(output)
+    assert ranking.loc[:1, "year"].tolist() == [2011, 2012]
+    assert ranking.loc[0, "hwmid_sum"] > ranking.loc[1, "hwmid_sum"] > 0
+
+
+def test_publication_wrapper_exposes_complete_workflow_help():
+    repo = Path(__file__).resolve().parents[1]
+    result = subprocess.run(
+        [sys.executable, str(repo / "scripts" / "run_publication_reproduction.py"), "--help"],
+        cwd=repo,
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+
+    assert "--eobs-file" in result.stdout
+    assert "--cmip6-root" in result.stdout

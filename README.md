@@ -1,218 +1,193 @@
 # Heatwave scenario definition
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20793874.svg)](https://doi.org/10.5281/zenodo.20793874)
+[![tests](https://github.com/johannesschuhmacher/heatwave_definition/actions/workflows/tests.yml/badge.svg)](https://github.com/johannesschuhmacher/heatwave_definition/actions/workflows/tests.yml)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20793872.svg)](https://doi.org/10.5281/zenodo.20793872)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-This repository contains the reproducible code used to identify heatwave
-scenario years for energy-system stress testing. The method follows the
-Heat Wave Magnitude Index daily (HWMId) approach by Russo et al. (2015):
+This repository identifies heatwave scenario years for energy-system stress
+tests. It implements the Heat Wave Magnitude Index daily (HWMId) following
+Russo et al. (2015), ranks annual events over configurable country domains and
+provides the scripts, derived results and provenance records used by the
+associated manuscript.
 
-- daily maximum temperature (`Tmax`)
-- reference period 1981-2010
-- daily threshold: 90th percentile in a 31-day moving calendar window
-- heatwave event: at least three consecutive days above the threshold
-- event magnitude: sum of daily magnitudes normalized by the interquartile
-  range of annual reference-period maxima
+The versioned Germany-France reference results are:
 
-The scenario selection used for the paper ranks yearly HWMId over grid cells in
-Germany and France. The versioned result snapshot selects:
-
-| Dataset | Rank 1 | HWMId sum | Rank 2 | HWMId sum |
+| Dataset | Rank 1 | HWMId grid-cell sum | Rank 2 | HWMId grid-cell sum |
 | --- | ---: | ---: | ---: | ---: |
-| Historical / E-OBS | 2003 | 25,280.48 | 2019 | 10,910.80 |
-| Historical / ERA5 | 2003 | 24,902.81 | 2026 | 24,439.57 |
-| RCP4.5 / IPSL-WRF | 2043 | 30,300.05 | 2070 | 27,046.41 |
-| RCP8.5 / MPI-CLM | 2092 | 56,896.79 | 2082 | 50,706.01 |
+| E-OBS v33.0e | 2003 | 25,280.48 | 2019 | 10,910.80 |
+| ERA5 | 2003 | 24,902.81 | 2026* | 24,439.57 |
+| CORDEX-CMIP5 RCP4.5 / IPSL-WRF | 2043 | 30,300.05 | 2070 | 27,046.41 |
+| CORDEX-CMIP5 RCP8.5 / MPI-CLM | 2092 | 56,896.79 | 2082 | 50,706.01 |
 
-The historical E-OBS ranking in the versioned snapshot uses E-OBS v33.0e daily
-maximum temperature for 1950-2025. ERA5 is included as a reanalysis-based
-historical data-product comparison; the common completed-year comparison with
-E-OBS uses 1950-2025, while the 2026 ERA5 file is treated as an incomplete
-current-year event comparison. CORDEX-CMIP5 and CORDEX-CMIP6 rankings are
-generated from local NetCDF archives and documented in the versioned result
-snapshot.
+`2026*` is an incomplete ERA5 current-year result based on data through
+1 July 2026. It is an event comparison, not a completed annual ranking.
+Absolute grid-cell sums are used to rank years within one data product. They
+must not be interpreted as directly comparable physical magnitudes across
+products with different grids or spatial coverage.
 
-## Repository contents
+## Quick start
 
-Source code, configuration examples, tests, and curated derived result tables
-and figures are stored in Git. Raw meteorological data, generated metric
-arrays, local full-output directories, PDFs, and debug files are intentionally
-excluded because of file size and data-licence constraints.
+The no-data demo verifies installation and runs the HWMId calculation on a
+small deterministic temperature series.
 
 ```text
-heatwave_definition/      Reusable Python package
-configs/                  Example TOML configurations
-docs/                     Provenance notes for local data handling
-scripts/                  Reproduction helpers for paper tables and figures
-tests/                    Lightweight regression tests
-results/                  Versioned derived CSV tables and manuscript figures
-README.md                 This file
-requirements.txt          Runtime dependencies
-pyproject.toml            Package metadata and test settings
-```
-
-## Data
-
-The code supports four data families:
-
-- E-OBS daily maximum temperature (`tx`) NetCDF files. The manuscript snapshot
-  uses E-OBS v33.0e for 1950-2025.
-- ERA5 hourly 2 m temperature (`t2m`) NetCDF files, aggregated internally to
-  daily maximum temperature in deg C. The manuscript uses ERA5 as a historical
-  comparison to E-OBS and for the current 2026 heatwave event comparison.
-- Copernicus/CORDEX-CMIP5 `tasAdjust` 3-hourly NetCDF files, converted
-  internally to daily maximum temperature in deg C.
-- CORDEX-CMIP6 hourly `tas` NetCDF files, converted internally to daily maximum
-  temperature in deg C for ensemble comparison figures.
-
-Download data from the official providers and keep them outside Git, for
-example in a local `data/` directory. Before publication, cite and acknowledge
-the data providers according to the applicable licences. In particular, E-OBS
-data are not bundled here.
-
-Document local data locations with a local manifest:
-
-```bash
-python scripts\write_data_manifest.py --copernicus-root "%HEATWAVE_COPERNICUS_ROOT%"
-```
-
-The manifest is written to `outputs/provenance/data_manifest.local.csv` and is
-ignored by Git because it contains absolute local paths. See
-`docs/data_provenance.md` for the column definitions.
-
-## Installation
-
-Create a fresh environment and install the package in editable mode:
-
-```bash
+git clone https://github.com/johannesschuhmacher/heatwave_definition.git
+cd heatwave_definition
 python -m venv .venv
-.venv\Scripts\activate
+```
+
+Activate the environment on Linux or macOS:
+
+```bash
+source .venv/bin/activate
+```
+
+Activate it on Windows PowerShell:
+
+```powershell
+.venv\Scripts\Activate.ps1
+```
+
+Install and run the checks:
+
+```text
 python -m pip install --upgrade pip
-python -m pip install -r requirements.txt
-python -m pip install -e .
+python -m pip install -e ".[dev]"
+python scripts/run_demo.py
+python -m pytest -q
 ```
 
-Cartopy may require platform-specific binary packages. If pip installation is
-problematic on Windows, install the dependencies from conda-forge instead.
+The demo writes `outputs/demo/ranked_years_demo.csv` and should rank the two
+injected events in 2011 and 2012 first.
 
-## Usage
+## Reproduction levels
 
-The complete manuscript workflow is run with:
+### 1. Inspect the published results
 
-```bash
-python scripts\run_complete_climate_workflow.py ^
-  --eobs-file <local-eobs-v33-tx.nc> ^
-  --era5-root <local-era5-directory> ^
-  --cmip5-root <local-cordex-cmip5-directory> ^
-  --cmip6-root <local-cordex-cmip6-directory>
+No climate data are needed to inspect `results/`. It contains the manuscript
+rankings, sensitivity tables, figures and sanitized provenance manifests.
+See [results/README.md](results/README.md).
+
+### 2. Run one data product
+
+Copy an example configuration, update its input path and run the package CLI:
+
+```text
+python -m heatwave_definition.cli run configs/e_obs.example.toml
+python -m heatwave_definition.cli run configs/era5.example.toml
 ```
 
-On the project machine, the same paths can also be provided through the
-environment variables `HEATWAVE_EOBS_FILE`, `HEATWAVE_ERA5_ROOT`,
-`HEATWAVE_CMIP5_ROOT`, and `HEATWAVE_CMIP6_ROOT`. The workflow:
+The dedicated ranking scripts expose additional options:
 
-- ranks E-OBS v33.0e from daily `tx`;
-- ranks ERA5 from annual hourly `t2m` files and writes a year-coverage table;
-- selects the 2003 and 2026 ERA5 event windows with the same automatic method;
-- ranks all local CORDEX-CMIP5 `tasAdjust` chains and exports the two primary
-  manuscript projection rankings from that ensemble table;
-- rebuilds the primary CMIP5 sensitivity tables from raw `tasAdjust` files;
-- ranks the local CORDEX-CMIP6 archive and updates the climate-data comparison
-  figures;
-- rebuilds appendix tables, manuscript figures, sanitized provenance files and
-  the curated `results/` snapshot;
-- runs the public-release check.
-
-The old entry point is kept as an alias:
-
-```bash
-python scripts\run_publication_reproduction.py
+```text
+python scripts/rank_eobs_tx.py <eobs-file> --top-years 20
+python scripts/rank_era5_t2m.py <era5-directory> --start-year 1950 --end-year 2026 --top-years 20
+python scripts/rank_copernicus_ensembles.py --root <cordex-cmip5-directory> --top-years 20
+python scripts/rank_cmip6_tas.py --root <cordex-cmip6-directory> --top-years 10
 ```
 
-Individual building blocks can still be run for debugging or partial updates.
-The most useful ones are:
+### 3. Rebuild the manuscript snapshot
 
-```bash
-python scripts\rank_eobs_tx.py <eobs-v33-tx.nc> --top-years 20
-python scripts\rank_era5_t2m.py <era5-directory> --start-year 1950 --end-year 2026 --top-years 20
-python scripts\rank_copernicus_ensembles.py --root <cordex-cmip5-directory> --top-years 20
-python scripts\rank_cmip6_tas.py --root <cordex-cmip6-directory> --top-years 10
+The complete raw-data-to-results command is:
+
+```text
+python scripts/run_complete_climate_workflow.py --eobs-file <eobs-v33-tx.nc> --era5-root <era5-directory> --cmip5-root <cordex-cmip5-directory> --cmip6-root <cordex-cmip6-directory> --tyndp-root <extracted-PEMMDB2-directory>
 ```
 
-Missing ERA5 years can be requested from the Copernicus Climate Data Store after
-configuring CDS API credentials:
+The same paths can be supplied through `HEATWAVE_EOBS_FILE`,
+`HEATWAVE_ERA5_ROOT`, `HEATWAVE_CMIP5_ROOT`, `HEATWAVE_CMIP6_ROOT` and
+`HEATWAVE_TYNDP_PEMMDB_ROOT`. The compatibility entry point
+`python scripts/run_publication_reproduction.py` accepts the same arguments.
 
-```bash
-python scripts\download_era5_t2m.py --output-dir <local-era5-directory> --start-year 1981 --end-year 2010
+`--skip-cmip5`, `--skip-cmip6` and `--reuse-derived-weights` are resume
+options. They require the corresponding existing files under `outputs/`; they
+are not substitutes for a first complete run.
+
+The workflow performs the following steps:
+
+1. calculate E-OBS and ERA5 historical rankings;
+2. automatically select the ERA5 event windows for 2003 and 2026;
+3. derive TYNDP 2024 country-capacity weights and rerun all sensitivities;
+4. download/cache WorldPop data and calculate population weighting;
+5. rank all discovered CORDEX-CMIP5 and CORDEX-CMIP6 chains;
+6. regenerate tables, figures and data/software manifests;
+7. refresh `results/` and run the public-release check.
+
+The final release command is intentionally data intensive. The archived inputs
+used here comprise approximately 0.9 GB E-OBS, 33 GB ERA5, 351 GiB CMIP5 and
+2.90 TB CMIP6. Use fast local or network storage and expect the complete run to
+take many hours or longer. The demo and unit tests are the appropriate first
+check on a laptop.
+
+## Input data
+
+Raw provider data are not redistributed. Exact products, links, variables,
+requests, file naming conventions and licences are documented in
+[docs/data_download.md](docs/data_download.md). The release snapshot uses:
+
+- E-OBS v33.0e daily maximum temperature, 1950-2025;
+- ERA5 hourly 2 m temperature, 1950-2026, converted to daily maximum;
+- bias-adjusted CORDEX-CMIP5 3-hourly `tasAdjust`;
+- CORDEX-CMIP6 hourly `tas`, converted to daily maximum;
+- TYNDP 2024 PEMMDB 2.5 National Trends capacities for 2040;
+- WorldPop 2020 1 km UN-adjusted population counts.
+
+The precise local input inventory is recorded under `results/provenance/` and
+`results/cmip6/`. Raw data, local paths, caches and large metric arrays remain
+outside Git.
+
+## Method
+
+For every grid cell, the implementation:
+
+1. calculates a calendar-day 90th-percentile threshold from a 31-day moving
+   window over 1981-2010;
+2. identifies events with at least three consecutive threshold-exceedance days;
+3. normalizes daily magnitude using the interquartile range of annual maximum
+   temperatures in the reference period;
+4. sums daily magnitudes within each event and retains the strongest event per
+   grid cell and year;
+5. aggregates the annual grid-cell field over the selected spatial domain and
+   ranks years by the resulting score.
+
+The reference ranking is an unweighted sum over Germany and France. Alternative
+country domains, area-weighted means, population weighting, TYNDP capacity
+weighting and alternative ranking criteria are included as sensitivities.
+Manuscript colors and line styles are defined centrally in
+`heatwave_definition/plot_style.py`.
+
+## Interpretation and limitations
+
+- HWMId is dimensionless. A regional grid-cell sum depends on the grid and
+  number of included cells; use it for within-product year ranking.
+- ERA5 2026 is frozen at the stated cutoff date and remains preliminary until
+  the year and source record are complete.
+- CORDEX-CMIP6 scenario coverage differs between chains. The available year
+  ranges are recorded in `results/cmip6/cmip6_de_fr_run_inventory.csv`.
+- CMIP5 and CMIP6 source variables are sub-daily near-surface air temperature;
+  this workflow derives daily maxima before calculating HWMId.
+- Country-level TYNDP capacities represent installed capacity, not plant-level
+  locations or hourly availability.
+
+Further details on output lineage, computing requirements and release checks
+are in [docs/reproducibility.md](docs/reproducibility.md).
+
+## Repository layout
+
+```text
+heatwave_definition/  Reusable Python package
+configs/              Example TOML configurations
+docs/                 Data and reproduction documentation
+scripts/              Data processing and publication workflows
+tests/                Synthetic regression tests
+results/              Versioned tables, figures and provenance
 ```
 
-For TYNDP sensitivity inputs, country weights can be derived from the
-ENTSO-E/ENTSOG TYNDP 2024 Scenarios final package, PEMMDB 2.5. Download
-`PEMMDB2.zip` from the official TYNDP Scenarios download page, keep it outside
-Git, and point the derivation script at the extracted PEMMDB root:
+## Citation and licence
 
-```bash
-python scripts\derive_country_weights_from_tyndp2024_pemmdb.py --pemmdb-root "%HEATWAVE_TYNDP_PEMMDB_ROOT%" --year 2040
-```
+Use the citation metadata in [CITATION.cff](CITATION.cff) and cite the exact
+Zenodo release used in an analysis. The badge above resolves to the concept DOI
+and therefore always points to the latest archived version.
 
-The TYNDP-derived file uses National Trends 2040 PEMMDB market-node capacities
-and includes total installed capacity, renewables, and technology-specific
-country weights for solar/PV including rooftop PV, wind, hydro excluding pumped
-storage, pumped hydro, bio/waste, nuclear, battery storage, battery plus pumped
-hydro, and thermal capacity. These weights are country-level sensitivities and
-do not represent intra-country plant locations or hourly availability.
-
-Appendix-ready CSV exports and figures are rebuilt by the complete workflow.
-They can also be refreshed manually with:
-
-```bash
-python scripts\summarize_scenario_selection.py
-python scripts\build_appendix_tables.py
-python scripts\make_additional_paper_figures.py
-python scripts\make_cmip6_internal_figures.py --output-dir outputs\figures
-```
-
-Manuscript figure colors, line styles, and categorical heatmap legends are
-defined centrally in `heatwave_definition/plot_style.py`.
-
-The derived result snapshot committed with the repository is refreshed from the
-local `outputs/` directory with:
-
-```bash
-python scripts\snapshot_public_results.py
-```
-
-The `results/` directory contains only curated CSV tables and PNG figures.
-Provider downloads, raw climate data, local full manifests and large
-intermediate arrays remain excluded from Git. Sanitized manifests with file
-names, sizes and checksums are stored under `results/provenance/`.
-
-## Method notes
-
-The public workflow separates two concepts that were mixed in earlier
-exploratory scripts:
-
-- **Grid-cell HWMId**: the paper's scenario ranking is based on yearly HWMId per
-  grid cell, summed over selected country masks.
-- **Regional mean temperature series**: useful for descriptive time-series
-  plots, but not identical to the grid-cell HWMId ranking.
-
-When reporting scenario years, state which criterion was used. For the working
-paper scenario definition, use grid-cell HWMId over Germany and France and
-report the GCM/RCM model chain together with the emission pathway. The local
-ensemble run shows, for example, that IPSL-WRF RCP8.5 ranks 2094/2093 highest,
-whereas MPI-CLM RCP8.5 ranks 2092/2082 highest.
-
-## Testing
-
-```bash
-python scripts\check_public_release.py
-python -m pytest
-```
-
-The included tests use synthetic arrays and do not require external NetCDF
-files.
-
-## Licence
-
-The code in this repository is released under the MIT License. Input data remain
-under their original provider licences.
+The source code is released under the [MIT License](LICENSE). Input datasets
+remain subject to their provider licences and acknowledgement requirements.

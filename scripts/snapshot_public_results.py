@@ -33,6 +33,7 @@ FILES = [
     ("ensemble_rankings/copernicus2100_de_fr_top2_summary.csv", "ensemble/copernicus2100_de_fr_top2_summary.csv"),
     ("ensemble_rankings/copernicus2100_de_fr_top_years.csv", "ensemble/copernicus2100_de_fr_top_years.csv"),
     ("cmip6_internal/cmip6_de_fr_run_inventory.csv", "cmip6/cmip6_de_fr_run_inventory.csv"),
+    ("cmip6_internal/cmip6_de_fr_file_inventory.csv", "cmip6/cmip6_de_fr_file_inventory.csv"),
     ("cmip6_internal/cmip6_de_fr_top_years.csv", "cmip6/cmip6_de_fr_top_years.csv"),
     ("sensitivity/country_set_top2_summary.csv", "sensitivity/country_set_top2_summary.csv"),
     ("sensitivity/country_set_top_years.csv", "sensitivity/country_set_top_years.csv"),
@@ -48,6 +49,7 @@ FILES = [
     ("sensitivity/tyndp_pemmdb_vs_supply_inputs_comparison.csv", "validation/tyndp_pemmdb_vs_supply_inputs_comparison.csv"),
     ("sensitivity/tyndp_pemmdb_vs_supply_inputs_comparison_by_country.csv", "validation/tyndp_pemmdb_vs_supply_inputs_comparison_by_country.csv"),
     ("cmip5_current/cmip5_primary_sensitivity_manifest.csv", "provenance/cmip5_primary_sensitivity_manifest.csv"),
+    ("provenance/software_environment.csv", "provenance/software_environment.csv"),
     ("figures/top10_rank_curve_de_fr.png", "figures/top10_rank_curve_de_fr.png"),
     ("figures/hwmid_workflow_example_2003.png", "figures/hwmid_workflow_example_2003.png"),
     ("figures/hwmid_timeseries_example_2003.png", "figures/hwmid_timeseries_example_2003.png"),
@@ -98,11 +100,11 @@ Contents:
 - `rankings/`: primary scenario-year rankings.
 - `sensitivity/`: country-mask, weighting and ranking-criterion sensitivity outputs.
 - `ensemble/`: Copernicus raw-data ensemble sensitivity summaries.
-- `cmip6/`: CORDEX-CMIP6 inventory and top-year rankings.
+- `cmip6/`: CORDEX-CMIP6 group/file inventories and top-year rankings.
 - `tables/`: appendix-ready compact tables, including the E-OBS/ERA5 historical data-product comparison.
 - `figures/`: manuscript and supplementary figures.
 - `validation/`: TYNDP 2024 PEMMDB capacity cross-check tables.
-- `provenance/`: sanitized reproduction manifests with file names and checksums where available.
+- `provenance/`: sanitized input and software manifests with file names and checksums where available.
 """
 
 

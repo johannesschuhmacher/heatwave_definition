@@ -7,7 +7,7 @@ from pathlib import Path
 
 import matplotlib.pyplot as plt
 from matplotlib.cm import ScalarMappable
-from matplotlib.colors import LogNorm
+from matplotlib.colors import Normalize
 from matplotlib.lines import Line2D
 from matplotlib.patches import Rectangle
 import numpy as np
@@ -293,53 +293,65 @@ def plot_internal_top10_lines(top10: pd.DataFrame, output: Path) -> Path:
 
 
 def plot_internal_top10_facets(top10: pd.DataFrame, output: Path) -> Path:
+    top10 = top10[top10["rank"].between(1, 10)].copy()
     panel_specs = [
-        ("Historical\nobservations and model runs", ["HISTORICAL"], True),
-        ("Lower forcing\nRCP2.6 and SSP1-2.6", ["RCP26", "SSP126"], True),
-        ("Medium forcing\nRCP4.5 and SSP2-4.5", ["RCP45", "SSP245"], True),
-        ("Higher forcing\nRCP8.5, SSP3-7.0 and SSP5-8.5", ["RCP85", "SSP370", "SSP585"], True),
-        ("All projection runs\nRCP and SSP scenarios", ["RCP26", "RCP45", "RCP85", "SSP126", "SSP245", "SSP370", "SSP585"], False),
+        (
+            "Historical data products\nE-OBS and ERA5",
+            top10["data_family"].eq("Historical"),
+        ),
+        (
+            "CORDEX-CMIP5 projection chains\nRCP scenarios",
+            top10["data_family"].eq("CORDEX-CMIP5"),
+        ),
+        (
+            "CORDEX-CMIP6 CNRM-driven ICON-CLM\nHistorical and SSP scenarios",
+            top10["group_label"].eq("CORDEX-CMIP6 / CNRM-driven ICON-CLM"),
+        ),
+        (
+            "CORDEX-CMIP6 MPI-driven ICON-CLM\nHistorical and SSP scenarios",
+            top10["group_label"].eq("CORDEX-CMIP6 / MPI-driven ICON-CLM"),
+        ),
     ]
-    fig, axes = plt.subplots(2, 3, figsize=(13.4, 8.4), sharex=True, sharey=True)
+    fig, axes = plt.subplots(2, 2, figsize=(11.4, 8.3), sharex=True, sharey=False)
     axes_flat = axes.ravel()
-    fig.subplots_adjust(left=0.07, right=0.98, top=0.88, bottom=0.10, wspace=0.20, hspace=0.30)
+    fig.subplots_adjust(left=0.085, right=0.985, top=0.86, bottom=0.17, wspace=0.20, hspace=0.34)
 
-    y_max = top10["hwmid_sum"].max() * 1.08
-    for ax, (title, scenarios, show_legend) in zip(axes_flat, panel_specs):
-        subset = top10[top10["scenario"].isin(scenarios)].copy()
-        draw_rank_curves(ax, subset, show_legend=show_legend)
+    for ax, (title, mask) in zip(axes_flat, panel_specs):
+        subset = top10[mask].copy()
+        draw_rank_curves(ax, subset, show_legend=True)
         ax.set_title(title, fontsize=9.6, pad=8)
-        ax.set_ylim(0, y_max)
+        if not subset.empty:
+            ax.set_ylim(0, subset["hwmid_sum"].max() * 1.12)
 
-    guide_ax = axes_flat[-1]
-    guide_ax.axis("off")
     guide_handles = [
-        Line2D([0], [0], color="#333333", linestyle="-", linewidth=2.0, label="Historical or medium forcing"),
-        Line2D([0], [0], color="#333333", linestyle=(0, (4.0, 2.0)), linewidth=2.0, label="Higher forcing"),
-        Line2D([0], [0], color="#333333", linestyle=(0, (2.2, 1.7)), linewidth=2.0, label="Lower forcing"),
         Line2D([0], [0], marker="o", color="black", linestyle="None", label="Rank 1", markersize=6.6),
         Line2D([0], [0], marker="^", color="black", linestyle="None", label="Rank 2", markersize=6.6),
+        Line2D([0], [0], marker="o", color="black", linestyle="None", label="Ranks 3-10", markersize=4.8),
+        Line2D([0], [0], color="#333333", linestyle="-", linewidth=2.0, label="Historical / RCP4.5 / SSP2-4.5"),
+        Line2D([0], [0], color="#333333", linestyle=(0, (2.2, 1.7)), linewidth=2.0, label="RCP2.6 / SSP1-2.6"),
+        Line2D([0], [0], color="#333333", linestyle=(0, (4.0, 2.0)), linewidth=2.0, label="RCP8.5 / SSP3-7.0"),
+        Line2D([0], [0], color="#333333", linestyle=(0, (6.0, 1.8)), linewidth=2.0, label="SSP5-8.5"),
     ]
-    guide_ax.legend(
+    fig.legend(
         handles=guide_handles,
         frameon=False,
-        loc="center left",
-        fontsize=8.0,
-        title="Line and marker guide",
-        title_fontsize=8.5,
+        loc="lower center",
+        bbox_to_anchor=(0.5, 0.035),
+        fontsize=7.5,
+        ncol=4,
     )
 
-    for ax in axes_flat[:5]:
+    for ax in axes_flat:
         ax.set_xticks(range(1, 11))
         ax.grid(axis="y", alpha=0.22)
         ax.spines[["top", "right"]].set_visible(False)
     for ax in axes[:, 0]:
         ax.set_ylabel("HWMId sum over Germany and France", fontsize=AXIS_LABEL_SIZE)
-    for ax in axes[1, :2]:
+    for ax in axes[1, :]:
         ax.set_xlabel("Rank", fontsize=AXIS_LABEL_SIZE)
 
     fig.suptitle(
-        "Top-10 heatwave-year rankings separated by scenario family",
+        "Top-10 heatwave-year rankings by data family",
         fontsize=PANEL_TITLE_SIZE + 1.2,
         y=0.965,
     )
@@ -391,19 +403,17 @@ def plot_internal_top10_matrix(top10: pd.DataFrame, output: Path) -> Path:
     values = values.reindex(columns=ranks)
     years = years.reindex(columns=ranks)
 
-    finite_values = values.to_numpy(dtype=float)
-    vmin = max(1.0, float(np.nanmin(finite_values)))
-    vmax = float(np.nanmax(finite_values))
+    relative_values = values.div(values.max(axis=1), axis=0)
 
     fig_height = max(7.0, 0.42 * len(labels) + 2.4)
     fig, ax = plt.subplots(figsize=(10.8, fig_height))
     fig.subplots_adjust(left=0.31, right=0.90, top=0.88, bottom=0.10)
 
     image = ax.imshow(
-        values.to_numpy(dtype=float),
+        relative_values.to_numpy(dtype=float),
         aspect="auto",
         cmap="YlOrRd",
-        norm=LogNorm(vmin=vmin, vmax=vmax),
+        norm=Normalize(vmin=0.0, vmax=1.0),
         zorder=1,
     )
 
@@ -427,7 +437,8 @@ def plot_internal_top10_matrix(top10: pd.DataFrame, output: Path) -> Path:
             value = values.loc[label, rank]
             if pd.isna(year) or pd.isna(value):
                 continue
-            text_color = "white" if float(value) > np.sqrt(vmin * vmax) else TEXT_COLOR
+            relative_value = float(relative_values.loc[label, rank])
+            text_color = "white" if relative_value >= 0.72 else TEXT_COLOR
             ax.text(
                 col_idx,
                 row_idx - 0.13,
@@ -463,7 +474,7 @@ def plot_internal_top10_matrix(top10: pd.DataFrame, output: Path) -> Path:
     ax.text(
         0.5,
         1.02,
-        "Cell labels show selected years and aggregated HWMId values in brackets; color intensity uses a logarithmic scale.",
+        "Cell labels show years and native-grid HWMId sums; colors are normalized to the maximum within each row.",
         transform=ax.transAxes,
         ha="center",
         va="bottom",
@@ -474,7 +485,7 @@ def plot_internal_top10_matrix(top10: pd.DataFrame, output: Path) -> Path:
     ax.set_xlim(-0.9, len(ranks) - 0.5)
 
     cbar = fig.colorbar(ScalarMappable(norm=image.norm, cmap=image.cmap), ax=ax, fraction=0.032, pad=0.028)
-    cbar.set_label("HWMId sum over Germany and France, log scale", fontsize=8.2)
+    cbar.set_label("Relative HWMId within each data product", fontsize=8.2)
     cbar.ax.tick_params(labelsize=7.5)
 
     fig.savefig(output, dpi=220)

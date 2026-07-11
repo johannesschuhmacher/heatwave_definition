@@ -4,11 +4,11 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "heatwave-definition"
-version = "0.1.0"
+version = "1.1.0"
 description = "HWMId-based heatwave scenario definition for energy-system stress tests"
 readme = "README.md"
-requires-python = ">=3.11"
-license = { text = "MIT" }
+requires-python = ">=3.11,<3.14"
+license = "MIT"
 authors = [
   { name = "Max Kleinebrahm" },
   { name = "Johannes Schuhmacher" },
@@ -21,8 +21,18 @@ dependencies = [
   "cartopy>=0.22",
   "shapely>=2.0",
   "matplotlib>=3.8",
-  "openpyxl>=3.1"
+  "openpyxl>=3.1",
+  "cdsapi>=0.7"
 ]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+
+[project.urls]
+Homepage = "https://github.com/johannesschuhmacher/heatwave_definition"
+Repository = "https://github.com/johannesschuhmacher/heatwave_definition"
+Issues = "https://github.com/johannesschuhmacher/heatwave_definition/issues"
+Archive = "https://doi.org/10.5281/zenodo.20793872"
 
 [project.scripts]
 heatwave-definition = "heatwave_definition.cli:main"

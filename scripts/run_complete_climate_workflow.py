@@ -14,14 +14,32 @@ DEFAULT_EOBS = Path(os.environ.get("HEATWAVE_EOBS_FILE", "data/eobs/tx_ens_mean_
 DEFAULT_ERA5 = Path(os.environ.get("HEATWAVE_ERA5_ROOT", "data/era5/t2m_europe"))
 DEFAULT_CMIP5 = Path(os.environ.get("HEATWAVE_CMIP5_ROOT", "data/cordex_cmip5"))
 DEFAULT_CMIP6 = Path(os.environ.get("HEATWAVE_CMIP6_ROOT", "data/cordex_cmip6/netcdf"))
+DEFAULT_TYNDP = Path(os.environ.get("HEATWAVE_TYNDP_PEMMDB_ROOT", "data/tyndp2024/PEMMDB2"))
+DEFAULT_WEIGHTS = REPO / "outputs" / "sensitivity" / "country_weights_from_tyndp2024_pemmdb_nt2040.csv"
 
 
 def main(argv: list[str] | None = None) -> None:
     args = parse_args(argv)
     require(args.eobs_file, "E-OBS v33.0e raw file")
     require(args.era5_root, "ERA5 root directory")
-    require(args.cmip5_root, "CORDEX-CMIP5 root directory")
-    require(args.cmip6_root, "CORDEX-CMIP6 root directory")
+    if not args.skip_cmip5:
+        require(args.cmip5_root, "CORDEX-CMIP5 root directory")
+    else:
+        require(
+            REPO / "outputs" / "ensemble_rankings" / "copernicus2100_de_fr_top_years.csv",
+            "existing CMIP5 ensemble ranking for --skip-cmip5",
+        )
+    if not args.skip_cmip6:
+        require(args.cmip6_root, "CORDEX-CMIP6 root directory")
+    else:
+        require(
+            REPO / "outputs" / "cmip6_internal" / "cmip6_de_fr_top_years.csv",
+            "existing CMIP6 ranking for --skip-cmip6",
+        )
+    if args.reuse_derived_weights:
+        require(DEFAULT_WEIGHTS, "existing derived TYNDP country weights")
+    else:
+        require(args.tyndp_root, "TYNDP 2024 PEMMDB root directory")
 
     run(
         [
@@ -36,6 +54,19 @@ def main(argv: list[str] | None = None) -> None:
             str(args.top_years),
         ]
     )
+    eobs_metrics_config = write_eobs_metrics_config(args.eobs_file)
+    run([sys.executable, "-m", "heatwave_definition.cli", "run", str(eobs_metrics_config)])
+    if not args.reuse_derived_weights:
+        run(
+            [
+                sys.executable,
+                "scripts/derive_country_weights_from_tyndp2024_pemmdb.py",
+                "--pemmdb-root",
+                str(args.tyndp_root),
+                "--year",
+                "2040",
+            ]
+        )
     run(
         [
             sys.executable,
@@ -45,8 +76,16 @@ def main(argv: list[str] | None = None) -> None:
             "10",
         ]
     )
-    eobs_metrics_config = write_eobs_metrics_config(args.eobs_file)
-    run([sys.executable, "-m", "heatwave_definition.cli", "run", str(eobs_metrics_config)])
+    run(
+        [
+            sys.executable,
+            "scripts/sensitivity_population_weighting.py",
+            "--metrics-dir",
+            "outputs/raw_metrics",
+            "--top-years",
+            "10",
+        ]
+    )
 
     run(
         [
@@ -169,6 +208,7 @@ def main(argv: list[str] | None = None) -> None:
             "outputs/cmip6_internal/cmip6_de_fr_top_years.csv",
         ]
     )
+    run([sys.executable, "scripts/write_software_environment.py"])
     run([sys.executable, "scripts/snapshot_public_results.py"])
     run([sys.executable, "scripts/check_public_release.py"])
 
@@ -218,14 +258,20 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--era5-root", type=Path, default=DEFAULT_ERA5)
     parser.add_argument("--cmip5-root", type=Path, default=DEFAULT_CMIP5)
     parser.add_argument("--cmip6-root", type=Path, default=DEFAULT_CMIP6)
+    parser.add_argument("--tyndp-root", type=Path, default=DEFAULT_TYNDP)
     parser.add_argument("--era5-start-year", type=int, default=1950)
     parser.add_argument("--era5-end-year", type=int, default=2026)
     parser.add_argument("--historical-common-end-year", type=int, default=2025)
     parser.add_argument("--era5-current-max-date", default="2026-07-01")
     parser.add_argument("--top-years", type=int, default=20)
-    parser.add_argument("--skip-cmip5", action="store_true")
-    parser.add_argument("--skip-cmip6", action="store_true")
+    parser.add_argument("--skip-cmip5", action="store_true", help="Reuse existing CMIP5 outputs.")
+    parser.add_argument("--skip-cmip6", action="store_true", help="Reuse existing CMIP6 outputs.")
     parser.add_argument("--cmip6-resume", action="store_true")
+    parser.add_argument(
+        "--reuse-derived-weights",
+        action="store_true",
+        help="Reuse outputs/sensitivity/country_weights_from_tyndp2024_pemmdb_nt2040.csv.",
+    )
     return parser.parse_args(argv)
 
 
