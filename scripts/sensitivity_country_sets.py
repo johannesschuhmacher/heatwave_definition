@@ -15,9 +15,9 @@ REPO = Path(__file__).resolve().parents[1]
 DEFAULT_OUTPUT_DIR = REPO / "outputs" / "sensitivity"
 
 DATASETS = [
-    ("Historical / E-OBS", ["metrics_e_obs.npz", "metrics_e_obs.pkl"]),
-    ("RCP4.5 / IPSL-WRF", ["metrics_copernicus_rcp45.npz", "metrics_copernicus_45.pkl"]),
-    ("RCP8.5 / MPI-CLM", ["metrics_copernicus_rcp85.npz", "metrics_copernicus_85.pkl"]),
+    ("Historical / E-OBS", ["metrics_e_obs.npz"]),
+    ("RCP4.5 / IPSL-WRF", ["metrics_copernicus_rcp45.npz"]),
+    ("RCP8.5 / MPI-CLM", ["metrics_copernicus_rcp85.npz"]),
 ]
 
 WESTERN_CENTRAL_EUROPE = [
@@ -94,6 +94,7 @@ def main(argv: list[str] | None = None) -> None:
             ranking.insert(0, "dataset", dataset)
             ranking.insert(1, "country_set", set_name)
             ranking.insert(2, "countries", "+".join(countries))
+            ranking["hwmid_method"] = data.hwmid_method
             rows.append(ranking)
 
     result = pd.concat(rows, ignore_index=True)

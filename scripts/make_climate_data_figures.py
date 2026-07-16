@@ -120,19 +120,19 @@ def main(argv: list[str] | None = None) -> None:
     combined_top2.to_csv(args.output_dir / "climate_data_timing_top2_with_cmip6.csv", index=False)
 
     paths = [
-        plot_internal_top10_lines(
+        plot_top10_lines(
             combined_top10,
             args.output_dir / "climate_data_top10_rank_curve_with_cmip6.png",
         ),
-        plot_internal_top10_facets(
+        plot_top10_facets(
             combined_top10,
             args.output_dir / "climate_data_top10_rank_curve_faceted_with_cmip6.png",
         ),
-        plot_internal_top10_matrix(
+        plot_top10_matrix(
             combined_top10,
             args.output_dir / "climate_data_top10_rank_matrix_with_cmip6.png",
         ),
-        plot_internal_timing(
+        plot_timing(
             combined_top2,
             args.output_dir / "climate_data_heatwave_magnitude_timing_with_cmip6.png",
         ),
@@ -195,6 +195,7 @@ def combined_columns() -> list[str]:
         "rank",
         "year",
         "hwmid_sum",
+        "hwmid_method",
         "country_cells",
     ]
 
@@ -211,7 +212,7 @@ def sort_combined(frame: pd.DataFrame) -> pd.DataFrame:
     return sorted_frame.drop(columns=["_group_order", "_chain_order", "_scenario_order"]).reset_index(drop=True)
 
 
-def plot_internal_top10_lines(top10: pd.DataFrame, output: Path) -> Path:
+def plot_top10_lines(top10: pd.DataFrame, output: Path) -> Path:
     labels = ordered_labels(top10)
     fig, ax = plt.subplots(figsize=(13.2, 8.3))
     fig.subplots_adjust(left=0.08, right=0.98, top=0.84, bottom=0.34)
@@ -292,7 +293,7 @@ def plot_internal_top10_lines(top10: pd.DataFrame, output: Path) -> Path:
     return output
 
 
-def plot_internal_top10_facets(top10: pd.DataFrame, output: Path) -> Path:
+def plot_top10_facets(top10: pd.DataFrame, output: Path) -> Path:
     top10 = top10[top10["rank"].between(1, 10)].copy()
     panel_specs = [
         (
@@ -395,7 +396,7 @@ def draw_rank_curves(ax: plt.Axes, subset: pd.DataFrame, show_legend: bool) -> N
         ax.legend(frameon=False, fontsize=6.6, loc="upper right")
 
 
-def plot_internal_top10_matrix(top10: pd.DataFrame, output: Path) -> Path:
+def plot_top10_matrix(top10: pd.DataFrame, output: Path) -> Path:
     labels = ordered_labels(top10)
     values = top10.pivot(index="plot_label", columns="rank", values="hwmid_sum").reindex(labels)
     years = top10.pivot(index="plot_label", columns="rank", values="year").reindex(labels)
@@ -493,7 +494,7 @@ def plot_internal_top10_matrix(top10: pd.DataFrame, output: Path) -> Path:
     return output
 
 
-def plot_internal_timing(top2: pd.DataFrame, output: Path) -> Path:
+def plot_timing(top2: pd.DataFrame, output: Path) -> Path:
     labels = ordered_labels(top2)
     y_positions = {label: idx for idx, label in enumerate(labels)}
     fig_height = max(7.0, 0.46 * len(labels) + 2.4)
@@ -726,7 +727,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument(
         "--cmip6-top-years",
         type=Path,
-        default=REPO / "outputs" / "cmip6_internal" / "cmip6_de_fr_top_years.csv",
+        default=REPO / "outputs" / "climate_data" / "cmip6_de_fr_top_years.csv",
     )
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
     return parser.parse_args(argv)

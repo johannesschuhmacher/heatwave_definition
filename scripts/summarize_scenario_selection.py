@@ -1,4 +1,4 @@
-"""Create the compact scenario-selection table used by the working paper."""
+"""Create the compact scenario-selection table used by the manuscript."""
 
 from __future__ import annotations
 
@@ -34,6 +34,7 @@ def main(argv: list[str] | None = None) -> None:
                     "rank": int(row["rank"]),
                     "year": int(row["year"]),
                     "hwmid_sum_de_fr": float(row["hwmid_sum"]),
+                    "hwmid_method": str(row["hwmid_method"]),
                     "country_cells": int(row["country_cells"]),
                     "source": path.name,
                 }

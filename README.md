@@ -14,10 +14,10 @@ The versioned Germany-France reference results are:
 
 | Dataset | Rank 1 | HWMId grid-cell sum | Rank 2 | HWMId grid-cell sum |
 | --- | ---: | ---: | ---: | ---: |
-| E-OBS v33.0e | 2003 | 25,280.48 | 2019 | 10,910.80 |
-| ERA5 | 2003 | 24,902.81 | 2026* | 24,439.57 |
-| CORDEX-CMIP5 RCP4.5 / IPSL-WRF | 2043 | 30,300.05 | 2070 | 27,046.41 |
-| CORDEX-CMIP5 RCP8.5 / MPI-CLM | 2092 | 56,896.79 | 2082 | 50,706.01 |
+| E-OBS v33.0e | 2003 | 25,287.00 | 2019 | 10,910.80 |
+| ERA5 | 2003 | 24,925.65 | 2026* | 24,441.56 |
+| CORDEX-CMIP5 RCP4.5 / IPSL-WRF | 2043 | 30,298.39 | 2070 | 27,049.08 |
+| CORDEX-CMIP5 RCP8.5 / MPI-CLM | 2092 | 57,152.09 | 2082 | 50,744.86 |
 
 `2026*` is an incomplete ERA5 current-year result based on data through
 1 July 2026. It is an event comparison, not a completed annual ranking.
@@ -54,6 +54,7 @@ Install and run the checks:
 python -m pip install --upgrade pip
 python -m pip install -e ".[dev]"
 python scripts/run_demo.py
+python scripts/check_public_release.py
 python -m pytest -q
 ```
 
@@ -77,6 +78,10 @@ python -m heatwave_definition.cli run configs/e_obs.example.toml
 python -m heatwave_definition.cli run configs/era5.example.toml
 ```
 
+The installed `heatwave-definition run <config>` command is equivalent. On
+the first country-mask calculation, Cartopy may download the Natural Earth
+`admin_0_countries` boundary file. Subsequent runs use Cartopy's local cache.
+
 The dedicated ranking scripts expose additional options:
 
 ```text
@@ -96,8 +101,7 @@ python scripts/run_complete_climate_workflow.py --eobs-file <eobs-v33-tx.nc> --e
 
 The same paths can be supplied through `HEATWAVE_EOBS_FILE`,
 `HEATWAVE_ERA5_ROOT`, `HEATWAVE_CMIP5_ROOT`, `HEATWAVE_CMIP6_ROOT` and
-`HEATWAVE_TYNDP_PEMMDB_ROOT`. The compatibility entry point
-`python scripts/run_publication_reproduction.py` accepts the same arguments.
+`HEATWAVE_TYNDP_PEMMDB_ROOT`.
 
 `--skip-cmip5`, `--skip-cmip6` and `--reuse-derived-weights` are resume
 options. They require the corresponding existing files under `outputs/`; they
@@ -132,27 +136,31 @@ requests, file naming conventions and licences are documented in
 - TYNDP 2024 PEMMDB 2.5 National Trends capacities for 2040;
 - WorldPop 2020 1 km UN-adjusted population counts.
 
-The precise local input inventory is recorded under `results/provenance/` and
-`results/cmip6/`. Raw data, local paths, caches and large metric arrays remain
-outside Git.
+Sanitized input inventories are recorded under `results/provenance/` and
+`results/cmip6/`. They retain provider file names, sizes and available
+integrity information, but no absolute local paths. Raw data, caches and large
+metric arrays remain outside Git.
 
 ## Method
 
 For every grid cell, the implementation:
 
-1. calculates a calendar-day 90th-percentile threshold from a 31-day moving
+1. removes 29 February and uses the standard 365-day HWMId calendar;
+2. calculates a calendar-day 90th-percentile threshold from a 31-day moving
    window over 1981-2010;
-2. identifies events with at least three consecutive threshold-exceedance days;
-3. normalizes daily magnitude using the interquartile range of annual maximum
+3. identifies events with at least three consecutive threshold-exceedance days;
+4. normalizes daily magnitude using the interquartile range of annual maximum
    temperatures in the reference period;
-4. sums daily magnitudes within each event and retains the strongest event per
+5. sums daily magnitudes within each event and retains the strongest event per
    grid cell and year;
-5. aggregates the annual grid-cell field over the selected spatial domain and
+6. aggregates the annual grid-cell field over the selected spatial domain and
    ranks years by the resulting score.
 
 The reference ranking is an unweighted sum over Germany and France. Alternative
 country domains, area-weighted means, population weighting, TYNDP capacity
 weighting and alternative ranking criteria are included as sensitivities.
+Country masks use Natural Earth administrative boundaries and assign grid cells
+by their center coordinates.
 Manuscript colors and line styles are defined centrally in
 `heatwave_definition/plot_style.py`.
 
@@ -162,8 +170,11 @@ Manuscript colors and line styles are defined centrally in
   number of included cells; use it for within-product year ranking.
 - ERA5 2026 is frozen at the stated cutoff date and remains preliminary until
   the year and source record are complete.
-- CORDEX-CMIP6 scenario coverage differs between chains. The available year
-  ranges are recorded in `results/cmip6/cmip6_de_fr_run_inventory.csv`.
+- The ERA5 event-window comparison sums daily contributions from all qualifying
+  local events that overlap a selected window. This window score is not the
+  annual strongest-event-per-cell score used to rank complete years.
+- The CMIP6 run inventory records all discovered groups and explicitly marks
+  whether each chain contains the complete HWMId reference period.
 - CMIP5 and CMIP6 source variables are sub-daily near-surface air temperature;
   this workflow derives daily maxima before calculating HWMId.
 - Country-level TYNDP capacities represent installed capacity, not plant-level
@@ -186,8 +197,9 @@ results/              Versioned tables, figures and provenance
 ## Citation and licence
 
 Use the citation metadata in [CITATION.cff](CITATION.cff) and cite the exact
-Zenodo release used in an analysis. The badge above resolves to the concept DOI
-and therefore always points to the latest archived version.
+Zenodo release used in an analysis. The badge above resolves to the concept
+DOI and therefore always points to the latest archived version; Zenodo lists
+the version-specific DOI on each release page.
 
 The source code is released under the [MIT License](LICENSE). Input datasets
 remain subject to their provider licences and acknowledgement requirements.

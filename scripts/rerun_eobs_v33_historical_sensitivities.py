@@ -15,7 +15,16 @@ import pandas as pd
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO))
 
-from heatwave_definition.hwmid import _build_threshold_masks, _find_runs
+from heatwave_definition.hwmid import (
+    HWMID_METHOD_ID,
+    _build_threshold_masks,
+    _find_runs,
+    _noleap_day_of_year,
+    _noleap_mask,
+    _validate_daily_time_axis,
+    _validate_hwmid_parameters,
+    _validate_reference_period,
+)
 from heatwave_definition.raw_eobs import filter_years_by_data_coverage, load_eobs_tx_country_cells
 from heatwave_definition.regions import classify_countries_matrix
 from scripts.sensitivity_country_sets import COUNTRY_SETS, WESTERN_CENTRAL_EUROPE
@@ -48,6 +57,7 @@ def main() -> None:
     np.savez_compressed(
         args.output_dir / "eobs_v33_wce_cell_metrics.npz",
         years=metrics.years,
+        hwmid_method=np.asarray(HWMID_METHOD_ID),
         hwmid=metrics.hwmid,
         duration=metrics.duration,
         annual_tmax=metrics.annual_tmax,
@@ -137,17 +147,25 @@ def calculate_cell_metrics(
     threshold_quantile: float,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     dates = pd.DatetimeIndex(dates)
+    ref_start, ref_end = [int(value) for value in ref_period]
+    _validate_hwmid_parameters(ref_start, ref_end, min_heatwave_days, threshold_quantile)
+    _validate_daily_time_axis(dates)
+    noleap_mask = _noleap_mask(dates)
+    dates = dates[noleap_mask]
+    daily_tmax = np.asarray(daily_tmax)[noleap_mask, :]
+    _validate_reference_period(dates, ref_start, ref_end)
+
     years = np.array(sorted(dates.year.unique()), dtype=int)
     year_to_pos = {year: idx for idx, year in enumerate(years)}
     year_masks = {year: dates.year == year for year in years}
-    ref_years = list(range(int(ref_period[0]), int(ref_period[1]) + 1))
+    ref_years = list(range(ref_start, ref_end + 1))
     ref_masks = {
         year: (dates >= pd.Timestamp(year, 1, 1)) & (dates <= pd.Timestamp(year, 12, 31))
         for year in ref_years
     }
 
     cell_count = daily_tmax.shape[1]
-    thresholds = np.full((366, cell_count), np.nan, dtype=np.float32)
+    thresholds = np.full((365, cell_count), np.nan, dtype=np.float32)
     threshold_masks = _build_threshold_masks(dates, ref_years)
     with warnings.catch_warnings():
         warnings.simplefilter("ignore", category=RuntimeWarning)
@@ -156,22 +174,23 @@ def calculate_cell_metrics(
                 thresholds[day, :] = np.nanquantile(daily_tmax[idx, :], threshold_quantile, axis=0)
         ref_annual_max = np.vstack([np.nanmax(daily_tmax[ref_masks[year], :], axis=0) for year in ref_years])
         annual_tmax = np.vstack([np.nanmax(daily_tmax[year_masks[year], :], axis=0) for year in years]).T
-
-    temp_anomaly = annual_tmax - np.nanmean(ref_annual_max, axis=0)[:, None]
-    denominator = np.nanquantile(ref_annual_max, 0.75, axis=0) - np.nanquantile(ref_annual_max, 0.25, axis=0)
-    t25 = np.nanquantile(ref_annual_max, 0.25, axis=0)
+        temp_anomaly = annual_tmax - np.nanmean(ref_annual_max, axis=0)[:, None]
+        denominator = np.nanquantile(ref_annual_max, 0.75, axis=0) - np.nanquantile(
+            ref_annual_max, 0.25, axis=0
+        )
+        t25 = np.nanquantile(ref_annual_max, 0.25, axis=0)
     valid_cells = np.isfinite(denominator) & (denominator > 0)
 
     hwmid = np.zeros((cell_count, len(years)), dtype=np.float32)
     duration = np.zeros((cell_count, len(years)), dtype=np.float32)
-    day_of_year = dates.dayofyear.to_numpy()
+    day_of_year = _noleap_day_of_year(dates)
     for cell in range(cell_count):
         if not valid_cells[cell]:
             continue
         series = daily_tmax[:, cell].astype(float, copy=False)
         daily_thresholds = thresholds[day_of_year - 1, cell]
         above_threshold = np.isfinite(series) & (series > daily_thresholds)
-        for start_idx, end_idx in _find_runs(above_threshold, min_heatwave_days):
+        for start_idx, end_idx in _find_runs(above_threshold, min_heatwave_days, dates=dates):
             event_values = series[start_idx : end_idx + 1]
             daily_magnitude = np.maximum((event_values - t25[cell]) / denominator[cell], 0.0)
             magnitude = float(np.nansum(daily_magnitude))
@@ -290,6 +309,8 @@ def ranked_rows(scores: np.ndarray, years: np.ndarray, top_years: int, score_col
 
 
 def write_replacing_historical(new_rows: pd.DataFrame, filename: str, directories: list[Path]) -> None:
+    new_rows = new_rows.copy()
+    new_rows["hwmid_method"] = HWMID_METHOD_ID
     for directory in directories:
         path = directory / filename
         path.parent.mkdir(parents=True, exist_ok=True)

@@ -10,7 +10,15 @@ import netCDF4 as nc
 import numpy as np
 import pandas as pd
 
-from heatwave_definition.hwmid import _build_threshold_masks, _find_runs
+from heatwave_definition.hwmid import (
+    _build_threshold_masks,
+    _find_runs,
+    _noleap_day_of_year,
+    _noleap_mask,
+    _validate_daily_time_axis,
+    _validate_hwmid_parameters,
+    _validate_reference_period,
+)
 from heatwave_definition.io import _decode_time, _first_existing_variable
 from heatwave_definition.raw_copernicus import _load_daily_tmax_for_mask, rank_daily_cells_by_hwmid
 from heatwave_definition.regions import classify_countries_matrix
@@ -172,9 +180,18 @@ def analyze_event(
     min_heatwave_days: int,
     threshold_quantile: float,
 ) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
-    ref_years = list(range(ref_period[0], ref_period[1] + 1))
+    dates = pd.DatetimeIndex(dates)
+    ref_start, ref_end = [int(value) for value in ref_period]
+    _validate_hwmid_parameters(ref_start, ref_end, min_heatwave_days, threshold_quantile)
+    _validate_daily_time_axis(dates)
+    noleap_mask = _noleap_mask(dates)
+    dates = dates[noleap_mask]
+    daily_tmax = np.asarray(daily_tmax)[noleap_mask, :]
+    _validate_reference_period(dates, ref_start, ref_end)
+
+    ref_years = list(range(ref_start, ref_end + 1))
     threshold_masks = _build_threshold_masks(dates, ref_years)
-    thresholds = np.full((366, daily_tmax.shape[1]), np.nan, dtype=np.float32)
+    thresholds = np.full((365, daily_tmax.shape[1]), np.nan, dtype=np.float32)
     for day, idx in enumerate(threshold_masks):
         if len(idx):
             thresholds[day, :] = np.nanquantile(daily_tmax[idx, :], threshold_quantile, axis=0)
@@ -192,7 +209,7 @@ def analyze_event(
     denominator = np.nanquantile(ref_annual_max, 0.75, axis=0) - t25
     valid = np.isfinite(denominator) & (denominator > 0)
 
-    day_of_year = dates.dayofyear.to_numpy()
+    day_of_year = _noleap_day_of_year(dates)
     event_mask = (dates >= event_start) & (dates <= event_end)
     event_positions = np.where(event_mask)[0]
     if not len(event_positions):
@@ -233,7 +250,7 @@ def analyze_event(
     for cell in range(daily_tmax.shape[1]):
         if not valid[cell]:
             continue
-        runs = _find_runs(above[:, cell], min_heatwave_days)
+        runs = _find_runs(above[:, cell], min_heatwave_days, dates=dates)
         for start_idx, end_idx in runs:
             overlaps_event = start_idx <= event_positions[-1] and end_idx >= event_positions[0]
             if not overlaps_event:

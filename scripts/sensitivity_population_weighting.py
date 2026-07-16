@@ -80,6 +80,7 @@ def main(argv: list[str] | None = None) -> None:
         baseline.insert(1, "criterion", "unweighted_hwmid_sum")
         baseline.insert(2, "criterion_label", "Unweighted HWMId sum")
         baseline["score_type"] = "hwmid_sum"
+        baseline["hwmid_method"] = data.hwmid_method
         ranking_rows.append(baseline)
 
         population_weights, diagnostics = build_population_weights(
@@ -104,6 +105,7 @@ def main(argv: list[str] | None = None) -> None:
         population.insert(1, "criterion", "population_weighted_hwmid_mean")
         population.insert(2, "criterion_label", "Population-weighted HWMId mean")
         population["score_type"] = "population_weighted_hwmid_mean"
+        population["hwmid_method"] = data.hwmid_method
         ranking_rows.append(population)
 
     rankings = pd.concat(ranking_rows, ignore_index=True)

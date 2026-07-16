@@ -33,7 +33,7 @@ def main(argv: list[str] | None = None) -> None:
         require(args.cmip6_root, "CORDEX-CMIP6 root directory")
     else:
         require(
-            REPO / "outputs" / "cmip6_internal" / "cmip6_de_fr_top_years.csv",
+            REPO / "outputs" / "climate_data" / "cmip6_de_fr_top_years.csv",
             "existing CMIP6 ranking for --skip-cmip6",
         )
     if args.reuse_derived_weights:
@@ -179,7 +179,7 @@ def main(argv: list[str] | None = None) -> None:
         ]
     )
     run([sys.executable, "scripts/make_additional_paper_figures.py"])
-    run([sys.executable, "scripts/make_cmip6_internal_figures.py", "--output-dir", "outputs/figures"])
+    run([sys.executable, "scripts/make_climate_data_figures.py", "--output-dir", "outputs/figures"])
     run(
         [
             sys.executable,
@@ -192,6 +192,8 @@ def main(argv: list[str] | None = None) -> None:
             str(args.era5_start_year),
             "--end-year",
             str(args.era5_end_year),
+            "--hash-eobs-raw",
+            "--hash-era5-raw",
         ]
     )
     run(
@@ -202,10 +204,7 @@ def main(argv: list[str] | None = None) -> None:
             str(args.cmip5_root),
             "--eobs-file",
             str(args.eobs_file),
-            "--generated-output",
-            "outputs/ensemble_rankings/copernicus2100_de_fr_top_years.csv",
-            "--generated-output",
-            "outputs/cmip6_internal/cmip6_de_fr_top_years.csv",
+            "--hash-files",
         ]
     )
     run([sys.executable, "scripts/write_software_environment.py"])

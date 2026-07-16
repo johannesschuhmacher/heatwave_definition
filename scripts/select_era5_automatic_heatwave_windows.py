@@ -10,7 +10,15 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-from heatwave_definition.hwmid import _build_threshold_masks, _find_runs
+from heatwave_definition.hwmid import (
+    _build_threshold_masks,
+    _find_runs,
+    _noleap_day_of_year,
+    _noleap_mask,
+    _validate_daily_time_axis,
+    _validate_hwmid_parameters,
+    _validate_reference_period,
+)
 from heatwave_definition.plot_style import apply_manuscript_style, LEGEND_SIZE, TITLE_SIZE
 
 
@@ -79,9 +87,18 @@ def build_daily_signal(
     min_heatwave_days: int,
     max_date: pd.Timestamp | None,
 ) -> pd.DataFrame:
-    ref_years = list(range(ref_period[0], ref_period[1] + 1))
+    dates = pd.DatetimeIndex(dates)
+    ref_start, ref_end = [int(value) for value in ref_period]
+    _validate_hwmid_parameters(ref_start, ref_end, min_heatwave_days, threshold_quantile)
+    _validate_daily_time_axis(dates)
+    noleap_mask = _noleap_mask(dates)
+    dates = dates[noleap_mask]
+    daily_tmax = np.asarray(daily_tmax)[noleap_mask, :]
+    _validate_reference_period(dates, ref_start, ref_end)
+
+    ref_years = list(range(ref_start, ref_end + 1))
     threshold_masks = _build_threshold_masks(dates, ref_years)
-    thresholds = np.full((366, daily_tmax.shape[1]), np.nan, dtype=np.float32)
+    thresholds = np.full((365, daily_tmax.shape[1]), np.nan, dtype=np.float32)
     for day, idx in enumerate(threshold_masks):
         if len(idx):
             thresholds[day, :] = np.nanquantile(daily_tmax[idx, :], threshold_quantile, axis=0)
@@ -99,7 +116,7 @@ def build_daily_signal(
     denominator = np.nanquantile(ref_annual_max, 0.75, axis=0) - t25
     valid = np.isfinite(denominator) & (denominator > 0)
 
-    day_of_year = dates.dayofyear.to_numpy()
+    day_of_year = _noleap_day_of_year(dates)
     daily_thresholds = thresholds[day_of_year - 1, :]
     above = np.isfinite(daily_tmax) & (daily_tmax > daily_thresholds)
     daily_magnitude = np.where(
@@ -113,7 +130,7 @@ def build_daily_signal(
     for cell in range(daily_tmax.shape[1]):
         if not valid[cell]:
             continue
-        for start_idx, end_idx in _find_runs(above[:, cell], min_heatwave_days):
+        for start_idx, end_idx in _find_runs(above[:, cell], min_heatwave_days, dates=dates):
             qualifying_daily[start_idx : end_idx + 1] += daily_magnitude[start_idx : end_idx + 1, cell]
 
     year_mask = dates.year == year
@@ -144,7 +161,8 @@ def select_windows(daily: pd.DataFrame, fixed_window_days: int, coverage_thresho
 
     coverage_flags = daily["share_above_threshold"].to_numpy() >= coverage_threshold
     best = None
-    for start_pos, end_pos in _find_runs(coverage_flags, 1):
+    daily_dates = pd.DatetimeIndex(daily["date"])
+    for start_pos, end_pos in _find_runs(coverage_flags, 1, dates=daily_dates):
         candidate = daily.iloc[start_pos : end_pos + 1]
         score = float(candidate["daily_hwmid"].sum())
         if best is None or score > best[0]:
@@ -154,7 +172,7 @@ def select_windows(daily: pd.DataFrame, fixed_window_days: int, coverage_thresho
 
     positive_flags = daily["daily_hwmid"].to_numpy() > 0
     best = None
-    for start_pos, end_pos in _find_runs(positive_flags, 1):
+    for start_pos, end_pos in _find_runs(positive_flags, 1, dates=daily_dates):
         candidate = daily.iloc[start_pos : end_pos + 1]
         if (candidate["share_above_threshold"] >= coverage_threshold).any():
             score = float(candidate["daily_hwmid"].sum())
@@ -172,7 +190,7 @@ def window_row(label: str, frame: pd.DataFrame) -> dict[str, float | int | str]:
         "start": frame["date"].iloc[0].date().isoformat(),
         "end": frame["date"].iloc[-1].date().isoformat(),
         "days": int(len(frame)),
-        "hwmid_sum": float(frame["daily_hwmid"].sum()),
+        "regional_hwmid_contribution_sum": float(frame["daily_hwmid"].sum()),
         "mean_tmax_c": float(frame["mean_tmax_c"].mean()),
         "max_tmax_c": float(frame["max_tmax_c"].max()),
         "mean_share_above_threshold": float(frame["share_above_threshold"].mean()),
@@ -204,7 +222,7 @@ def plot_windows(daily: pd.DataFrame, windows: pd.DataFrame, path: Path) -> None
         for ax in axes:
             ax.axvspan(start, end, color=color, alpha=0.12)
 
-    ax0.set_ylabel("Daily HWMId")
+    ax0.set_ylabel("Daily regional HWMId contribution")
     ax1.set_ylabel("Temperature (°C)")
     ax2.set_ylabel("Cells above\nthreshold (%)")
     ax2.set_ylim(0, 105)

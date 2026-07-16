@@ -1,7 +1,7 @@
 [run]
 name = "e_obs"
 data_kind = "e_obs"
-input_file = "data/tx_ens_mean_0.25deg_reg_v33.0e.nc"
+input_file = "data/eobs/tx_ens_mean_0.25deg_reg_v33.0e.nc"
 output_dir = "outputs/raw_metrics"
 countries = ["Germany", "France"]
 reference_period = [1981, 2010]

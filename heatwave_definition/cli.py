@@ -10,8 +10,7 @@ from pathlib import Path
 
 import numpy as np
 
-from .hwmid import calc_hwmid
-from .legacy import load_legacy_metrics_pickle
+from .hwmid import HWMID_METHOD_ID, calc_hwmid
 from .ranking import rank_years_by_hwmid, write_ranked_years
 
 
@@ -76,9 +75,6 @@ def run_from_config(config_path: Path) -> None:
             temperature_unit=data_config.get("temperature_unit", "K"),
             pattern=data_config.get("pattern", "t2m_era5_*.nc"),
         )
-    elif data_kind == "metrics_pickle":
-        run_existing_metrics(input_file, output_dir, run_name, run)
-        return
     else:
         raise ValueError(f"Unsupported data_kind: {data_kind!r}")
 
@@ -102,6 +98,7 @@ def run_from_config(config_path: Path) -> None:
         annual_tmax=metrics[4],
         heatwave_start_day=metrics[5],
         heatwave_start_index=metrics[6],
+        hwmid_method=np.asarray(HWMID_METHOD_ID),
         longitude=np.asarray(data.longitude),
         latitude=np.asarray(data.latitude),
         dates=data.dates.astype("datetime64[ns]").astype("int64"),
@@ -115,36 +112,11 @@ def run_from_config(config_path: Path) -> None:
         no_years=int(run.get("top_years", 10)),
         countries=run.get("countries", ["Germany", "France"]),
     )
+    ranking["hwmid_method"] = HWMID_METHOD_ID
     ranking_path = output_dir / f"ranked_years_{run_name}.csv"
     write_ranked_years(ranking_path, ranking)
 
     print(f"Wrote metrics: {metric_path}")
-    print(f"Wrote ranking: {ranking_path}")
-    print(ranking.to_string(index=False))
-
-
-def run_existing_metrics(input_file: Path, output_dir: Path, run_name: str, run: dict) -> None:
-    """Rank a legacy metrics pickle with the configured country mask.
-
-    This mode is intended for reproducible re-ranking of already computed HWMId
-    arrays. It does not recompute HWMId from raw NetCDF input.
-    """
-
-    data = load_legacy_metrics_pickle(input_file)
-
-    ranking = rank_years_by_hwmid(
-        data.latitude,
-        data.longitude,
-        data.hwmid,
-        data.dates,
-        no_years=int(run.get("top_years", 10)),
-        countries=run.get("countries", ["Germany", "France"]),
-    )
-    ranking["run_name"] = run_name
-    ranking["source_metrics"] = str(input_file)
-
-    ranking_path = output_dir / f"ranked_years_{run_name}.csv"
-    write_ranked_years(ranking_path, ranking)
     print(f"Wrote ranking: {ranking_path}")
     print(ranking.to_string(index=False))
 

@@ -12,8 +12,8 @@ contain absolute paths and must remain outside Git.
 
 Use the final reproduction workflow to regenerate the provenance outputs:
 
-```bash
-python scripts\run_complete_climate_workflow.py
+```text
+python scripts/run_complete_climate_workflow.py --eobs-file <eobs-file> --era5-root <era5-root> --cmip5-root <cmip5-root> --cmip6-root <cmip6-root> --tyndp-root <PEMMDB2-root>
 ```
 
 Typical manifest columns are:
@@ -29,8 +29,13 @@ Typical manifest columns are:
 - `size_bytes`, `sha256`: reproducibility checks.
 - `note`: existence or run note.
 
-The older `scripts/write_data_manifest.py` helper is retained for ad hoc local
-data inventories, but it is not the final publication manifest.
+`scripts/write_data_manifest.py` records the E-OBS and CORDEX-CMIP5 provider
+inputs. The local version may contain absolute paths; the public version keeps
+only file names, sizes and content SHA-256 hashes. The historical manifest also
+records a content hash over the annual ERA5 files. CORDEX-CMIP6 has a separate
+grouped and file-level inventory under `results/cmip6/`; because the processed
+archive is about 2.90 TB, its published signatures cover relative file names
+and byte sizes rather than file contents.
 
 The current manuscript snapshot uses E-OBS v33.0e daily maximum temperature
 for the historical ranking period 1950-2025. ERA5 hourly 2 m temperature is

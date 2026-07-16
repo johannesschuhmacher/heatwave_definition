@@ -21,16 +21,17 @@ import numpy as np
 import pandas as pd
 
 from heatwave_definition.io import _decode_time
+from heatwave_definition.hwmid import HWMID_METHOD_ID
 from heatwave_definition.raw_copernicus import _load_daily_tmax_for_mask, rank_daily_cells_by_hwmid
 from heatwave_definition.regions import classify_countries_matrix
 
 
 REPO = Path(__file__).resolve().parents[1]
 DEFAULT_ROOT = Path(os.environ.get("HEATWAVE_CMIP6_ROOT", "data/cordex_cmip6/netcdf"))
-DEFAULT_OUTPUT = REPO / "outputs" / "cmip6_internal" / "cmip6_de_fr_top_years.csv"
-DEFAULT_INVENTORY = REPO / "outputs" / "cmip6_internal" / "cmip6_de_fr_run_inventory.csv"
-DEFAULT_FILE_INVENTORY = REPO / "outputs" / "cmip6_internal" / "cmip6_de_fr_file_inventory.csv"
-DEFAULT_CACHE_DIR = REPO / "outputs" / "cmip6_internal" / "daily_cache"
+DEFAULT_OUTPUT = REPO / "outputs" / "climate_data" / "cmip6_de_fr_top_years.csv"
+DEFAULT_INVENTORY = REPO / "outputs" / "climate_data" / "cmip6_de_fr_run_inventory.csv"
+DEFAULT_FILE_INVENTORY = REPO / "outputs" / "climate_data" / "cmip6_de_fr_file_inventory.csv"
+DEFAULT_CACHE_DIR = REPO / "outputs" / "climate_data" / "daily_cache"
 
 
 @dataclass(frozen=True)
@@ -73,17 +74,29 @@ def main(argv: list[str] | None = None) -> None:
 
     groups = discover_cmip6_tas_groups(args.root, variable=args.variable, frequency=args.frequency)
     groups = filter_groups(groups, scenarios=args.scenarios, gcms=args.gcms)
-    inventory = inventory_table(groups)
+    historical_by_chain = {group.chain_key: group for group in groups if group.scenario == "historical"}
+    eligible_chain_keys = {
+        key
+        for key, historical in historical_by_chain.items()
+        if not missing_reference_years(historical, tuple(args.reference_period))
+    }
+    inventory = inventory_table(groups, historical_by_chain, tuple(args.reference_period))
     inventory.to_csv(args.inventory, index=False)
     print(args.inventory)
     file_inventory_table(groups, args.root).to_csv(args.file_inventory, index=False)
     print(args.file_inventory)
 
-    historical_by_chain = {group.chain_key: group for group in groups if group.scenario == "historical"}
     future_groups = [group for group in groups if group.scenario != "historical"]
 
     run_order = []
-    for historical in historical_by_chain.values():
+    for key, historical in historical_by_chain.items():
+        if key not in eligible_chain_keys:
+            missing = missing_reference_years(historical, tuple(args.reference_period))
+            print(
+                f"Skipping {historical.gcm} {historical.variant}: historical reference "
+                f"is missing years {format_year_ranges(missing)}"
+            )
+            continue
         run_order.append(historical)
         run_order.extend(group for group in future_groups if group.chain_key == historical.chain_key)
     if args.max_runs is not None:
@@ -128,7 +141,7 @@ def main(argv: list[str] | None = None) -> None:
             historical_files = historical.files
             if group.scenario != "historical":
                 ref_start, ref_end = tuple(args.reference_period)
-                historical_files = files_for_year_range(historical.files, ref_start, ref_end)
+                historical_files = files_for_year_range(historical.files, ref_start - 1, ref_end + 1)
             print(f"  loading historical reference: {historical.label} ({len(historical_files)} files)")
             hist_subset = load_daily_subset(
                 historical_files,
@@ -188,7 +201,9 @@ def main(argv: list[str] | None = None) -> None:
         reference_files = reference_files_for_group(group, historical, tuple(args.reference_period))
         ranking["scenario_file_count"] = len(group.files)
         ranking["reference_file_count"] = len(reference_files)
-        ranking["source_inventory_sha256"] = source_inventory_signature(group.files + reference_files)
+        ranking["source_inventory_name_size_sha256"] = source_inventory_signature(
+            group.files + reference_files
+        )
         ranking["available_year_start"] = int(dates.year.min())
         ranking["available_year_end"] = int(dates.year.max())
         ranking["rank_year_start"] = rank_start
@@ -230,7 +245,11 @@ def classify_resume_groups(
         if "scenario_file_count" in rows:
             recorded_count = int(pd.to_numeric(rows["scenario_file_count"], errors="coerce").max())
             file_count_matches = recorded_count == len(group.files)
-        if recorded_end == expected_end and file_count_matches:
+        method_matches = (
+            "hwmid_method" in rows
+            and set(rows["hwmid_method"].dropna().astype(str)) == {HWMID_METHOD_ID}
+        )
+        if recorded_end == expected_end and file_count_matches and method_matches:
             completed.add(group.label)
         else:
             stale.add(group.label)
@@ -251,7 +270,9 @@ def enrich_resumed_rows(
         reference_files = reference_files_for_group(group, historical, reference_period)
         existing.loc[mask, "scenario_file_count"] = len(group.files)
         existing.loc[mask, "reference_file_count"] = len(reference_files)
-        existing.loc[mask, "source_inventory_sha256"] = source_inventory_signature(group.files + reference_files)
+        existing.loc[mask, "source_inventory_name_size_sha256"] = source_inventory_signature(
+            group.files + reference_files
+        )
     return existing
 
 
@@ -262,10 +283,13 @@ def reference_files_for_group(
 ) -> tuple[Path, ...]:
     if group.scenario == "historical":
         return ()
-    return files_for_year_range(historical.files, *reference_period)
+    ref_start, ref_end = reference_period
+    return files_for_year_range(historical.files, ref_start - 1, ref_end + 1)
 
 
 def source_inventory_signature(files: tuple[Path, ...]) -> str:
+    """Hash sorted source file names and byte sizes, not file contents."""
+
     digest = hashlib.sha256()
     for path in sorted(files):
         stat = path.stat()
@@ -426,10 +450,20 @@ def daily_cache_path(
     return cache_dir / f"{path.stem}_{country_key}_{variable}_{temperature_unit}_{digest}.npz"
 
 
-def inventory_table(groups: list[Cmip6Group]) -> pd.DataFrame:
+def inventory_table(
+    groups: list[Cmip6Group],
+    historical_by_chain: dict[tuple[str, str, str, str, str, str], Cmip6Group],
+    reference_period: tuple[int, int],
+) -> pd.DataFrame:
     rows = []
     for group in groups:
         years = [year_from_filename(path) for path in group.files]
+        historical = historical_by_chain.get(group.chain_key)
+        missing = (
+            missing_reference_years(historical, reference_period)
+            if historical is not None
+            else list(range(reference_period[0] - 1, reference_period[1] + 2))
+        )
         rows.append(
             {
                 "dataset": group.label,
@@ -445,15 +479,47 @@ def inventory_table(groups: list[Cmip6Group]) -> pd.DataFrame:
                 "year_start": min(years),
                 "year_end": max(years),
                 "size_gb": sum(path.stat().st_size for path in group.files) / 1e9,
+                "eligible_for_ranking": not missing,
+                "missing_reference_years": format_year_ranges(missing),
             }
         )
     return pd.DataFrame.from_records(rows)
+
+
+def missing_reference_years(
+    historical: Cmip6Group,
+    reference_period: tuple[int, int],
+) -> list[int]:
+    """Return missing historical years, including threshold-window boundaries."""
+
+    available = {year_from_filename(path) for path in historical.files}
+    required = set(range(reference_period[0] - 1, reference_period[1] + 2))
+    return sorted(required - available)
+
+
+def format_year_ranges(years: list[int]) -> str:
+    """Format integer years as compact comma-separated ranges."""
+
+    if not years:
+        return ""
+    ranges: list[str] = []
+    start = previous = years[0]
+    for year in years[1:]:
+        if year == previous + 1:
+            previous = year
+            continue
+        ranges.append(str(start) if start == previous else f"{start}-{previous}")
+        start = previous = year
+    ranges.append(str(start) if start == previous else f"{start}-{previous}")
+    return ",".join(ranges)
 
 
 def file_inventory_table(groups: list[Cmip6Group], root: Path) -> pd.DataFrame:
     rows = []
     for group in groups:
         for path in group.files:
+            relative_path = path.relative_to(root).as_posix()
+            size_bytes = path.stat().st_size
             rows.append(
                 {
                     "dataset": group.label,
@@ -465,10 +531,12 @@ def file_inventory_table(groups: list[Cmip6Group], root: Path) -> pd.DataFrame:
                     "frequency": group.frequency,
                     "variable": group.variable,
                     "year": year_from_filename(path),
-                    "relative_path": path.relative_to(root).as_posix(),
+                    "relative_path": relative_path,
                     "file_name": path.name,
-                    "size_bytes": path.stat().st_size,
-                    "sha256": "",
+                    "size_bytes": size_bytes,
+                    "name_size_sha256": hashlib.sha256(
+                        f"{relative_path}\t{size_bytes}".encode("utf-8")
+                    ).hexdigest(),
                 }
             )
     return pd.DataFrame.from_records(rows)

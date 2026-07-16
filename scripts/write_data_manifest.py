@@ -1,4 +1,4 @@
-"""Write a local manifest for raw data, metric files, and generated outputs."""
+"""Write local and sanitized manifests for publication-workflow inputs."""
 
 from __future__ import annotations
 
@@ -30,7 +30,7 @@ def main(argv: list[str] | None = None) -> None:
                     scenario=run.scenario,
                     model_chain=f"{run.driving_model} / {run.regional_model}",
                     variable="tasAdjust",
-                    source_note="Local Copernicus2100 raw-data archive",
+                    source_note="CORDEX-CMIP5 provider input retained outside Git",
                     include_hash=args.hash_files,
                 )
             )
@@ -44,35 +44,7 @@ def main(argv: list[str] | None = None) -> None:
                 scenario="historical",
                 model_chain="observational gridded dataset",
                 variable="tx",
-                source_note="Local E-OBS file; cite provider licence before publication",
-                include_hash=args.hash_files,
-            )
-        )
-
-    for metrics_file in args.metrics_file:
-        rows.append(
-            file_record(
-                path=metrics_file,
-                role="legacy_metrics",
-                dataset_family="trusted legacy metric pickle",
-                scenario=infer_scenario(metrics_file),
-                model_chain=infer_model_chain(metrics_file),
-                variable="HWMId and derived metrics",
-                source_note="Local trusted pickle; ignored by Git and not for publication",
-                include_hash=args.hash_files,
-            )
-        )
-
-    for output_path in args.generated_output:
-        rows.append(
-            file_record(
-                path=output_path,
-                role="generated_output",
-                dataset_family="generated analysis output",
-                scenario="derived",
-                model_chain="derived",
-                variable=output_path.suffix.lstrip("."),
-                source_note="Generated locally; ignored by Git unless explicitly exported",
+                source_note="E-OBS provider input retained outside Git",
                 include_hash=args.hash_files,
             )
         )
@@ -82,7 +54,7 @@ def main(argv: list[str] | None = None) -> None:
     manifest.to_csv(args.output, index=False)
     print(args.output)
     if args.public_output is not None:
-        public = manifest.copy()
+        public = manifest[manifest["role"] == "raw_climate"].copy()
         if "local_path" in public.columns:
             public["local_path"] = ""
         args.public_output.parent.mkdir(parents=True, exist_ok=True)
@@ -125,36 +97,12 @@ def sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
-def infer_scenario(path: Path) -> str:
-    name = path.name.lower()
-    if "e_obs" in name:
-        return "historical"
-    if "45" in name:
-        return "RCP45"
-    if "85" in name:
-        return "RCP85"
-    return "unknown"
-
-
-def infer_model_chain(path: Path) -> str:
-    name = path.name.lower()
-    if "e_obs" in name:
-        return "observational gridded dataset"
-    if "45" in name:
-        return "IPSL-WRF"
-    if "85" in name:
-        return "MPI-CLM"
-    return "unknown"
-
-
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
     parser.add_argument("--public-output", type=Path, default=DEFAULT_PUBLIC_OUTPUT)
     parser.add_argument("--copernicus-root", type=Path)
     parser.add_argument("--eobs-file", type=Path)
-    parser.add_argument("--metrics-file", type=Path, action="append", default=[])
-    parser.add_argument("--generated-output", type=Path, action="append", default=[])
     parser.add_argument(
         "--hash-files",
         action="store_true",

@@ -16,9 +16,9 @@ DEFAULT_OUTPUT_DIR = REPO / "outputs" / "sensitivity"
 DEFAULT_WEIGHTS = REPO / "configs" / "country_weights.example.csv"
 
 DATASETS = [
-    ("Historical / E-OBS", ["metrics_e_obs.npz", "metrics_e_obs.pkl"]),
-    ("RCP4.5 / IPSL-WRF", ["metrics_copernicus_rcp45.npz", "metrics_copernicus_45.pkl"]),
-    ("RCP8.5 / MPI-CLM", ["metrics_copernicus_rcp85.npz", "metrics_copernicus_85.pkl"]),
+    ("Historical / E-OBS", ["metrics_e_obs.npz"]),
+    ("RCP4.5 / IPSL-WRF", ["metrics_copernicus_rcp45.npz"]),
+    ("RCP8.5 / MPI-CLM", ["metrics_copernicus_rcp85.npz"]),
 ]
 
 
@@ -41,6 +41,7 @@ def main(argv: list[str] | None = None) -> None:
             )
             ranking.insert(0, "dataset", dataset)
             ranking.insert(1, "weighting", weighting)
+            ranking["hwmid_method"] = data.hwmid_method
             rows.append(ranking)
 
     result = pd.concat(rows, ignore_index=True)

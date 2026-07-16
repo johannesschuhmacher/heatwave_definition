@@ -23,7 +23,7 @@ from heatwave_definition.plot_style import (
 
 
 REPO = Path(__file__).resolve().parents[1]
-DEFAULT_EOBS = REPO / "outputs" / "eobs_current" / "ranked_years_eobs_v33_historical.csv"
+DEFAULT_EOBS = REPO / "outputs" / "ranking_from_config" / "ranked_years_e_obs.csv"
 DEFAULT_ERA5 = REPO / "outputs" / "ranking_from_config" / "ranked_years_era5.csv"
 DEFAULT_OUTPUT_DIR = REPO / "outputs" / "appendix"
 DEFAULT_FIGURE = REPO / "outputs" / "figures" / "historical_data_product_top10_comparison.png"
@@ -64,7 +64,20 @@ def build_common_period_top10(eobs_path: Path, era5_path: Path, start_year: int,
         subset.insert(0, "dataset", dataset)
         subset.insert(1, "data_product", product)
         subset.insert(2, "comparison_period", period)
-        frames.append(subset[["dataset", "data_product", "comparison_period", "rank", "year", "hwmid_sum", "country_cells"]])
+        frames.append(
+            subset[
+                [
+                    "dataset",
+                    "data_product",
+                    "comparison_period",
+                    "rank",
+                    "year",
+                    "hwmid_sum",
+                    "hwmid_method",
+                    "country_cells",
+                ]
+            ]
+        )
     return pd.concat(frames, ignore_index=True)
 
 
@@ -80,11 +93,12 @@ def build_top2_comparison(top10: pd.DataFrame) -> pd.DataFrame:
                 "rank": rank,
                 "eobs_year": int(eobs.loc[rank, "year"]),
                 "eobs_hwmid_sum": eobs_value,
+                "eobs_country_cells": int(eobs.loc[rank, "country_cells"]),
                 "era5_year": int(era5.loc[rank, "year"]),
                 "era5_hwmid_sum": era5_value,
+                "era5_country_cells": int(era5.loc[rank, "country_cells"]),
                 "same_year": int(eobs.loc[rank, "year"]) == int(era5.loc[rank, "year"]),
-                "era5_minus_eobs_hwmid_sum": era5_value - eobs_value,
-                "era5_minus_eobs_percent": ((era5_value - eobs_value) / eobs_value) * 100.0,
+                "hwmid_method": str(eobs.loc[rank, "hwmid_method"]),
             }
         )
     return pd.DataFrame(rows)

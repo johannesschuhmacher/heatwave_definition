@@ -1,8 +1,8 @@
 cff-version: 1.2.0
-message: "If you use this heatwave scenario definition code, please cite the repository and associated working paper."
+message: "If you use this heatwave scenario definition code, please cite the archived software release and associated article."
 title: "Heatwave scenario definition for energy-system stress tests"
-version: "1.1.0"
-date-released: "2026-07-11"
+version: "1.2.0"
+date-released: "2026-07-16"
 license: MIT
 doi: "10.5281/zenodo.20793872"
 repository-code: "https://github.com/johannesschuhmacher/heatwave_definition"

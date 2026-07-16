@@ -48,7 +48,9 @@ def main(argv: list[str] | None = None) -> None:
         path = resolve_input(paths)
         table = pd.read_csv(path).head(10)
         table.insert(0, "dataset", dataset)
-        top10.append(table[["dataset", "rank", "year", "hwmid_sum", "country_cells"]])
+        top10.append(
+            table[["dataset", "rank", "year", "hwmid_sum", "hwmid_method", "country_cells"]]
+        )
     top10_path = args.output_dir / "primary_top10.csv"
     pd.concat(top10, ignore_index=True).to_csv(top10_path, index=False)
 

@@ -33,6 +33,7 @@ The environment used to generate the public snapshot is recorded in
 ```text
 raw NetCDF / PEMMDB / WorldPop
         -> daily maximum temperature
+        -> remove 29 February (365-day HWMId calendar)
         -> grid-cell annual HWMId
         -> spatial and weighted annual scores
         -> ranked scenario years
@@ -50,8 +51,11 @@ artifacts listed in that script to `results/`.
 - ERA5 completed-year comparison: 1950-2025.
 - ERA5 current-year event: data frozen through 1 July 2026.
 - CMIP5: eight discovered full-period `tasAdjust` files.
-- CMIP6: ten discovered model/experiment groups with unequal end years.
+- CMIP6: ten eligible model/experiment groups from two complete chains; a
+  separately discovered partial MIROC6 chain is inventoried but not ranked.
 - HWMId reference period: 1981-2010.
+- Calendar convention: 365 days; 29 February is excluded before threshold and
+  event calculation.
 - Threshold: calendar-day 90th percentile in a 31-day window.
 - Minimum event duration: three consecutive days.
 - Reference spatial domain: Germany and France.

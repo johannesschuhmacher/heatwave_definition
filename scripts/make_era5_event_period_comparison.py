@@ -11,6 +11,7 @@ from matplotlib.patches import Patch
 from matplotlib.lines import Line2D
 import pandas as pd
 
+from heatwave_definition.hwmid import HWMID_METHOD_ID
 from heatwave_definition.plot_style import (
     ANNOTATION_SIZE,
     AXIS_LABEL_SIZE,
@@ -80,14 +81,15 @@ def summarize_year(daily: pd.DataFrame, windows: pd.DataFrame, year: int) -> dic
         "event_period_start": envelope["start"],
         "event_period_end": envelope["end"],
         "event_period_days": int(envelope["days"]),
-        "event_period_hwmid": float(envelope["hwmid_sum"]),
+        "event_period_contribution_sum": float(envelope["regional_hwmid_contribution_sum"]),
+        "hwmid_method": HWMID_METHOD_ID,
         "regional_core_start": core["start"],
         "regional_core_end": core["end"],
         "regional_core_days": int(core["days"]),
-        "regional_core_hwmid": float(core["hwmid_sum"]),
+        "regional_core_contribution_sum": float(core["regional_hwmid_contribution_sum"]),
         "fixed_17_day_start": fixed["start"],
         "fixed_17_day_end": fixed["end"],
-        "fixed_17_day_hwmid": float(fixed["hwmid_sum"]),
+        "fixed_17_day_contribution_sum": float(fixed["regional_hwmid_contribution_sum"]),
         "regional_core_mean_tmax_c": float(core_daily["mean_tmax_c"].mean()),
         "regional_core_max_tmax_c": float(core_daily["max_tmax_c"].max()),
         "regional_core_mean_cells_above_threshold": float(core_daily["share_above_threshold"].mean()),
@@ -148,7 +150,7 @@ def plot_comparison(records: dict[int, tuple[pd.DataFrame, pd.DataFrame]], outpu
     fig.text(
         0.5,
         0.945,
-        "The event window is selected separately for each year over Germany and France using the same HWMId-based regional signal.",
+        "Windows are selected separately using the same regional signal; values sum contributions from qualifying local events.",
         ha="center",
         va="top",
         fontsize=SUBTITLE_SIZE,
@@ -253,8 +255,10 @@ def event_view(daily: pd.DataFrame, envelope: pd.Series) -> pd.DataFrame:
 
 def event_title(year: int, envelope: pd.Series, core: pd.Series) -> str:
     return (
-        f"{year}: {format_period(envelope)} event period, HWMId {float(envelope['hwmid_sum']):,.0f}\n"
-        f"core {format_period(core)}, HWMId {float(core['hwmid_sum']):,.0f}"
+        f"{year}: {format_period(envelope)} event period, contribution sum "
+        f"{float(envelope['regional_hwmid_contribution_sum']):,.0f}\n"
+        f"core {format_period(core)}, contribution sum "
+        f"{float(core['regional_hwmid_contribution_sum']):,.0f}"
     )
 
 

@@ -17,6 +17,9 @@ python scripts\check_public_release.py
   tracked data/output files are expected for a cleanup commit, but the files
   should remain available locally outside the public Git history if they are
   still needed for reruns.
+- Confirm that raw provider files are absent from the reachable history, not
+  only from the current tree. A fresh clone should remain small and must not
+  contain deleted NetCDF, pickle or large PDF objects.
 
 ## Reproduction run
 
@@ -45,16 +48,11 @@ python scripts/run_complete_climate_workflow.py \
   incomplete current-year ERA5 file before interpreting 2026 as an event
   comparison.
 - Confirm that `results/cmip6/cmip6_de_fr_file_inventory.csv` matches the
-  locally processed CMIP6 archive and documents any incomplete scenario range.
+  locally processed CMIP6 archive and that the run inventory marks incomplete
+  reference chains as ineligible for ranking.
 - Confirm that `results/provenance/software_environment.csv` was refreshed.
 
 ## Paper update
-
-- Update the Word papers from the current CSV outputs:
-
-```bash
-python scripts\update_paper_with_ensemble_sensitivity.py --paper-dir "<local-paper-directory>"
-```
 
 - Report scenario years with both emission pathway and GCM/RCM model chain,
   for example `RCP4.5 / IPSL-WRF / 2043`.
@@ -72,9 +70,9 @@ python scripts\update_paper_with_ensemble_sensitivity.py --paper-dir "<local-pap
 
 - Run:
 
-```bash
-python -m py_compile $(git ls-files '*.py')
-python -m pytest
+```text
+python -m compileall -q heatwave_definition scripts tests
+python -m pytest -q
 ```
 
 - Render the DOCX papers to PDF/PNG for visual layout QA when LibreOffice is

@@ -55,14 +55,14 @@ not embed credentials in files or command lines.
   <https://doi.org/10.1016/j.cliser.2019.100138>.
 
 The ranking script recursively discovers files beginning with `tasAdjust`.
-The exact eight files, byte sizes and SHA-256 checksums used for release 1.1.0
+The exact eight files, byte sizes and SHA-256 checksums used for the release
 are listed in `results/provenance/raw_input_manifest.csv`.
 
 ## CORDEX-CMIP6
 
 - Product family: CORDEX-CMIP6 EUR-12.
 - Regional model: ICON-CLM-202407-1-1.
-- Driving models currently available locally: CNRM-ESM2-1 and MPI-ESM1-2-HR.
+- Driving models ranked for the release: CNRM-ESM2-1 and MPI-ESM1-2-HR.
 - Experiments: historical, SSP1-2.6, SSP2-4.5, SSP3-7.0 and SSP5-8.5 where
   available.
 - Variable/frequency: hourly point `tas` (`1hrPt`), converted to daily maximum.
@@ -76,13 +76,18 @@ Expected directory hierarchy:
 <root>/EUR-12/<institution>/<rcm>/<gcm>/<scenario>/<variant>/<version>/1hrPt/tas/*.nc
 ```
 
-The exact local archive was generated in June 2026 and was labelled in the
+The processed archive was generated in June 2026 and was labelled in the
 NetCDF metadata as CORDEX-CMIP6 output prepared for ESGF within UDAG. At the
 time of release, some of these very recent files or tracking handles may not
 yet be indexed by all public ESGF nodes. `results/cmip6/` therefore contains a
 file-level inventory with relative paths and sizes in addition to the grouped
 year-coverage inventory. External raw-data reproduction of those runs depends
 on provider publication and availability.
+
+The local archive also contains a single MIROC6 historical file for 1950. The
+run inventory records this partial chain, but it is excluded from ranking
+because it cannot supply the 1981-2010 HWMId reference period and its boundary
+years.
 
 ## TYNDP 2024 capacities
 

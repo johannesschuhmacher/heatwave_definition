@@ -1,4 +1,3 @@
-import pickle
 import importlib.util
 import subprocess
 import sys
@@ -8,18 +7,20 @@ from pathlib import Path
 import netCDF4 as nc
 import numpy as np
 import pandas as pd
+import pytest
 
-from heatwave_definition.hwmid import calc_hwmid, canonical_day_of_year
+from heatwave_definition.hwmid import HWMID_METHOD_ID, _find_runs, calc_hwmid, canonical_day_of_year
 from heatwave_definition.io import load_era5_t2m_daily_tmax
-from heatwave_definition.legacy import load_legacy_metrics_pickle
 from heatwave_definition.metrics import load_metrics_npz
 from heatwave_definition.plot_style import classify_top2_stability
+from heatwave_definition.raw_copernicus import rank_daily_cells_by_hwmid
 from heatwave_definition.regions import normalize_country_names
 from heatwave_definition.ranking import (
     rank_years_by_cell_weighted_hwmid,
     rank_years_by_country_weighted_hwmid,
     rank_years_by_grid_metric,
 )
+from scripts.rank_cmip6_tas import Cmip6Group, format_year_ranges, missing_reference_years
 
 
 def load_script_module(name: str):
@@ -40,70 +41,30 @@ def test_normalize_country_names_splits_commas_and_semicolons():
     ]
 
 
-def test_canonical_day_of_year_uses_leap_calendar():
-    assert canonical_day_of_year(2, 29) == 60
-    assert canonical_day_of_year(3, 1) == 61
+def test_canonical_day_of_year_uses_hwmid_noleap_calendar():
+    assert canonical_day_of_year(2, 28) == 59
+    assert canonical_day_of_year(3, 1) == 60
+    with pytest.raises(ValueError, match="29 February"):
+        canonical_day_of_year(2, 29)
 
 
-def test_load_legacy_metrics_pickle_supports_old_layout(tmp_path):
-    dates = pd.date_range("2000-01-01", "2001-12-31", freq="D")
-    hwmid = np.zeros((2, 3, 2))
-    longitude = np.array([7.0, 8.0, 9.0])
-    latitude = np.array([49.0, 50.0])
-    path = tmp_path / "metrics.pkl"
+def test_cmip6_reference_preflight_includes_boundary_years():
+    historical = Cmip6Group(
+        institution="example",
+        rcm="example-rcm",
+        gcm="example-gcm",
+        scenario="historical",
+        variant="r1i1p1f1",
+        version="v1",
+        frequency="1hrPt",
+        variable="tas",
+        files=tuple(Path(f"tas_{year}.nc") for year in range(1981, 2011)),
+    )
 
-    with path.open("wb") as handle:
-        pickle.dump(
-            [hwmid, None, None, None, None, None, longitude, latitude, dates],
-            handle,
-        )
+    missing = missing_reference_years(historical, (1981, 2010))
 
-    data = load_legacy_metrics_pickle(path)
-
-    assert data.hwmid.shape == (2, 3, 2)
-    assert data.temp_anomaly is None
-    assert data.heatwave_duration is None
-    assert data.annual_tmax is None
-    np.testing.assert_array_equal(data.longitude, longitude)
-    np.testing.assert_array_equal(data.latitude, latitude)
-    assert data.dates.equals(dates)
-
-
-def test_load_legacy_metrics_pickle_supports_metadata_layout(tmp_path):
-    dates = pd.date_range("2030-01-01", "2031-12-31", freq="D")
-    hwmid = np.ones((1, 2, 2))
-    longitude = np.array([6.0, 7.0])
-    latitude = np.array([48.0])
-    path = tmp_path / "metrics_with_metadata.pkl"
-
-    with path.open("wb") as handle:
-        pickle.dump(
-            [
-                hwmid,
-                None,
-                None,
-                None,
-                None,
-                None,
-                {"metadata": True},
-                longitude,
-                latitude,
-                dates,
-                None,
-                None,
-            ],
-            handle,
-        )
-
-    data = load_legacy_metrics_pickle(path)
-
-    assert data.hwmid.shape == (1, 2, 2)
-    assert data.temp_anomaly is None
-    assert data.heatwave_duration is None
-    assert data.annual_tmax is None
-    np.testing.assert_array_equal(data.longitude, longitude)
-    np.testing.assert_array_equal(data.latitude, latitude)
-    assert data.dates.equals(dates)
+    assert missing == [1980, 2011]
+    assert format_year_ranges(missing) == "1980,2011"
 
 
 def test_load_metrics_npz_supports_raw_run_output(tmp_path):
@@ -118,6 +79,7 @@ def test_load_metrics_npz_supports_raw_run_output(tmp_path):
     np.savez_compressed(
         path,
         hwmid=hwmid,
+        hwmid_method=np.asarray(HWMID_METHOD_ID),
         temp_anomaly=temp_anomaly,
         heatwave_duration=heatwave_duration,
         annual_tmax=annual_tmax,
@@ -129,6 +91,7 @@ def test_load_metrics_npz_supports_raw_run_output(tmp_path):
     data = load_metrics_npz(path)
 
     assert data.source_format == "npz"
+    assert data.hwmid_method == HWMID_METHOD_ID
     np.testing.assert_array_equal(data.hwmid, hwmid)
     np.testing.assert_array_equal(data.temp_anomaly, temp_anomaly)
     np.testing.assert_array_equal(data.heatwave_duration, heatwave_duration)
@@ -206,6 +169,74 @@ def test_calc_hwmid_detects_synthetic_heatwave():
     pos_2011 = int(np.where(years == 2011)[0][0])
     assert result[0][0, 0, pos_2011] > 0.0
     assert result[2][0, 0, pos_2011] >= 3.0
+    assert result[3].shape == (1, 1, 365)
+
+
+def test_calc_hwmid_matches_daily_magnitude_formula_and_minimum_duration():
+    dates = pd.date_range("1980-01-01", "2012-12-31", freq="D")
+    values = np.zeros(len(dates), dtype=float)
+    for year, annual_maximum in zip(range(1981, 2011), range(10, 40)):
+        values[dates == pd.Timestamp(year, 7, 1)] = annual_maximum
+
+    values[(dates >= "2011-07-10") & (dates <= "2011-07-12")] = 50.0
+    values[(dates >= "2012-07-10") & (dates <= "2012-07-11")] = 60.0
+
+    result = calc_hwmid(
+        values[:, None, None],
+        latitude=np.array([50.0]),
+        longitude=np.array([8.0]),
+        datetime_vector=dates,
+    )
+
+    years = np.array(sorted(dates.year.unique()))
+    pos_2011 = int(np.where(years == 2011)[0][0])
+    pos_2012 = int(np.where(years == 2012)[0][0])
+    t25 = np.quantile(np.arange(10.0, 40.0), 0.25)
+    t75 = np.quantile(np.arange(10.0, 40.0), 0.75)
+    expected = 3.0 * (50.0 - t25) / (t75 - t25)
+
+    assert np.isclose(result[0][0, 0, pos_2011], expected)
+    assert result[2][0, 0, pos_2011] == 3.0
+    assert result[0][0, 0, pos_2012] == 0.0
+
+
+def test_memory_aware_ranking_matches_full_grid_calculation():
+    dates = pd.date_range("1980-01-01", "2012-12-31", freq="D")
+    seasonal = 15.0 + 10.0 * np.sin(2.0 * np.pi * (dates.dayofyear.to_numpy() - 80) / 365.25)
+    values = seasonal + 0.05 * (dates.year.to_numpy() - 1980)
+    values[(dates >= "2011-07-10") & (dates <= "2011-07-15")] += 15.0
+    values[(dates >= "2012-08-01") & (dates <= "2012-08-04")] += 12.0
+
+    full = calc_hwmid(
+        values[:, None, None],
+        latitude=np.array([50.0]),
+        longitude=np.array([8.0]),
+        datetime_vector=dates,
+    )
+    ranking = rank_daily_cells_by_hwmid(values[:, None], dates, top_years=3)
+    years = np.array(sorted(dates.year.unique()))
+    expected_scores = full[0][0, 0, :]
+
+    for row in ranking.itertuples(index=False):
+        year_position = int(np.where(years == row.year)[0][0])
+        assert np.isclose(row.hwmid_sum, expected_scores[year_position], rtol=1e-6)
+
+
+def test_find_runs_splits_at_missing_calendar_days():
+    dates = pd.DatetimeIndex(["2001-07-01", "2001-07-02", "2001-07-05", "2001-07-06", "2001-07-07"])
+    assert _find_runs(np.ones(5, dtype=bool), 3, dates=dates) == [(2, 4)]
+
+
+def test_calc_hwmid_rejects_incomplete_reference_year():
+    dates = pd.date_range("1980-01-01", "2012-12-31", freq="D")
+    keep = dates != pd.Timestamp("1995-07-01")
+    with pytest.raises(ValueError, match="Reference year 1995 is incomplete"):
+        calc_hwmid(
+            np.zeros((int(keep.sum()), 1, 1)),
+            latitude=np.array([50.0]),
+            longitude=np.array([8.0]),
+            datetime_vector=dates[keep],
+        )
 
 
 def test_rank_years_by_country_weighted_hwmid_distributes_country_weights():
@@ -359,10 +390,10 @@ def test_demo_ranks_injected_events_first(tmp_path):
     assert ranking.loc[0, "hwmid_sum"] > ranking.loc[1, "hwmid_sum"] > 0
 
 
-def test_publication_wrapper_exposes_complete_workflow_help():
+def test_complete_workflow_exposes_required_input_options():
     repo = Path(__file__).resolve().parents[1]
     result = subprocess.run(
-        [sys.executable, str(repo / "scripts" / "run_publication_reproduction.py"), "--help"],
+        [sys.executable, str(repo / "scripts" / "run_complete_climate_workflow.py"), "--help"],
         cwd=repo,
         check=True,
         capture_output=True,

@@ -15,6 +15,7 @@ REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO))
 
 from heatwave_definition.io import _decode_time
+from heatwave_definition.hwmid import HWMID_METHOD_ID
 from heatwave_definition.raw_copernicus import (
     _load_daily_tmax_for_mask,
     discover_tasadjust_runs,
@@ -83,6 +84,7 @@ def main() -> None:
         np.savez_compressed(
             metric_path,
             years=metrics.years,
+            hwmid_method=np.asarray(HWMID_METHOD_ID),
             hwmid=metrics.hwmid,
             duration=metrics.duration,
             annual_tmax=metrics.annual_tmax,
@@ -289,6 +291,8 @@ def countries_to_cell_mask(metrics: CellMetrics, countries: list[str]) -> np.nda
 
 
 def write_replacing_dataset(new_rows: pd.DataFrame, filename: str, directories: list[Path], dataset: str) -> None:
+    new_rows = new_rows.copy()
+    new_rows["hwmid_method"] = HWMID_METHOD_ID
     for directory in directories:
         path = directory / filename
         path.parent.mkdir(parents=True, exist_ok=True)

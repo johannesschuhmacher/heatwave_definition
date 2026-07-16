@@ -10,7 +10,16 @@ import netCDF4 as nc
 import numpy as np
 import pandas as pd
 
-from .hwmid import _build_threshold_masks, _find_runs
+from .hwmid import (
+    HWMID_METHOD_ID,
+    _build_threshold_masks,
+    _find_runs,
+    _noleap_day_of_year,
+    _noleap_mask,
+    _validate_daily_time_axis,
+    _validate_hwmid_parameters,
+    _validate_reference_period,
+)
 from .io import _decode_time
 from .regions import classify_countries_matrix
 
@@ -201,10 +210,17 @@ def rank_daily_cells_by_hwmid(
     if daily_tmax.ndim != 2:
         raise ValueError("daily_tmax must have shape (time, cells)")
 
+    ref_start, ref_end = [int(value) for value in ref_period]
+    _validate_hwmid_parameters(ref_start, ref_end, min_heatwave_days, threshold_quantile)
+    _validate_daily_time_axis(dates)
+    noleap_mask = _noleap_mask(dates)
+    dates = dates[noleap_mask]
+    daily_tmax = np.ma.filled(np.ma.masked_invalid(np.ma.array(daily_tmax)), np.nan)[noleap_mask, :]
+    _validate_reference_period(dates, ref_start, ref_end)
+
     years = np.array(sorted(dates.year.unique()), dtype=int)
     year_to_pos = {year: idx for idx, year in enumerate(years)}
     year_masks = {year: dates.year == year for year in years}
-    ref_start, ref_end = ref_period
     ref_years = list(range(int(ref_start), int(ref_end) + 1))
     ref_masks = {
         year: (dates >= pd.Timestamp(year, 1, 1))
@@ -213,7 +229,7 @@ def rank_daily_cells_by_hwmid(
     }
 
     cell_count = daily_tmax.shape[1]
-    thresholds = np.full((366, cell_count), np.nan, dtype=np.float32)
+    thresholds = np.full((365, cell_count), np.nan, dtype=np.float32)
     threshold_masks = _build_threshold_masks(dates, ref_years)
     with warnings.catch_warnings():
         warnings.simplefilter("ignore", category=RuntimeWarning)
@@ -232,16 +248,18 @@ def rank_daily_cells_by_hwmid(
             ]
         )
 
-    denominator = np.nanquantile(ref_annual_max, 0.75, axis=0) - np.nanquantile(
-        ref_annual_max,
-        0.25,
-        axis=0,
-    )
-    t25 = np.nanquantile(ref_annual_max, 0.25, axis=0)
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", category=RuntimeWarning)
+        denominator = np.nanquantile(ref_annual_max, 0.75, axis=0) - np.nanquantile(
+            ref_annual_max,
+            0.25,
+            axis=0,
+        )
+        t25 = np.nanquantile(ref_annual_max, 0.25, axis=0)
     valid_cells = np.isfinite(denominator) & (denominator > 0)
 
     hwmid_cells = np.zeros((cell_count, len(years)), dtype=np.float32)
-    day_of_year = dates.dayofyear.to_numpy()
+    day_of_year = _noleap_day_of_year(dates)
     for cell in range(cell_count):
         if not valid_cells[cell]:
             continue
@@ -249,7 +267,7 @@ def rank_daily_cells_by_hwmid(
         daily_thresholds = thresholds[day_of_year - 1, cell]
         above_threshold = np.isfinite(series) & (series > daily_thresholds)
 
-        for start_idx, end_idx in _find_runs(above_threshold, min_heatwave_days):
+        for start_idx, end_idx in _find_runs(above_threshold, min_heatwave_days, dates=dates):
             event_values = series[start_idx : end_idx + 1]
             daily_magnitude = np.where(
                 event_values > t25[cell],
@@ -285,6 +303,7 @@ def rank_daily_cells_by_hwmid(
             "rank": np.arange(1, len(order) + 1),
             "year": years[order],
             "hwmid_sum": scores[order],
+            "hwmid_method": HWMID_METHOD_ID,
         }
     )
 

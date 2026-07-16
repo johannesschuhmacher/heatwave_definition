@@ -1,4 +1,4 @@
-"""Create compact top-2 ensemble ranking tables for the working paper."""
+"""Create compact top-2 ensemble ranking tables for the manuscript."""
 
 from __future__ import annotations
 
@@ -24,6 +24,7 @@ def main(argv: list[str] | None = None) -> None:
             "rank",
             "year",
             "hwmid_sum",
+            "hwmid_method",
             "country_cells",
             "countries",
         ]

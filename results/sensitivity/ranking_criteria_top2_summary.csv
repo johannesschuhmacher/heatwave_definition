@@ -1,37 +1,37 @@
-dataset,criterion,criterion_label,metric,rank,year,score,country_cells,aggregation
-Historical / E-OBS,hwmid_sum,HWMId sum,hwmid,1,2003,25280.482421875,1790,sum
-Historical / E-OBS,hwmid_sum,HWMId sum,hwmid,2,2019,10910.7978515625,1790,sum
-Historical / E-OBS,hwmid_area_mean,Area-weighted HWMId mean,hwmid,1,2003,14.443033194689797,1790,area_weighted_mean
-Historical / E-OBS,hwmid_area_mean,Area-weighted HWMId mean,hwmid,2,2019,6.173525156633108,1790,area_weighted_mean
-Historical / E-OBS,hwmid_mean,Mean HWMId,hwmid,1,2003,14.123174667358398,1790,mean
-Historical / E-OBS,hwmid_mean,Mean HWMId,hwmid,2,2019,6.0954179763793945,1790,mean
-Historical / E-OBS,hwmid_max,Maximum grid-cell HWMId,hwmid,1,2003,49.426300048828125,1790,max
-Historical / E-OBS,hwmid_max,Maximum grid-cell HWMId,hwmid,2,2024,47.78745651245117,1790,max
-Historical / E-OBS,duration_area_mean,Area-weighted heatwave duration,heatwave_duration,1,2003,10.277837047583716,1790,area_weighted_mean
-Historical / E-OBS,duration_area_mean,Area-weighted heatwave duration,heatwave_duration,2,1976,7.897073953838448,1790,area_weighted_mean
-Historical / E-OBS,tmax_anomaly_area_mean,Area-weighted annual maximum temperature anomaly,temp_anomaly,1,2019,4.6142257142506615,1790,area_weighted_mean
-Historical / E-OBS,tmax_anomaly_area_mean,Area-weighted annual maximum temperature anomaly,temp_anomaly,2,2022,4.207182408882853,1790,area_weighted_mean
-RCP4.5 / IPSL-WRF,hwmid_sum,HWMId sum,hwmid,1,2043,30300.048828125,1779,sum
-RCP4.5 / IPSL-WRF,hwmid_sum,HWMId sum,hwmid,2,2070,27046.4140625,1779,sum
-RCP4.5 / IPSL-WRF,hwmid_area_mean,Area-weighted HWMId mean,hwmid,1,2043,17.091595867721033,1779,area_weighted_mean
-RCP4.5 / IPSL-WRF,hwmid_area_mean,Area-weighted HWMId mean,hwmid,2,2070,15.040107577992082,1779,area_weighted_mean
-RCP4.5 / IPSL-WRF,hwmid_mean,Mean HWMId,hwmid,1,2043,17.032068252563477,1779,mean
-RCP4.5 / IPSL-WRF,hwmid_mean,Mean HWMId,hwmid,2,2070,15.203155517578123,1779,mean
-RCP4.5 / IPSL-WRF,hwmid_max,Maximum grid-cell HWMId,hwmid,1,2041,124.81748962402344,1779,max
-RCP4.5 / IPSL-WRF,hwmid_max,Maximum grid-cell HWMId,hwmid,2,2089,100.04188537597656,1779,max
-RCP4.5 / IPSL-WRF,duration_area_mean,Area-weighted heatwave duration,heatwave_duration,1,2040,20.165611215012312,1779,area_weighted_mean
-RCP4.5 / IPSL-WRF,duration_area_mean,Area-weighted heatwave duration,heatwave_duration,2,2070,17.615114943047253,1779,area_weighted_mean
-RCP4.5 / IPSL-WRF,tmax_anomaly_area_mean,Area-weighted annual maximum temperature anomaly,temp_anomaly,1,2043,5.051804122605132,1779,area_weighted_mean
-RCP4.5 / IPSL-WRF,tmax_anomaly_area_mean,Area-weighted annual maximum temperature anomaly,temp_anomaly,2,2065,4.759959803389156,1779,area_weighted_mean
-RCP8.5 / MPI-CLM,hwmid_sum,HWMId sum,hwmid,1,2092,56896.7890625,1779,sum
-RCP8.5 / MPI-CLM,hwmid_sum,HWMId sum,hwmid,2,2082,50706.01171875,1779,sum
-RCP8.5 / MPI-CLM,hwmid_area_mean,Area-weighted HWMId mean,hwmid,1,2092,32.45176195272337,1779,area_weighted_mean
-RCP8.5 / MPI-CLM,hwmid_area_mean,Area-weighted HWMId mean,hwmid,2,2082,29.328970446304112,1779,area_weighted_mean
-RCP8.5 / MPI-CLM,hwmid_mean,Mean HWMId,hwmid,1,2092,31.98245620727539,1779,mean
-RCP8.5 / MPI-CLM,hwmid_mean,Mean HWMId,hwmid,2,2082,28.50253677368164,1779,mean
-RCP8.5 / MPI-CLM,hwmid_max,Maximum grid-cell HWMId,hwmid,1,2086,293.5682678222656,1779,max
-RCP8.5 / MPI-CLM,hwmid_max,Maximum grid-cell HWMId,hwmid,2,2090,289.0989990234375,1779,max
-RCP8.5 / MPI-CLM,duration_area_mean,Area-weighted heatwave duration,heatwave_duration,1,2092,20.95331839504559,1779,area_weighted_mean
-RCP8.5 / MPI-CLM,duration_area_mean,Area-weighted heatwave duration,heatwave_duration,2,2085,19.525679084004967,1779,area_weighted_mean
-RCP8.5 / MPI-CLM,tmax_anomaly_area_mean,Area-weighted annual maximum temperature anomaly,temp_anomaly,1,2083,8.69555488726525,1779,area_weighted_mean
-RCP8.5 / MPI-CLM,tmax_anomaly_area_mean,Area-weighted annual maximum temperature anomaly,temp_anomaly,2,2085,8.654592658330182,1779,area_weighted_mean
+dataset,criterion,criterion_label,metric,rank,year,score,country_cells,aggregation,hwmid_method
+Historical / E-OBS,hwmid_sum,HWMId sum,hwmid,1,2003,25287.0,1790,sum,russo2015-noleap365-v1
+Historical / E-OBS,hwmid_sum,HWMId sum,hwmid,2,2019,10910.7978515625,1790,sum,russo2015-noleap365-v1
+Historical / E-OBS,hwmid_area_mean,Area-weighted HWMId mean,hwmid,1,2003,14.446850847894014,1790,area_weighted_mean,russo2015-noleap365-v1
+Historical / E-OBS,hwmid_area_mean,Area-weighted HWMId mean,hwmid,2,2019,6.173525156633108,1790,area_weighted_mean,russo2015-noleap365-v1
+Historical / E-OBS,hwmid_mean,Mean HWMId,hwmid,1,2003,14.126815795898438,1790,mean,russo2015-noleap365-v1
+Historical / E-OBS,hwmid_mean,Mean HWMId,hwmid,2,2019,6.0954179763793945,1790,mean,russo2015-noleap365-v1
+Historical / E-OBS,hwmid_max,Maximum grid-cell HWMId,hwmid,1,2003,49.426300048828125,1790,max,russo2015-noleap365-v1
+Historical / E-OBS,hwmid_max,Maximum grid-cell HWMId,hwmid,2,2024,47.78745651245117,1790,max,russo2015-noleap365-v1
+Historical / E-OBS,duration_area_mean,Area-weighted heatwave duration,heatwave_duration,1,2003,10.293103497540455,1790,area_weighted_mean,russo2015-noleap365-v1
+Historical / E-OBS,duration_area_mean,Area-weighted heatwave duration,heatwave_duration,2,1976,7.959458973279932,1790,area_weighted_mean,russo2015-noleap365-v1
+Historical / E-OBS,tmax_anomaly_area_mean,Area-weighted annual maximum temperature anomaly,temp_anomaly,1,2019,4.6142257142506615,1790,area_weighted_mean,russo2015-noleap365-v1
+Historical / E-OBS,tmax_anomaly_area_mean,Area-weighted annual maximum temperature anomaly,temp_anomaly,2,2022,4.207182408882853,1790,area_weighted_mean,russo2015-noleap365-v1
+RCP4.5 / IPSL-WRF,hwmid_sum,HWMId sum,hwmid,1,2043,30298.390625,1779,sum,russo2015-noleap365-v1
+RCP4.5 / IPSL-WRF,hwmid_sum,HWMId sum,hwmid,2,2070,27049.078125,1779,sum,russo2015-noleap365-v1
+RCP4.5 / IPSL-WRF,hwmid_area_mean,Area-weighted HWMId mean,hwmid,1,2043,17.0918849595232,1779,area_weighted_mean,russo2015-noleap365-v1
+RCP4.5 / IPSL-WRF,hwmid_area_mean,Area-weighted HWMId mean,hwmid,2,2070,15.041869502987735,1779,area_weighted_mean,russo2015-noleap365-v1
+RCP4.5 / IPSL-WRF,hwmid_mean,Mean HWMId,hwmid,1,2043,17.03113555908203,1779,mean,russo2015-noleap365-v1
+RCP4.5 / IPSL-WRF,hwmid_mean,Mean HWMId,hwmid,2,2070,15.204652786254885,1779,mean,russo2015-noleap365-v1
+RCP4.5 / IPSL-WRF,hwmid_max,Maximum grid-cell HWMId,hwmid,1,2041,124.81748962402344,1779,max,russo2015-noleap365-v1
+RCP4.5 / IPSL-WRF,hwmid_max,Maximum grid-cell HWMId,hwmid,2,2089,100.04188537597656,1779,max,russo2015-noleap365-v1
+RCP4.5 / IPSL-WRF,duration_area_mean,Area-weighted heatwave duration,heatwave_duration,1,2040,19.631983343662583,1779,area_weighted_mean,russo2015-noleap365-v1
+RCP4.5 / IPSL-WRF,duration_area_mean,Area-weighted heatwave duration,heatwave_duration,2,2070,17.61736095563969,1779,area_weighted_mean,russo2015-noleap365-v1
+RCP4.5 / IPSL-WRF,tmax_anomaly_area_mean,Area-weighted annual maximum temperature anomaly,temp_anomaly,1,2043,5.051804122605132,1779,area_weighted_mean,russo2015-noleap365-v1
+RCP4.5 / IPSL-WRF,tmax_anomaly_area_mean,Area-weighted annual maximum temperature anomaly,temp_anomaly,2,2065,4.759959803389156,1779,area_weighted_mean,russo2015-noleap365-v1
+RCP8.5 / MPI-CLM,hwmid_sum,HWMId sum,hwmid,1,2092,57152.08984375,1779,sum,russo2015-noleap365-v1
+RCP8.5 / MPI-CLM,hwmid_sum,HWMId sum,hwmid,2,2082,50744.85546875,1779,sum,russo2015-noleap365-v1
+RCP8.5 / MPI-CLM,hwmid_area_mean,Area-weighted HWMId mean,hwmid,1,2092,32.60471251284555,1779,area_weighted_mean,russo2015-noleap365-v1
+RCP8.5 / MPI-CLM,hwmid_area_mean,Area-weighted HWMId mean,hwmid,2,2082,29.351449796190483,1779,area_weighted_mean,russo2015-noleap365-v1
+RCP8.5 / MPI-CLM,hwmid_mean,Mean HWMId,hwmid,1,2092,32.1259651184082,1779,mean,russo2015-noleap365-v1
+RCP8.5 / MPI-CLM,hwmid_mean,Mean HWMId,hwmid,2,2082,28.524370193481445,1779,mean,russo2015-noleap365-v1
+RCP8.5 / MPI-CLM,hwmid_max,Maximum grid-cell HWMId,hwmid,1,2086,293.5682678222656,1779,max,russo2015-noleap365-v1
+RCP8.5 / MPI-CLM,hwmid_max,Maximum grid-cell HWMId,hwmid,2,2090,289.0989990234375,1779,max,russo2015-noleap365-v1
+RCP8.5 / MPI-CLM,duration_area_mean,Area-weighted heatwave duration,heatwave_duration,1,2092,21.082165652144734,1779,area_weighted_mean,russo2015-noleap365-v1
+RCP8.5 / MPI-CLM,duration_area_mean,Area-weighted heatwave duration,heatwave_duration,2,2085,19.51909977827046,1779,area_weighted_mean,russo2015-noleap365-v1
+RCP8.5 / MPI-CLM,tmax_anomaly_area_mean,Area-weighted annual maximum temperature anomaly,temp_anomaly,1,2083,8.69555488726525,1779,area_weighted_mean,russo2015-noleap365-v1
+RCP8.5 / MPI-CLM,tmax_anomaly_area_mean,Area-weighted annual maximum temperature anomaly,temp_anomaly,2,2085,8.654592658330182,1779,area_weighted_mean,russo2015-noleap365-v1

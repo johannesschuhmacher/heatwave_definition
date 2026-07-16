@@ -12,7 +12,16 @@ import netCDF4 as nc
 import numpy as np
 import pandas as pd
 
-from heatwave_definition.hwmid import _annual_reference_maxima, _build_threshold_masks, _find_runs
+from heatwave_definition.hwmid import (
+    _annual_reference_maxima,
+    _build_threshold_masks,
+    _find_runs,
+    _noleap_day_of_year,
+    _noleap_mask,
+    _validate_daily_time_axis,
+    _validate_hwmid_parameters,
+    _validate_reference_period,
+)
 from heatwave_definition.metrics import load_metrics_file
 from heatwave_definition.plot_style import (
     ANNOTATION_SIZE,
@@ -58,6 +67,9 @@ def main(argv: list[str] | None = None) -> None:
         latitude = float(metrics.latitude[lat_idx])
         longitude = float(metrics.longitude[lon_idx])
     dates, series = load_eobs_cell(args.eobs, lat_idx, lon_idx)
+    noleap_mask = _noleap_mask(dates)
+    dates = dates[noleap_mask]
+    series = series[noleap_mask]
     events = events_for_year(
         dates=dates,
         series=series,
@@ -141,8 +153,11 @@ def events_for_year(
     ref_period: tuple[int, int],
     min_heatwave_days: int,
     threshold_quantile: float,
-) -> Event:
+) -> list[Event]:
     ref_start, ref_end = ref_period
+    _validate_hwmid_parameters(ref_start, ref_end, min_heatwave_days, threshold_quantile)
+    _validate_daily_time_axis(dates)
+    _validate_reference_period(dates, ref_start, ref_end)
     ref_years = list(range(ref_start, ref_end + 1))
     ref_masks = {
         ref_year: (dates >= pd.Timestamp(ref_year, 1, 1)) & (dates <= pd.Timestamp(ref_year, 12, 31))
@@ -165,9 +180,9 @@ def events_for_year(
         ],
         dtype=float,
     )
-    daily_thresholds = thresholds[dates.dayofyear.to_numpy() - 1]
+    daily_thresholds = thresholds[_noleap_day_of_year(dates) - 1]
     above_threshold = np.isfinite(series) & (series > daily_thresholds)
-    runs = _find_runs(above_threshold, min_heatwave_days)
+    runs = _find_runs(above_threshold, min_heatwave_days, dates=dates)
 
     events: list[Event] = []
     for start_idx, end_idx in runs:

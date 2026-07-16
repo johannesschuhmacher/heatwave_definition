@@ -1,4 +1,4 @@
-"""Create additional figures for the heatwave scenario working paper."""
+"""Create additional figures for the heatwave scenario manuscript."""
 
 from __future__ import annotations
 

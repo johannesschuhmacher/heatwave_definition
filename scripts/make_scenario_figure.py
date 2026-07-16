@@ -1,4 +1,4 @@
-"""Create the working-paper HWMId scenario comparison figure."""
+"""Create the HWMId scenario comparison figure."""
 
 from __future__ import annotations
 
@@ -28,9 +28,9 @@ DEFAULT_OUTPUT = REPO / "outputs" / "figures" / "scenario_hwmid_top2_de_fr.png"
 COUNTRIES = ["Germany", "France"]
 
 RUNS = [
-    ("Historical", ["metrics_e_obs.npz", "metrics_e_obs.pkl"], "E-OBS"),
-    ("RCP4.5", ["metrics_copernicus_rcp45.npz", "metrics_copernicus_45.pkl"], "IPSL-WRF RCP4.5"),
-    ("RCP8.5", ["metrics_copernicus_rcp85.npz", "metrics_copernicus_85.pkl"], "MPI-CLM RCP8.5"),
+    ("Historical", ["metrics_e_obs.npz"], "E-OBS"),
+    ("RCP4.5", ["metrics_copernicus_rcp45.npz"], "IPSL-WRF RCP4.5"),
+    ("RCP8.5", ["metrics_copernicus_rcp85.npz"], "MPI-CLM RCP8.5"),
 ]
 
 
@@ -133,7 +133,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         "--repo",
         type=Path,
         default=REPO,
-        help="Directory containing metrics_*.npz files from raw runs, or trusted local legacy pickles.",
+        help="Directory containing metrics_*.npz files generated from raw climate data.",
     )
     parser.add_argument(
         "--output",

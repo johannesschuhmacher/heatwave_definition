@@ -9,11 +9,13 @@ maximum-temperature interquartile range.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import date
 from typing import Iterable
 
 import numpy as np
 import pandas as pd
+
+
+HWMID_METHOD_ID = "russo2015-noleap365-v1"
 
 
 @dataclass(frozen=True)
@@ -76,13 +78,20 @@ def calc_hwmid(
     dates = pd.DatetimeIndex(datetime_vector)
     if len(dates) != np.shape(max_daily_temp)[0]:
         raise ValueError("datetime_vector length must match max_daily_temp time dimension")
+    _validate_hwmid_parameters(ref_start, ref_end, min_heatwave_days, threshold_quantile)
+    _validate_daily_time_axis(dates)
+
+    noleap_mask = _noleap_mask(dates)
+    dates = dates[noleap_mask]
+    max_daily_temp = np.ma.array(max_daily_temp, copy=False)[noleap_mask, ...]
+    _validate_reference_period(dates, ref_start, ref_end)
 
     lat_count = len(latitude)
     lon_count = len(longitude)
     years = np.array(sorted(dates.year.unique()), dtype=int)
     year_count = len(years)
     year_to_pos = {year: idx for idx, year in enumerate(years)}
-    day_of_year = dates.dayofyear.to_numpy()
+    day_of_year = _noleap_day_of_year(dates)
 
     tmax = np.ma.masked_invalid(np.ma.array(max_daily_temp, copy=False))
 
@@ -90,7 +99,7 @@ def calc_hwmid(
     temp_anomaly = np.full_like(hwmid, np.nan, dtype=float)
     annual_tmax = np.full_like(hwmid, np.nan, dtype=float)
     heatwave_duration = np.full_like(hwmid, np.nan, dtype=float)
-    temperature_threshold = np.full((lat_count, lon_count, 366), np.nan)
+    temperature_threshold = np.full((lat_count, lon_count, 365), np.nan)
     heatwave_start_day = np.full_like(hwmid, np.nan, dtype=float)
     heatwave_start_index = np.full_like(hwmid, np.nan, dtype=float)
 
@@ -143,7 +152,7 @@ def calc_hwmid(
 
             daily_thresholds = thresholds[day_of_year - 1]
             above_threshold = np.isfinite(series) & (series > daily_thresholds)
-            runs = _find_runs(above_threshold, min_heatwave_days)
+            runs = _find_runs(above_threshold, min_heatwave_days, dates=dates)
 
             best_by_year: dict[int, dict[str, float | pd.Timestamp]] = {}
             for start_idx, end_idx in runs:
@@ -162,10 +171,8 @@ def calc_hwmid(
                     best_by_year[start_year] = {
                         "magnitude": magnitude,
                         "duration": float(end_idx - start_idx + 1),
-                        "start_day": float(start_date.dayofyear),
-                        "start_index": float(start_date.dayofyear - 1)
-                        if start_date.dayofyear <= 365
-                        else np.nan,
+                        "start_day": float(day_of_year[start_idx]),
+                        "start_index": float(day_of_year[start_idx] - 1),
                     }
 
             hwmid[lat_idx, lon_idx, :] = 0.0
@@ -199,32 +206,69 @@ def _annual_reference_maxima(series: np.ndarray, ref_masks: dict[int, np.ndarray
 
 
 def _build_threshold_masks(dates: pd.DatetimeIndex, ref_years: list[int]) -> list[np.ndarray]:
-    """Build 31-day moving-window masks for 366 calendar-day thresholds.
+    """Build the 365 centered 31-day threshold samples used by HWMId.
 
-    This keeps the original Russo-style indexing used in the exploratory code:
-    for each reference year, the source window spans Dec 17 of the previous year
-    to Jan 16 of the next year, and day `d` uses columns `d:d+31`.
+    Leap days must be removed before calling this helper. The preceding and
+    following calendar years provide the boundary days needed for January and
+    December windows.
     """
 
-    all_masks: list[list[int]] = [[] for _ in range(366)]
+    dates = pd.DatetimeIndex(dates)
+    if np.any(~_noleap_mask(dates)):
+        raise ValueError("Remove 29 February before building HWMId threshold windows")
+
     positions = np.arange(len(dates))
+    day_of_year = _noleap_day_of_year(dates)
+    serial_day = _noleap_serial_day(dates)
+    all_masks: list[list[int]] = [[] for _ in range(365)]
 
     for year in ref_years:
-        start = pd.Timestamp(year - 1, 12, 17)
-        end = pd.Timestamp(year + 1, 1, 16)
-        idx = positions[(dates >= start) & (dates <= end)]
-        idx = idx[:396]
-        for day in range(366):
-            window = idx[day : day + 31]
-            all_masks[day].extend(int(i) for i in window)
+        for target_day in range(1, 366):
+            center = positions[(dates.year == year) & (day_of_year == target_day)]
+            if len(center) != 1:
+                raise ValueError(
+                    f"Reference year {year} does not contain exactly one no-leap "
+                    f"calendar day {target_day}"
+                )
+            center_pos = int(center[0])
+            distance = serial_day - serial_day[center_pos]
+            window = positions[(distance >= -15) & (distance <= 15)]
+            if len(window) != 31:
+                raise ValueError(
+                    f"Incomplete 31-day threshold window around year {year}, "
+                    f"calendar day {target_day}; include the years before and after "
+                    "the reference period"
+                )
+            all_masks[target_day - 1].extend(int(value) for value in window)
 
-    return [np.array(sorted(set(mask)), dtype=int) for mask in all_masks]
+    return [np.asarray(mask, dtype=int) for mask in all_masks]
 
 
-def _find_runs(flags: np.ndarray, min_length: int) -> list[tuple[int, int]]:
+def _find_runs(
+    flags: np.ndarray,
+    min_length: int,
+    dates: pd.DatetimeIndex | None = None,
+) -> list[tuple[int, int]]:
+    """Return inclusive runs, splitting them at non-consecutive calendar days."""
+
+    flags = np.asarray(flags, dtype=bool)
+    if min_length < 1:
+        raise ValueError("min_length must be at least one")
+    continuity = np.ones(len(flags), dtype=bool)
+    if dates is not None:
+        dates = pd.DatetimeIndex(dates)
+        if len(dates) != len(flags):
+            raise ValueError("dates length must match flags length")
+        serial_day = _noleap_serial_day(dates)
+        continuity[1:] = np.diff(serial_day) == 1
+
     runs: list[tuple[int, int]] = []
     start = None
     for idx, flag in enumerate(flags):
+        if idx and not continuity[idx] and start is not None:
+            if idx - start >= min_length:
+                runs.append((start, idx - 1))
+            start = None
         if flag and start is None:
             start = idx
         elif not flag and start is not None:
@@ -236,7 +280,67 @@ def _find_runs(flags: np.ndarray, min_length: int) -> list[tuple[int, int]]:
     return runs
 
 
-def canonical_day_of_year(month: int, day: int) -> int:
-    """Return day-of-year on a leap-year calendar."""
+def _noleap_mask(dates: pd.DatetimeIndex) -> np.ndarray:
+    """Return a mask that excludes 29 February."""
 
-    return date(2000, month, day).timetuple().tm_yday
+    dates = pd.DatetimeIndex(dates)
+    return ~((dates.month == 2) & (dates.day == 29))
+
+
+def _noleap_day_of_year(dates: pd.DatetimeIndex) -> np.ndarray:
+    """Return one-based day numbers on a 365-day calendar."""
+
+    dates = pd.DatetimeIndex(dates)
+    if np.any(~_noleap_mask(dates)):
+        raise ValueError("29 February has no day number on the HWMId no-leap calendar")
+    day_of_year = dates.dayofyear.to_numpy(dtype=int)
+    after_february = dates.is_leap_year & (dates.month > 2)
+    return day_of_year - np.asarray(after_february, dtype=int)
+
+
+def _noleap_serial_day(dates: pd.DatetimeIndex) -> np.ndarray:
+    """Return continuous integer days for no-leap calendar comparisons."""
+
+    dates = pd.DatetimeIndex(dates)
+    return dates.year.to_numpy(dtype=int) * 365 + _noleap_day_of_year(dates)
+
+
+def _validate_hwmid_parameters(
+    ref_start: int,
+    ref_end: int,
+    min_heatwave_days: int,
+    threshold_quantile: float,
+) -> None:
+    if ref_start > ref_end:
+        raise ValueError("reference-period start year must not exceed end year")
+    if min_heatwave_days < 1:
+        raise ValueError("min_heatwave_days must be at least one")
+    if not 0.0 < threshold_quantile < 1.0:
+        raise ValueError("threshold_quantile must be between zero and one")
+
+
+def _validate_daily_time_axis(dates: pd.DatetimeIndex) -> None:
+    if dates.hasnans:
+        raise ValueError("datetime_vector must not contain missing timestamps")
+    if not dates.is_unique:
+        raise ValueError("datetime_vector must not contain duplicate timestamps")
+    if not dates.is_monotonic_increasing:
+        raise ValueError("datetime_vector must be sorted in increasing order")
+    if np.any(dates != dates.floor("D")):
+        raise ValueError("datetime_vector must contain daily timestamps")
+
+
+def _validate_reference_period(dates: pd.DatetimeIndex, ref_start: int, ref_end: int) -> None:
+    day_of_year = _noleap_day_of_year(dates)
+    for year in range(ref_start, ref_end + 1):
+        present = np.unique(day_of_year[dates.year == year])
+        if len(present) != 365 or present[0] != 1 or present[-1] != 365:
+            raise ValueError(f"Reference year {year} is incomplete on the 365-day calendar")
+
+
+def canonical_day_of_year(month: int, day: int) -> int:
+    """Return day-of-year on the 365-day HWMId calendar."""
+
+    if month == 2 and day == 29:
+        raise ValueError("29 February is excluded from the HWMId calendar")
+    return pd.Timestamp(2001, month, day).dayofyear

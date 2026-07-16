@@ -48,7 +48,11 @@ def main(argv: list[str] | None = None) -> None:
 
         subset = subset.sort_values("rank", kind="stable").head(args.top_years)
         source_names = subset.get("source_file", pd.Series([""] * len(subset))).map(source_basename)
-        output = subset[["rank", "year", "hwmid_sum", "country_cells", "countries"]].copy()
+        required = ["rank", "year", "hwmid_sum", "hwmid_method", "country_cells", "countries"]
+        missing = set(required).difference(subset.columns)
+        if missing:
+            raise ValueError(f"Ensemble ranking is missing provenance columns: {sorted(missing)}")
+        output = subset[required].copy()
         output["aggregation"] = "sum"
         output["run_name"] = spec["run_name"]
         output["source_data"] = "Copernicus/CORDEX-CMIP5 tasAdjust 3-hourly file aggregated to daily Tmax"

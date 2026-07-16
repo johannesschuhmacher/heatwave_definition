@@ -1,4 +1,4 @@
-"""Metric-array loading helpers for reproducible and legacy runs."""
+"""Helpers for loading deterministic metric arrays."""
 
 from __future__ import annotations
 
@@ -7,9 +7,6 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
-
-from .legacy import load_legacy_metrics_pickle
-
 
 @dataclass(frozen=True)
 class MetricsData:
@@ -20,31 +17,18 @@ class MetricsData:
     longitude: np.ndarray
     latitude: np.ndarray
     dates: pd.DatetimeIndex
+    hwmid_method: str
     source_path: Path
     source_format: str
 
 
 def load_metrics_file(path: str | Path) -> MetricsData:
-    """Load deterministic `.npz` metrics or a trusted legacy `.pkl` file."""
+    """Load metric arrays from a deterministic `.npz` file."""
 
     path = Path(path)
-    suffix = path.suffix.lower()
-    if suffix == ".npz":
-        return load_metrics_npz(path)
-    if suffix == ".pkl":
-        legacy = load_legacy_metrics_pickle(path)
-        return MetricsData(
-            hwmid=legacy.hwmid,
-            temp_anomaly=legacy.temp_anomaly,
-            heatwave_duration=legacy.heatwave_duration,
-            annual_tmax=legacy.annual_tmax,
-            longitude=legacy.longitude,
-            latitude=legacy.latitude,
-            dates=legacy.dates,
-            source_path=path,
-            source_format="legacy_pickle",
-        )
-    raise ValueError(f"Unsupported metrics file format: {path}")
+    if path.suffix.lower() != ".npz":
+        raise ValueError(f"Metrics input must be an .npz file: {path}")
+    return load_metrics_npz(path)
 
 
 def load_metrics_npz(path: str | Path) -> MetricsData:
@@ -52,7 +36,7 @@ def load_metrics_npz(path: str | Path) -> MetricsData:
 
     path = Path(path)
     with np.load(path, allow_pickle=False) as data:
-        required = {"hwmid", "longitude", "latitude", "dates"}
+        required = {"hwmid", "hwmid_method", "longitude", "latitude", "dates"}
         missing = required.difference(data.files)
         if missing:
             raise ValueError(f"Metrics npz is missing arrays: {sorted(missing)}")
@@ -61,6 +45,7 @@ def load_metrics_npz(path: str | Path) -> MetricsData:
         longitude = np.asarray(data["longitude"])
         latitude = np.asarray(data["latitude"])
         dates = pd.to_datetime(np.asarray(data["dates"], dtype="int64"))
+        hwmid_method = str(np.asarray(data["hwmid_method"]).item())
         temp_anomaly = _optional_array(data, "temp_anomaly")
         heatwave_duration = _optional_array(data, "heatwave_duration")
         annual_tmax = _optional_array(data, "annual_tmax")
@@ -84,6 +69,7 @@ def load_metrics_npz(path: str | Path) -> MetricsData:
         longitude=longitude,
         latitude=latitude,
         dates=dates,
+        hwmid_method=hwmid_method,
         source_path=path,
         source_format="npz",
     )

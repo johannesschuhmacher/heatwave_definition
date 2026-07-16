@@ -1,7 +1,7 @@
 [run]
 name = "era5"
 data_kind = "era5"
-input_file = "data/era5/t2m"
+input_file = "data/era5/t2m_europe"
 output_dir = "outputs/raw_metrics"
 countries = ["Germany", "France"]
 reference_period = [1981, 2010]
