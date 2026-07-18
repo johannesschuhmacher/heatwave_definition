@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.2.0 - 2026-07-16
+## 1.2.0 - 2026-07-18
 
 - Aligned the HWMId implementation with the standard 365-day calendar by
   excluding 29 February and preserving complete 31-day threshold windows.
