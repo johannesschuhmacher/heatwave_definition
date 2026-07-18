@@ -71,6 +71,7 @@ REQUIRED_FILES = {
     "docs/reproducibility.md",
     "scripts/run_demo.py",
 }
+CANONICAL_TEXT_SUFFIXES = ALLOWED_TEXT_SUFFIXES - {""}
 
 REQUIRED_RESULTS = {
     "results/provenance/raw_input_manifest.csv",
@@ -217,11 +218,12 @@ def check_result_metadata() -> list[str]:
                 problems.append(f"derived manifest target is not unique: {row.get('file_name', '')}")
                 continue
             path = matches[0]
+            content = artifact_bytes(path)
             expected_size = row.get("size_bytes", "")
-            if expected_size and int(expected_size) != path.stat().st_size:
+            if expected_size and int(expected_size) != len(content):
                 problems.append(f"derived manifest size mismatch: {path.relative_to(REPO)}")
             expected_hash = row.get("sha256", "")
-            if expected_hash and expected_hash.lower() != sha256(path):
+            if expected_hash and expected_hash.lower() != hashlib.sha256(content).hexdigest():
                 problems.append(f"derived manifest checksum mismatch: {path.relative_to(REPO)}")
 
     return problems
@@ -246,12 +248,13 @@ def check_reachable_history() -> list[str]:
     return problems
 
 
-def sha256(path: Path) -> str:
-    digest = hashlib.sha256()
-    with path.open("rb") as handle:
-        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
-            digest.update(chunk)
-    return digest.hexdigest()
+def artifact_bytes(path: Path) -> bytes:
+    """Return platform-independent bytes for a versioned artifact."""
+
+    content = path.read_bytes()
+    if path.suffix.lower() in CANONICAL_TEXT_SUFFIXES:
+        return content.replace(b"\r\n", b"\n").replace(b"\r", b"\n")
+    return content
 
 
 def listed_files() -> list[Path]:

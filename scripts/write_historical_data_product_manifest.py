@@ -64,6 +64,8 @@ DERIVED_ARTIFACTS = [
     ),
 ]
 
+TEXT_ARTIFACT_SUFFIXES = {".csv", ".md", ".py", ".toml", ".txt", ".yml", ".yaml"}
+
 
 def main(argv: list[str] | None = None) -> None:
     args = parse_args(argv)
@@ -118,6 +120,7 @@ def derived_records() -> list[dict[str, object]]:
     records = []
     for rel_path, dataset, period, note in DERIVED_ARTIFACTS:
         path = REPO / rel_path
+        artifact = artifact_bytes(path) if path.exists() and path.is_file() else None
         records.append(
             {
                 "timestamp_utc": timestamp(),
@@ -126,8 +129,8 @@ def derived_records() -> list[dict[str, object]]:
                 "period": period,
                 "file_name": path.name,
                 "local_path": str(path),
-                "size_bytes": file_size(path),
-                "sha256": sha256_file(path) if path.exists() and path.is_file() else "",
+                "size_bytes": len(artifact) if artifact is not None else "",
+                "sha256": hashlib.sha256(artifact).hexdigest() if artifact is not None else "",
                 "note": note if path.exists() else f"missing; {note}",
             }
         )
@@ -164,6 +167,15 @@ def sha256_file(path: Path) -> str:
         for chunk in iter(lambda: handle.read(1024 * 1024), b""):
             digest.update(chunk)
     return digest.hexdigest()
+
+
+def artifact_bytes(path: Path) -> bytes:
+    """Return platform-independent bytes for a versioned artifact."""
+
+    content = path.read_bytes()
+    if path.suffix.lower() in TEXT_ARTIFACT_SUFFIXES:
+        return content.replace(b"\r\n", b"\n").replace(b"\r", b"\n")
+    return content
 
 
 def sha256_directory(files: list[Path], root: Path) -> str:

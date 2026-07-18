@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.2.1 - 2026-07-18
+
+- Made derived-artifact checksums independent of Windows and Unix line endings
+  so the public release validation passes identically in fresh GitHub Actions
+  checkouts.
+
 ## 1.2.0 - 2026-07-18
 
 - Aligned the HWMId implementation with the standard 365-day calendar by
