@@ -1,0 +1,25 @@
+dataset,weighting,rank,year,score,population_year,population_source,population_source_doi
+RCP4.5 / IPSL-WRF,Unweighted,1,2043,30298.379175186157,2040,ISIMIP2b secondary population input data (v1.0),https://doi.org/10.48364/ISIMIP.432399
+RCP4.5 / IPSL-WRF,Unweighted,2,2070,27049.07638937235,2040,ISIMIP2b secondary population input data (v1.0),https://doi.org/10.48364/ISIMIP.432399
+RCP4.5 / IPSL-WRF,SSP1,1,2043,17.54809295856209,2040,ISIMIP2b secondary population input data (v1.0),https://doi.org/10.48364/ISIMIP.432399
+RCP4.5 / IPSL-WRF,SSP1,2,2070,16.782477235776874,2040,ISIMIP2b secondary population input data (v1.0),https://doi.org/10.48364/ISIMIP.432399
+RCP4.5 / IPSL-WRF,SSP2,1,2043,17.566269323511044,2040,ISIMIP2b secondary population input data (v1.0),https://doi.org/10.48364/ISIMIP.432399
+RCP4.5 / IPSL-WRF,SSP2,2,2070,16.7974754978834,2040,ISIMIP2b secondary population input data (v1.0),https://doi.org/10.48364/ISIMIP.432399
+RCP4.5 / IPSL-WRF,SSP3,1,2043,17.587943290332127,2040,ISIMIP2b secondary population input data (v1.0),https://doi.org/10.48364/ISIMIP.432399
+RCP4.5 / IPSL-WRF,SSP3,2,2070,16.829835162157426,2040,ISIMIP2b secondary population input data (v1.0),https://doi.org/10.48364/ISIMIP.432399
+RCP4.5 / IPSL-WRF,SSP4,1,2043,17.555516194708936,2040,ISIMIP2b secondary population input data (v1.0),https://doi.org/10.48364/ISIMIP.432399
+RCP4.5 / IPSL-WRF,SSP4,2,2070,16.801935964967633,2040,ISIMIP2b secondary population input data (v1.0),https://doi.org/10.48364/ISIMIP.432399
+RCP4.5 / IPSL-WRF,SSP5,1,2043,17.557572552675158,2040,ISIMIP2b secondary population input data (v1.0),https://doi.org/10.48364/ISIMIP.432399
+RCP4.5 / IPSL-WRF,SSP5,2,2070,16.78302651360209,2040,ISIMIP2b secondary population input data (v1.0),https://doi.org/10.48364/ISIMIP.432399
+RCP8.5 / MPI-CLM,Unweighted,1,2092,57152.08603954315,2040,ISIMIP2b secondary population input data (v1.0),https://doi.org/10.48364/ISIMIP.432399
+RCP8.5 / MPI-CLM,Unweighted,2,2082,50744.812037706375,2040,ISIMIP2b secondary population input data (v1.0),https://doi.org/10.48364/ISIMIP.432399
+RCP8.5 / MPI-CLM,SSP1,1,2092,30.25204263239151,2040,ISIMIP2b secondary population input data (v1.0),https://doi.org/10.48364/ISIMIP.432399
+RCP8.5 / MPI-CLM,SSP1,2,2082,24.73709215746994,2040,ISIMIP2b secondary population input data (v1.0),https://doi.org/10.48364/ISIMIP.432399
+RCP8.5 / MPI-CLM,SSP2,1,2092,30.269290874971098,2040,ISIMIP2b secondary population input data (v1.0),https://doi.org/10.48364/ISIMIP.432399
+RCP8.5 / MPI-CLM,SSP2,2,2082,24.760299350657377,2040,ISIMIP2b secondary population input data (v1.0),https://doi.org/10.48364/ISIMIP.432399
+RCP8.5 / MPI-CLM,SSP3,1,2092,30.298553692631323,2040,ISIMIP2b secondary population input data (v1.0),https://doi.org/10.48364/ISIMIP.432399
+RCP8.5 / MPI-CLM,SSP3,2,2082,24.777682384966987,2040,ISIMIP2b secondary population input data (v1.0),https://doi.org/10.48364/ISIMIP.432399
+RCP8.5 / MPI-CLM,SSP4,1,2092,30.266364563749647,2040,ISIMIP2b secondary population input data (v1.0),https://doi.org/10.48364/ISIMIP.432399
+RCP8.5 / MPI-CLM,SSP4,2,2082,24.74230380282558,2040,ISIMIP2b secondary population input data (v1.0),https://doi.org/10.48364/ISIMIP.432399
+RCP8.5 / MPI-CLM,SSP5,1,2092,30.254596336807204,2040,ISIMIP2b secondary population input data (v1.0),https://doi.org/10.48364/ISIMIP.432399
+RCP8.5 / MPI-CLM,SSP5,2,2082,24.756544447177674,2040,ISIMIP2b secondary population input data (v1.0),https://doi.org/10.48364/ISIMIP.432399

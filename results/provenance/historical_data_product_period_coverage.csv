@@ -1,0 +1,7 @@
+comparison,product,first_date,last_date,daily_steps,missing_days,missing_dates
+completed_1950_2025,E-OBS,1950-01-01,2025-12-31,27759,0,
+completed_1950_2025,ERA5,1950-01-01,2025-12-31,27759,0,
+completed_1950_2025,NOAA CORe,1950-01-01,2025-12-31,27759,0,
+including_2026,E-OBS,1950-01-01,2025-12-31,27759,0,
+including_2026,ERA5,1950-01-01,2026-07-01,27941,0,
+including_2026,NOAA CORe,1950-01-01,2026-07-01,27940,1,2026-05-19

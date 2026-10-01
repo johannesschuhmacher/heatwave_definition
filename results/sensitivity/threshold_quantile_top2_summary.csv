@@ -1,0 +1,19 @@
+dataset,threshold_quantile,threshold_percentile,rank,year,hwmid_sum,hwmid_method,country_cells,countries,source_file_count,source_file_names,source_directory_name,source_year_start,source_year_end,period_end,gap_to_rank_1_percent
+E-OBS,0.9,90,1,2003,25287.0,russo2015-noleap365-v1,1790,Germany+France,1.0,tx_ens_mean_0.25deg_reg_v33.0e.nc,,,,,0.0
+E-OBS,0.9,90,2,2019,10910.798,russo2015-noleap365-v1,1790,Germany+France,1.0,tx_ens_mean_0.25deg_reg_v33.0e.nc,,,,,56.852146
+ERA5,0.9,90,1,2003,24925.648,russo2015-noleap365-v1,1779,Germany+France,77.0,,t2m_europe,1950.0,2026.0,,0.0
+ERA5,0.9,90,2,2026,24441.555,russo2015-noleap365-v1,1779,Germany+France,77.0,,t2m_europe,1950.0,2026.0,,1.9421511
+NOAA CORe,0.9,90,1,2003,3195.58,russo2015-noleap365-v1,223,,,,,,,2026-07-01,0.0
+NOAA CORe,0.9,90,2,2026,3001.1206,russo2015-noleap365-v1,223,,,,,,,2026-07-01,6.0852637
+E-OBS,0.95,95,1,2003,24511.887,russo2015-noleap365-v1,1790,Germany+France,1.0,tx_ens_mean_0.25deg_reg_v33.0e.nc,,,,,0.0
+E-OBS,0.95,95,2,2019,10575.615,russo2015-noleap365-v1,1790,Germany+France,1.0,tx_ens_mean_0.25deg_reg_v33.0e.nc,,,,,56.855156
+ERA5,0.95,95,1,2003,24253.906,russo2015-noleap365-v1,1779,Germany+France,77.0,,t2m_europe,1950.0,2026.0,,0.0
+ERA5,0.95,95,2,2026,24170.59,russo2015-noleap365-v1,1779,Germany+France,77.0,,t2m_europe,1950.0,2026.0,,0.34351748
+NOAA CORe,0.95,95,1,2003,3099.9092,russo2015-noleap365-v1,223,,,,,,,2026-07-01,0.0
+NOAA CORe,0.95,95,2,2026,2949.7366,russo2015-noleap365-v1,223,,,,,,,2026-07-01,4.8444195
+E-OBS,0.99,99,1,2003,13283.353,russo2015-noleap365-v1,1790,Germany+France,1.0,tx_ens_mean_0.25deg_reg_v33.0e.nc,,,,,0.0
+E-OBS,0.99,99,2,2019,8476.189,russo2015-noleap365-v1,1790,Germany+France,1.0,tx_ens_mean_0.25deg_reg_v33.0e.nc,,,,,36.18938
+ERA5,0.99,99,1,2026,22741.506,russo2015-noleap365-v1,1779,Germany+France,77.0,,t2m_europe,1950.0,2026.0,,0.0
+ERA5,0.99,99,2,2003,13328.257,russo2015-noleap365-v1,1779,Germany+France,77.0,,t2m_europe,1950.0,2026.0,,41.392372
+NOAA CORe,0.99,99,1,2026,2807.4219,russo2015-noleap365-v1,223,,,,,,,2026-07-01,0.0
+NOAA CORe,0.99,99,2,2003,1741.2614,russo2015-noleap365-v1,223,,,,,,,2026-07-01,37.976498

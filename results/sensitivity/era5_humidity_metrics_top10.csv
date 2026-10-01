@@ -1,0 +1,81 @@
+comparison,metric,rank,year,regional_event_score
+completed_1981_2025,Temperature-only HWMId,1,2003,24925.648
+completed_1981_2025,Temperature-only HWMId,2,2025,12593.876
+completed_1981_2025,Temperature-only HWMId,3,2019,11156.703
+completed_1981_2025,Temperature-only HWMId,4,2022,8660.085
+completed_1981_2025,Temperature-only HWMId,5,2023,7808.4365
+completed_1981_2025,Temperature-only HWMId,6,2015,7471.203
+completed_1981_2025,Temperature-only HWMId,7,2020,7374.457
+completed_1981_2025,Temperature-only HWMId,8,2018,5661.842
+completed_1981_2025,Temperature-only HWMId,9,2006,4877.785
+completed_1981_2025,Temperature-only HWMId,10,2024,4655.9004
+completed_1981_2025,Humidex-based event score,1,2003,15056.649
+completed_1981_2025,Humidex-based event score,2,2019,10729.112
+completed_1981_2025,Humidex-based event score,3,2025,10222.4
+completed_1981_2025,Humidex-based event score,4,2023,8727.404
+completed_1981_2025,Humidex-based event score,5,2024,8444.834
+completed_1981_2025,Humidex-based event score,6,2015,6814.8706
+completed_1981_2025,Humidex-based event score,7,2012,4180.453
+completed_1981_2025,Humidex-based event score,8,2020,4078.9792
+completed_1981_2025,Humidex-based event score,9,1983,3621.298
+completed_1981_2025,Humidex-based event score,10,2018,3483.473
+completed_1981_2025,Wet-bulb event score,1,2019,7820.5664
+completed_1981_2025,Wet-bulb event score,2,2024,7797.194
+completed_1981_2025,Wet-bulb event score,3,2023,7522.1846
+completed_1981_2025,Wet-bulb event score,4,2003,6447.03
+completed_1981_2025,Wet-bulb event score,5,2025,6168.401
+completed_1981_2025,Wet-bulb event score,6,2015,4848.454
+completed_1981_2025,Wet-bulb event score,7,1987,3852.863
+completed_1981_2025,Wet-bulb event score,8,1994,3367.291
+completed_1981_2025,Wet-bulb event score,9,1992,3130.7573
+completed_1981_2025,Wet-bulb event score,10,2013,3073.937
+completed_1981_2025,Shade-WBGT event score,1,2003,14509.972
+completed_1981_2025,Shade-WBGT event score,2,2019,10584.869
+completed_1981_2025,Shade-WBGT event score,3,2025,10198.887
+completed_1981_2025,Shade-WBGT event score,4,2023,8759.078
+completed_1981_2025,Shade-WBGT event score,5,2024,8277.624
+completed_1981_2025,Shade-WBGT event score,6,2015,6761.495
+completed_1981_2025,Shade-WBGT event score,7,2012,4167.873
+completed_1981_2025,Shade-WBGT event score,8,2020,4124.8843
+completed_1981_2025,Shade-WBGT event score,9,2018,3528.1516
+completed_1981_2025,Shade-WBGT event score,10,1983,3519.972
+including_2026,Temperature-only HWMId,1,2003,24925.648
+including_2026,Temperature-only HWMId,2,2026,24441.555
+including_2026,Temperature-only HWMId,3,2025,12593.876
+including_2026,Temperature-only HWMId,4,2019,11156.703
+including_2026,Temperature-only HWMId,5,2022,8660.085
+including_2026,Temperature-only HWMId,6,2023,7808.4365
+including_2026,Temperature-only HWMId,7,2015,7471.203
+including_2026,Temperature-only HWMId,8,2020,7374.457
+including_2026,Temperature-only HWMId,9,2018,5661.842
+including_2026,Temperature-only HWMId,10,2006,4877.785
+including_2026,Humidex-based event score,1,2026,22105.54
+including_2026,Humidex-based event score,2,2003,15056.649
+including_2026,Humidex-based event score,3,2019,10729.112
+including_2026,Humidex-based event score,4,2025,10222.4
+including_2026,Humidex-based event score,5,2023,8727.404
+including_2026,Humidex-based event score,6,2024,8444.834
+including_2026,Humidex-based event score,7,2015,6814.8706
+including_2026,Humidex-based event score,8,2012,4180.453
+including_2026,Humidex-based event score,9,2020,4078.9792
+including_2026,Humidex-based event score,10,1983,3621.298
+including_2026,Wet-bulb event score,1,2026,14250.549
+including_2026,Wet-bulb event score,2,2019,7820.5664
+including_2026,Wet-bulb event score,3,2024,7797.194
+including_2026,Wet-bulb event score,4,2023,7522.1846
+including_2026,Wet-bulb event score,5,2003,6447.03
+including_2026,Wet-bulb event score,6,2025,6168.401
+including_2026,Wet-bulb event score,7,2015,4848.454
+including_2026,Wet-bulb event score,8,1987,3852.863
+including_2026,Wet-bulb event score,9,1994,3367.291
+including_2026,Wet-bulb event score,10,1992,3130.7573
+including_2026,Shade-WBGT event score,1,2026,21907.121
+including_2026,Shade-WBGT event score,2,2003,14509.972
+including_2026,Shade-WBGT event score,3,2019,10584.869
+including_2026,Shade-WBGT event score,4,2025,10198.887
+including_2026,Shade-WBGT event score,5,2023,8759.078
+including_2026,Shade-WBGT event score,6,2024,8277.624
+including_2026,Shade-WBGT event score,7,2015,6761.495
+including_2026,Shade-WBGT event score,8,2012,4167.873
+including_2026,Shade-WBGT event score,9,2020,4124.8843
+including_2026,Shade-WBGT event score,10,2018,3528.1516

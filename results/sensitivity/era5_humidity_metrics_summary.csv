@@ -1,0 +1,7 @@
+comparison,comparison_metric,spearman_vs_temperature,common_top10_years,temperature_rank_2003,metric_rank_2003,temperature_rank_2026,metric_rank_2026,temperature_2026_vs_2003_percent,metric_2026_vs_2003_percent
+completed_1981_2025,Humidex-based event score,0.9050065876152833,8,1,1,,,,
+completed_1981_2025,Wet-bulb event score,0.6654808959156785,6,1,4,,,,
+completed_1981_2025,Shade-WBGT event score,0.90566534914361,8,1,1,,,,
+including_2026,Humidex-based event score,0.9109466543324083,7,1,2,2.0,1.0,98.05785369873047,146.8157958984375
+including_2026,Wet-bulb event score,0.6863398088189948,6,1,5,2.0,1.0,98.05785369873047,221.04052734375
+including_2026,Shade-WBGT event score,0.9115633672525439,8,1,2,2.0,1.0,98.05785369873047,150.97975158691406

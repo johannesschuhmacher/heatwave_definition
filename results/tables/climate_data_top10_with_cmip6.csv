@@ -19,6 +19,16 @@ Historical / ERA5,ERA5,Historical,Historical observations and reanalysis,HISTORI
 Historical / ERA5,ERA5,Historical,Historical observations and reanalysis,HISTORICAL,,ERA5,8,2020,7374.457,russo2015-noleap365-v1,1779
 Historical / ERA5,ERA5,Historical,Historical observations and reanalysis,HISTORICAL,,ERA5,9,2018,5661.842,russo2015-noleap365-v1,1779
 Historical / ERA5,ERA5,Historical,Historical observations and reanalysis,HISTORICAL,,ERA5,10,1976,5134.3374,russo2015-noleap365-v1,1779
+Historical / NOAA CORe,NOAA CORe,Historical,Historical observations and reanalysis,HISTORICAL,,NOAA CORe,1,2003,3195.58,russo2015-noleap365-v1,223
+Historical / NOAA CORe,NOAA CORe,Historical,Historical observations and reanalysis,HISTORICAL,,NOAA CORe,2,2026,3001.1206,russo2015-noleap365-v1,223
+Historical / NOAA CORe,NOAA CORe,Historical,Historical observations and reanalysis,HISTORICAL,,NOAA CORe,3,2019,1163.8391,russo2015-noleap365-v1,223
+Historical / NOAA CORe,NOAA CORe,Historical,Historical observations and reanalysis,HISTORICAL,,NOAA CORe,4,2020,990.7486,russo2015-noleap365-v1,223
+Historical / NOAA CORe,NOAA CORe,Historical,Historical observations and reanalysis,HISTORICAL,,NOAA CORe,5,2025,960.8854,russo2015-noleap365-v1,223
+Historical / NOAA CORe,NOAA CORe,Historical,Historical observations and reanalysis,HISTORICAL,,NOAA CORe,6,2015,698.6668,russo2015-noleap365-v1,223
+Historical / NOAA CORe,NOAA CORe,Historical,Historical observations and reanalysis,HISTORICAL,,NOAA CORe,7,2023,679.4108,russo2015-noleap365-v1,223
+Historical / NOAA CORe,NOAA CORe,Historical,Historical observations and reanalysis,HISTORICAL,,NOAA CORe,8,2012,603.0158,russo2015-noleap365-v1,223
+Historical / NOAA CORe,NOAA CORe,Historical,Historical observations and reanalysis,HISTORICAL,,NOAA CORe,9,1998,599.12537,russo2015-noleap365-v1,223
+Historical / NOAA CORe,NOAA CORe,Historical,Historical observations and reanalysis,HISTORICAL,,NOAA CORe,10,1994,589.12256,russo2015-noleap365-v1,223
 CNRM-CERFACS-CNRM-CM5 / CNRM-ALADIN63 RCP26,CNRM-ALADIN RCP2.6,CORDEX-CMIP5,CORDEX-CMIP5 / RCP projections,RCP26,CNRM-CERFACS-CNRM-CM5,CNRM-ALADIN,1,2026,39857.348,russo2015-noleap365-v1,1779
 CNRM-CERFACS-CNRM-CM5 / CNRM-ALADIN63 RCP26,CNRM-ALADIN RCP2.6,CORDEX-CMIP5,CORDEX-CMIP5 / RCP projections,RCP26,CNRM-CERFACS-CNRM-CM5,CNRM-ALADIN,2,2032,34494.51,russo2015-noleap365-v1,1779
 CNRM-CERFACS-CNRM-CM5 / CNRM-ALADIN63 RCP26,CNRM-ALADIN RCP2.6,CORDEX-CMIP5,CORDEX-CMIP5 / RCP projections,RCP26,CNRM-CERFACS-CNRM-CM5,CNRM-ALADIN,3,2042,22587.219,russo2015-noleap365-v1,1779

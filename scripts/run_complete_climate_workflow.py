@@ -20,6 +20,11 @@ DEFAULT_ERA5_DEWPOINT = Path(os.environ.get("HEATWAVE_ERA5_DEWPOINT_ROOT", "data
 DEFAULT_SSP_POPULATION = Path(os.environ.get("HEATWAVE_SSP_POPULATION_ROOT", "data/population/isimip2b_ssp_0p5deg"))
 DEFAULT_CMIP5_GRID = Path(os.environ.get("HEATWAVE_CMIP5_GRID_FILE", "data/cordex_cmip5/grid_tasAdjust.nc"))
 DEFAULT_WEIGHTS = REPO / "outputs" / "sensitivity" / "country_weights_from_tyndp2024_pemmdb_nt2040.csv"
+# Order matches PRIMARY_RUNS in rerun_cmip5_primary_sensitivities.py (IPSL-WRF RCP4.5, MPI-CLM RCP8.5).
+PRIMARY_CMIP5_METRICS = ("copernicus_rcp45", "copernicus_rcp85")
+
+if str(REPO) not in sys.path:
+    sys.path.insert(0, str(REPO))
 
 
 def main(argv: list[str] | None = None) -> None:
@@ -37,6 +42,8 @@ def main(argv: list[str] | None = None) -> None:
             REPO / "outputs" / "ensemble_rankings" / "copernicus2100_de_fr_top_years.csv",
             "existing CMIP5 ensemble ranking for --skip-cmip5",
         )
+        for name in PRIMARY_CMIP5_METRICS:
+            require(REPO / "outputs" / "raw_metrics" / f"metrics_{name}.npz", "existing CMIP5 metrics for --skip-cmip5")
     if not args.skip_cmip6:
         require(args.cmip6_root, "CORDEX-CMIP6 root directory")
     else:
@@ -149,6 +156,8 @@ def main(argv: list[str] | None = None) -> None:
                 "10",
             ]
         )
+        for config in write_primary_cmip5_metrics_configs(args.cmip5_root):
+            run([sys.executable, "-m", "heatwave_definition.cli", "run", str(config)])
 
     if not args.skip_cmip6:
         command = [
@@ -233,6 +242,7 @@ def main(argv: list[str] | None = None) -> None:
             str(args.eobs_file),
         ]
     )
+    run([sys.executable, "scripts/make_scenario_figure.py", "--repo", "outputs/raw_metrics"])
     run([sys.executable, "scripts/make_additional_paper_figures.py"])
     run([sys.executable, "scripts/make_climate_data_figures.py", "--output-dir", "outputs/figures"])
     run(
@@ -304,6 +314,45 @@ def write_eobs_metrics_config(eobs_file: Path) -> Path:
         newline="\n",
     )
     return path
+
+
+def write_primary_cmip5_metrics_configs(cmip5_root: Path) -> list[Path]:
+    """Write CLI configs for the full-domain metrics of the two primary CMIP5 runs (Figure 5)."""
+
+    from heatwave_definition.raw_copernicus import discover_tasadjust_runs
+    from scripts.rerun_cmip5_primary_sensitivities import PRIMARY_RUNS, select_run
+
+    runs = discover_tasadjust_runs(cmip5_root)
+    paths = []
+    for name, spec in zip(PRIMARY_CMIP5_METRICS, PRIMARY_RUNS):
+        source = select_run(runs, spec).path
+        path = REPO / "outputs" / "provenance" / f"{name}.generated.local.toml"
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(
+            "\n".join(
+                [
+                    "[run]",
+                    f'name = "{name}"',
+                    'data_kind = "copernicus"',
+                    f'input_file = "{source.as_posix()}"',
+                    'output_dir = "outputs/raw_metrics"',
+                    'countries = ["Germany", "France"]',
+                    "reference_period = [1981, 2010]",
+                    "threshold_quantile = 0.90",
+                    "min_heatwave_days = 3",
+                    "top_years = 10",
+                    "",
+                    "[copernicus]",
+                    'variable = "tasAdjust"',
+                    'temperature_unit = "K"',
+                    "",
+                ]
+            ),
+            encoding="utf-8",
+            newline="\n",
+        )
+        paths.append(path)
+    return paths
 
 
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:

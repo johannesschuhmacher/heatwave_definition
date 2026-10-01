@@ -1,0 +1,91 @@
+dataset,threshold_quantile,threshold_percentile,rank,year,hwmid_sum,hwmid_method,country_cells,countries,source_file_count,source_file_names,source_directory_name,source_year_start,source_year_end,period_end
+E-OBS,0.9,90,1,2003,25287.0,russo2015-noleap365-v1,1790,Germany+France,1.0,tx_ens_mean_0.25deg_reg_v33.0e.nc,,,,
+E-OBS,0.9,90,2,2019,10910.798,russo2015-noleap365-v1,1790,Germany+France,1.0,tx_ens_mean_0.25deg_reg_v33.0e.nc,,,,
+E-OBS,0.9,90,3,2025,9279.456,russo2015-noleap365-v1,1790,Germany+France,1.0,tx_ens_mean_0.25deg_reg_v33.0e.nc,,,,
+E-OBS,0.9,90,4,2020,8193.442,russo2015-noleap365-v1,1790,Germany+France,1.0,tx_ens_mean_0.25deg_reg_v33.0e.nc,,,,
+E-OBS,0.9,90,5,2022,7681.0645,russo2015-noleap365-v1,1790,Germany+France,1.0,tx_ens_mean_0.25deg_reg_v33.0e.nc,,,,
+E-OBS,0.9,90,6,2015,7202.564,russo2015-noleap365-v1,1790,Germany+France,1.0,tx_ens_mean_0.25deg_reg_v33.0e.nc,,,,
+E-OBS,0.9,90,7,2023,7104.113,russo2015-noleap365-v1,1790,Germany+France,1.0,tx_ens_mean_0.25deg_reg_v33.0e.nc,,,,
+E-OBS,0.9,90,8,2018,6189.2607,russo2015-noleap365-v1,1790,Germany+France,1.0,tx_ens_mean_0.25deg_reg_v33.0e.nc,,,,
+E-OBS,0.9,90,9,1952,5378.6147,russo2015-noleap365-v1,1790,Germany+France,1.0,tx_ens_mean_0.25deg_reg_v33.0e.nc,,,,
+E-OBS,0.9,90,10,1976,5298.2593,russo2015-noleap365-v1,1790,Germany+France,1.0,tx_ens_mean_0.25deg_reg_v33.0e.nc,,,,
+ERA5,0.9,90,1,2003,24925.648,russo2015-noleap365-v1,1779,Germany+France,77.0,,t2m_europe,1950.0,2026.0,
+ERA5,0.9,90,2,2026,24441.555,russo2015-noleap365-v1,1779,Germany+France,77.0,,t2m_europe,1950.0,2026.0,
+ERA5,0.9,90,3,2025,12593.876,russo2015-noleap365-v1,1779,Germany+France,77.0,,t2m_europe,1950.0,2026.0,
+ERA5,0.9,90,4,2019,11156.703,russo2015-noleap365-v1,1779,Germany+France,77.0,,t2m_europe,1950.0,2026.0,
+ERA5,0.9,90,5,2022,8660.085,russo2015-noleap365-v1,1779,Germany+France,77.0,,t2m_europe,1950.0,2026.0,
+ERA5,0.9,90,6,2023,7808.4365,russo2015-noleap365-v1,1779,Germany+France,77.0,,t2m_europe,1950.0,2026.0,
+ERA5,0.9,90,7,2015,7471.203,russo2015-noleap365-v1,1779,Germany+France,77.0,,t2m_europe,1950.0,2026.0,
+ERA5,0.9,90,8,2020,7374.457,russo2015-noleap365-v1,1779,Germany+France,77.0,,t2m_europe,1950.0,2026.0,
+ERA5,0.9,90,9,2018,5661.842,russo2015-noleap365-v1,1779,Germany+France,77.0,,t2m_europe,1950.0,2026.0,
+ERA5,0.9,90,10,1976,5134.3374,russo2015-noleap365-v1,1779,Germany+France,77.0,,t2m_europe,1950.0,2026.0,
+NOAA CORe,0.9,90,1,2003,3195.58,russo2015-noleap365-v1,223,,,,,,,2026-07-01
+NOAA CORe,0.9,90,2,2026,3001.1206,russo2015-noleap365-v1,223,,,,,,,2026-07-01
+NOAA CORe,0.9,90,3,2019,1163.8391,russo2015-noleap365-v1,223,,,,,,,2026-07-01
+NOAA CORe,0.9,90,4,2020,990.7486,russo2015-noleap365-v1,223,,,,,,,2026-07-01
+NOAA CORe,0.9,90,5,2025,960.8854,russo2015-noleap365-v1,223,,,,,,,2026-07-01
+NOAA CORe,0.9,90,6,2015,698.6668,russo2015-noleap365-v1,223,,,,,,,2026-07-01
+NOAA CORe,0.9,90,7,2023,679.4108,russo2015-noleap365-v1,223,,,,,,,2026-07-01
+NOAA CORe,0.9,90,8,2012,603.0158,russo2015-noleap365-v1,223,,,,,,,2026-07-01
+NOAA CORe,0.9,90,9,1998,599.12537,russo2015-noleap365-v1,223,,,,,,,2026-07-01
+NOAA CORe,0.9,90,10,1994,589.12256,russo2015-noleap365-v1,223,,,,,,,2026-07-01
+E-OBS,0.95,95,1,2003,24511.887,russo2015-noleap365-v1,1790,Germany+France,1.0,tx_ens_mean_0.25deg_reg_v33.0e.nc,,,,
+E-OBS,0.95,95,2,2019,10575.615,russo2015-noleap365-v1,1790,Germany+France,1.0,tx_ens_mean_0.25deg_reg_v33.0e.nc,,,,
+E-OBS,0.95,95,3,2025,8537.497,russo2015-noleap365-v1,1790,Germany+France,1.0,tx_ens_mean_0.25deg_reg_v33.0e.nc,,,,
+E-OBS,0.95,95,4,2020,7681.3896,russo2015-noleap365-v1,1790,Germany+France,1.0,tx_ens_mean_0.25deg_reg_v33.0e.nc,,,,
+E-OBS,0.95,95,5,2023,6586.1616,russo2015-noleap365-v1,1790,Germany+France,1.0,tx_ens_mean_0.25deg_reg_v33.0e.nc,,,,
+E-OBS,0.95,95,6,2015,6419.1294,russo2015-noleap365-v1,1790,Germany+France,1.0,tx_ens_mean_0.25deg_reg_v33.0e.nc,,,,
+E-OBS,0.95,95,7,2022,6338.0225,russo2015-noleap365-v1,1790,Germany+France,1.0,tx_ens_mean_0.25deg_reg_v33.0e.nc,,,,
+E-OBS,0.95,95,8,1976,5093.2534,russo2015-noleap365-v1,1790,Germany+France,1.0,tx_ens_mean_0.25deg_reg_v33.0e.nc,,,,
+E-OBS,0.95,95,9,1952,5031.962,russo2015-noleap365-v1,1790,Germany+France,1.0,tx_ens_mean_0.25deg_reg_v33.0e.nc,,,,
+E-OBS,0.95,95,10,2018,4867.26,russo2015-noleap365-v1,1790,Germany+France,1.0,tx_ens_mean_0.25deg_reg_v33.0e.nc,,,,
+ERA5,0.95,95,1,2003,24253.906,russo2015-noleap365-v1,1779,Germany+France,77.0,,t2m_europe,1950.0,2026.0,
+ERA5,0.95,95,2,2026,24170.59,russo2015-noleap365-v1,1779,Germany+France,77.0,,t2m_europe,1950.0,2026.0,
+ERA5,0.95,95,3,2025,12088.487,russo2015-noleap365-v1,1779,Germany+France,77.0,,t2m_europe,1950.0,2026.0,
+ERA5,0.95,95,4,2019,10752.696,russo2015-noleap365-v1,1779,Germany+France,77.0,,t2m_europe,1950.0,2026.0,
+ERA5,0.95,95,5,2023,7295.373,russo2015-noleap365-v1,1779,Germany+France,77.0,,t2m_europe,1950.0,2026.0,
+ERA5,0.95,95,6,2022,7281.848,russo2015-noleap365-v1,1779,Germany+France,77.0,,t2m_europe,1950.0,2026.0,
+ERA5,0.95,95,7,2020,6958.0024,russo2015-noleap365-v1,1779,Germany+France,77.0,,t2m_europe,1950.0,2026.0,
+ERA5,0.95,95,8,2015,6687.9844,russo2015-noleap365-v1,1779,Germany+France,77.0,,t2m_europe,1950.0,2026.0,
+ERA5,0.95,95,9,1976,4925.2114,russo2015-noleap365-v1,1779,Germany+France,77.0,,t2m_europe,1950.0,2026.0,
+ERA5,0.95,95,10,2018,4592.8994,russo2015-noleap365-v1,1779,Germany+France,77.0,,t2m_europe,1950.0,2026.0,
+NOAA CORe,0.95,95,1,2003,3099.9092,russo2015-noleap365-v1,223,,,,,,,2026-07-01
+NOAA CORe,0.95,95,2,2026,2949.7366,russo2015-noleap365-v1,223,,,,,,,2026-07-01
+NOAA CORe,0.95,95,3,2019,1139.0586,russo2015-noleap365-v1,223,,,,,,,2026-07-01
+NOAA CORe,0.95,95,4,2020,922.8106,russo2015-noleap365-v1,223,,,,,,,2026-07-01
+NOAA CORe,0.95,95,5,2025,833.86566,russo2015-noleap365-v1,223,,,,,,,2026-07-01
+NOAA CORe,0.95,95,6,2023,637.09595,russo2015-noleap365-v1,223,,,,,,,2026-07-01
+NOAA CORe,0.95,95,7,2015,629.39886,russo2015-noleap365-v1,223,,,,,,,2026-07-01
+NOAA CORe,0.95,95,8,1998,534.4082,russo2015-noleap365-v1,223,,,,,,,2026-07-01
+NOAA CORe,0.95,95,9,2012,501.14597,russo2015-noleap365-v1,223,,,,,,,2026-07-01
+NOAA CORe,0.95,95,10,1994,433.71597,russo2015-noleap365-v1,223,,,,,,,2026-07-01
+E-OBS,0.99,99,1,2003,13283.353,russo2015-noleap365-v1,1790,Germany+France,1.0,tx_ens_mean_0.25deg_reg_v33.0e.nc,,,,
+E-OBS,0.99,99,2,2019,8476.189,russo2015-noleap365-v1,1790,Germany+France,1.0,tx_ens_mean_0.25deg_reg_v33.0e.nc,,,,
+E-OBS,0.99,99,3,2025,4560.7603,russo2015-noleap365-v1,1790,Germany+France,1.0,tx_ens_mean_0.25deg_reg_v33.0e.nc,,,,
+E-OBS,0.99,99,4,2023,4362.2495,russo2015-noleap365-v1,1790,Germany+France,1.0,tx_ens_mean_0.25deg_reg_v33.0e.nc,,,,
+E-OBS,0.99,99,5,2015,4193.748,russo2015-noleap365-v1,1790,Germany+France,1.0,tx_ens_mean_0.25deg_reg_v33.0e.nc,,,,
+E-OBS,0.99,99,6,1976,3507.2354,russo2015-noleap365-v1,1790,Germany+France,1.0,tx_ens_mean_0.25deg_reg_v33.0e.nc,,,,
+E-OBS,0.99,99,7,1952,2614.747,russo2015-noleap365-v1,1790,Germany+France,1.0,tx_ens_mean_0.25deg_reg_v33.0e.nc,,,,
+E-OBS,0.99,99,8,2022,2338.668,russo2015-noleap365-v1,1790,Germany+France,1.0,tx_ens_mean_0.25deg_reg_v33.0e.nc,,,,
+E-OBS,0.99,99,9,2016,2189.8984,russo2015-noleap365-v1,1790,Germany+France,1.0,tx_ens_mean_0.25deg_reg_v33.0e.nc,,,,
+E-OBS,0.99,99,10,2017,2089.2664,russo2015-noleap365-v1,1790,Germany+France,1.0,tx_ens_mean_0.25deg_reg_v33.0e.nc,,,,
+ERA5,0.99,99,1,2026,22741.506,russo2015-noleap365-v1,1779,Germany+France,77.0,,t2m_europe,1950.0,2026.0,
+ERA5,0.99,99,2,2003,13328.257,russo2015-noleap365-v1,1779,Germany+France,77.0,,t2m_europe,1950.0,2026.0,
+ERA5,0.99,99,3,2019,8314.287,russo2015-noleap365-v1,1779,Germany+France,77.0,,t2m_europe,1950.0,2026.0,
+ERA5,0.99,99,4,2025,8082.615,russo2015-noleap365-v1,1779,Germany+France,77.0,,t2m_europe,1950.0,2026.0,
+ERA5,0.99,99,5,2023,5271.51,russo2015-noleap365-v1,1779,Germany+France,77.0,,t2m_europe,1950.0,2026.0,
+ERA5,0.99,99,6,2015,4422.067,russo2015-noleap365-v1,1779,Germany+France,77.0,,t2m_europe,1950.0,2026.0,
+ERA5,0.99,99,7,2022,3275.3726,russo2015-noleap365-v1,1779,Germany+France,77.0,,t2m_europe,1950.0,2026.0,
+ERA5,0.99,99,8,1976,3090.9883,russo2015-noleap365-v1,1779,Germany+France,77.0,,t2m_europe,1950.0,2026.0,
+ERA5,0.99,99,9,2016,2109.6484,russo2015-noleap365-v1,1779,Germany+France,77.0,,t2m_europe,1950.0,2026.0,
+ERA5,0.99,99,10,2017,2000.9104,russo2015-noleap365-v1,1779,Germany+France,77.0,,t2m_europe,1950.0,2026.0,
+NOAA CORe,0.99,99,1,2026,2807.4219,russo2015-noleap365-v1,223,,,,,,,2026-07-01
+NOAA CORe,0.99,99,2,2003,1741.2614,russo2015-noleap365-v1,223,,,,,,,2026-07-01
+NOAA CORe,0.99,99,3,2019,807.1502,russo2015-noleap365-v1,223,,,,,,,2026-07-01
+NOAA CORe,0.99,99,4,2015,488.88733,russo2015-noleap365-v1,223,,,,,,,2026-07-01
+NOAA CORe,0.99,99,5,2023,392.96796,russo2015-noleap365-v1,223,,,,,,,2026-07-01
+NOAA CORe,0.99,99,6,1957,253.225,russo2015-noleap365-v1,223,,,,,,,2026-07-01
+NOAA CORe,0.99,99,7,2020,248.63882,russo2015-noleap365-v1,223,,,,,,,2026-07-01
+NOAA CORe,0.99,99,8,1976,211.54988,russo2015-noleap365-v1,223,,,,,,,2026-07-01
+NOAA CORe,0.99,99,9,2025,206.76031,russo2015-noleap365-v1,223,,,,,,,2026-07-01
+NOAA CORe,0.99,99,10,1952,170.89432,russo2015-noleap365-v1,223,,,,,,,2026-07-01
