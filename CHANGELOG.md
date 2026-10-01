@@ -1,5 +1,24 @@
 # Changelog
 
+## 1.3.0 - 2026-10-01
+
+Code and results for the revised and accepted Climate Services article.
+
+- Added NOAA CORe daily maximum 2 m temperature (download, ranking) and an
+  E-OBS/ERA5/CORe comparison for 1950-2025 and with 2026 through 1 July
+  (ranks, Spearman correlations, top-ten overlap). Climate-data figures now
+  include CORe; CORe uses a secondary axis in the historical rank-curve panel.
+- Added a 90th/95th/99th-percentile threshold sensitivity for E-OBS, ERA5 and
+  CORe.
+- Added an exploratory ERA5 humidity sensitivity (Humidex, Stull wet-bulb
+  temperature, no-solar-load WBGT proxy) and ERA5 dewpoint download/extraction.
+- Added fixed-2040 ISIMIP2b SSP1-SSP5 population weighting for the primary
+  CORDEX-CMIP5 chains; cached CMIP5 cell metrics now store cell longitudes.
+- `run_complete_climate_workflow.py` runs these analyses and requires the
+  CORe, ERA5 dewpoint, ISIMIP2b population and CMIP5 grid inputs.
+- Manuscript figures are written as 450 dpi PNG plus SVG. The results README
+  maps each article figure to its file.
+
 ## 1.2.1 - 2026-07-18
 
 - Made derived-artifact checksums independent of Windows and Unix line endings

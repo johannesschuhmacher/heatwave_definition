@@ -35,6 +35,38 @@ def rank_era5_t2m_directory(
     if not files:
         raise FileNotFoundError(f"No {pattern!r} files found in {directory}")
 
+    daily_tmax, dates, mask = load_era5_t2m_country_cells(
+        files,
+        countries=countries,
+        variable=variable,
+        temperature_unit=temperature_unit,
+    )
+
+    ranking = rank_daily_cells_by_hwmid(
+        daily_tmax=daily_tmax,
+        dates=dates,
+        top_years=top_years,
+        ref_period=ref_period,
+        min_heatwave_days=min_heatwave_days,
+        threshold_quantile=threshold_quantile,
+    )
+    ranking["country_cells"] = int(mask.sum())
+    ranking["countries"] = "+".join(countries)
+    ranking["source_file_count"] = len(files)
+    ranking["source_directory_name"] = directory.name
+    ranking["source_year_start"] = min(_year_from_filename(path) for path in files)
+    ranking["source_year_end"] = max(_year_from_filename(path) for path in files)
+    return ranking
+
+
+def load_era5_t2m_country_cells(
+    files: list[str | Path],
+    countries: list[str],
+    variable: str = "t2m",
+    temperature_unit: str = "K",
+) -> tuple[np.ndarray, pd.DatetimeIndex, np.ndarray]:
+    """Load daily maximum temperature for selected cells from annual ERA5 files."""
+
     daily_chunks = []
     date_chunks = []
     latitude = None
@@ -79,21 +111,9 @@ def rank_era5_t2m_directory(
     dates = pd.DatetimeIndex(dates.to_numpy()[order])
     daily_tmax = daily_tmax[order, :]
 
-    ranking = rank_daily_cells_by_hwmid(
-        daily_tmax=daily_tmax,
-        dates=dates,
-        top_years=top_years,
-        ref_period=ref_period,
-        min_heatwave_days=min_heatwave_days,
-        threshold_quantile=threshold_quantile,
-    )
-    ranking["country_cells"] = int(mask.sum()) if mask is not None else 0
-    ranking["countries"] = "+".join(countries)
-    ranking["source_file_count"] = len(files)
-    ranking["source_directory_name"] = directory.name
-    ranking["source_year_start"] = min(_year_from_filename(path) for path in files)
-    ranking["source_year_end"] = max(_year_from_filename(path) for path in files)
-    return ranking
+    if mask is None:
+        raise ValueError("No ERA5 files were provided")
+    return daily_tmax, dates, mask
 
 
 def era5_year_coverage(

@@ -21,6 +21,7 @@ from heatwave_definition.plot_style import (
     STABILITY_NORM,
     apply_manuscript_style,
     classify_top2_stability,
+    save_manuscript_figure,
     stability_legend_handles,
 )
 from heatwave_definition.ranking import rank_years_by_grid_metric
@@ -179,7 +180,7 @@ def plot_heatmap(top2: pd.DataFrame, output: Path) -> None:
         fontsize=LEGEND_SIZE,
     )
     output.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(output, dpi=220)
+    save_manuscript_figure(fig, output)
     plt.close(fig)
 
 

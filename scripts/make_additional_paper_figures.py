@@ -28,6 +28,7 @@ from heatwave_definition.plot_style import (
     TITLE_SIZE,
     apply_manuscript_style,
     classify_top2_stability,
+    save_manuscript_figure,
     stability_legend_handles,
 )
 
@@ -121,7 +122,7 @@ def plot_top10_rank_curve(top10: pd.DataFrame, output: Path) -> Path:
     ax.grid(axis="y", alpha=0.25)
     ax.spines[["top", "right"]].set_visible(False)
     ax.legend(frameon=False, loc="upper right")
-    fig.savefig(output, dpi=220)
+    save_manuscript_figure(fig, output)
     plt.close(fig)
     return output
 
@@ -170,7 +171,7 @@ def plot_country_mask_heatmap(country_mask: pd.DataFrame, output: Path) -> Path:
             )
 
     add_stability_legend(ax, y=-0.22)
-    fig.savefig(output, dpi=220)
+    save_manuscript_figure(fig, output)
     plt.close(fig)
     return output
 
@@ -212,7 +213,7 @@ def plot_n_minus_1_heatmap(country_mask: pd.DataFrame, output: Path) -> Path:
             )
 
     add_stability_legend(ax, y=-0.18)
-    fig.savefig(output, dpi=220)
+    save_manuscript_figure(fig, output)
     plt.close(fig)
     return output
 
@@ -302,7 +303,7 @@ def plot_weighting_heatmap(weighted: pd.DataFrame, primary_top10: pd.DataFrame, 
         bbox_to_anchor=(0.5, -0.16),
     )
     fig.subplots_adjust(left=plot_left, right=plot_right, top=0.87, bottom=0.25)
-    fig.savefig(output, dpi=220)
+    save_manuscript_figure(fig, output)
     plt.close(fig)
     return output
 
@@ -409,7 +410,7 @@ def plot_ensemble_dotplot(ensemble: pd.DataFrame, output: Path) -> Path:
         bbox_to_anchor=(0.5, -0.16),
         fontsize=LEGEND_SIZE,
     )
-    fig.savefig(output, dpi=220)
+    save_manuscript_figure(fig, output)
     plt.close(fig)
     return output
 
@@ -471,7 +472,7 @@ def plot_method_flow(output: Path) -> Path:
         fontsize=SMALL_TEXT_SIZE,
         color="#4a5568",
     )
-    fig.savefig(output, dpi=220)
+    save_manuscript_figure(fig, output)
     plt.close(fig)
     return output
 

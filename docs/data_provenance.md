@@ -6,15 +6,13 @@ writes local inventories under `outputs/provenance/` and sanitized provenance
 tables under `results/provenance/`.
 
 The current public snapshot contains sanitized manifests for the E-OBS/ERA5
-historical data-product comparison, E-OBS and ERA5 year coverage, and the
-primary CMIP5 sensitivity intermediates. Local inventories may additionally
+historical data-product comparison, E-OBS, ERA5 and NOAA CORe year coverage,
+the daily coverage of the three-product comparison (CORe lacks 19 May 2026),
+and the primary CMIP5 sensitivity intermediates. Local inventories may additionally
 contain absolute paths and must remain outside Git.
 
-Use the final reproduction workflow to regenerate the provenance outputs:
-
-```text
-python scripts/run_complete_climate_workflow.py --eobs-file <eobs-file> --era5-root <era5-root> --cmip5-root <cmip5-root> --cmip6-root <cmip6-root> --tyndp-root <PEMMDB2-root>
-```
+Use the final reproduction workflow in the README (`scripts/run_complete_climate_workflow.py`)
+to regenerate the provenance outputs.
 
 Typical manifest columns are:
 

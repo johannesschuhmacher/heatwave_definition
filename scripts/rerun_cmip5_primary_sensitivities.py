@@ -62,6 +62,7 @@ class CellMetrics:
     annual_tmax: np.ndarray
     temp_anomaly: np.ndarray
     cell_lat: np.ndarray
+    cell_lon: np.ndarray
     country_masks: dict[str, np.ndarray]
 
 
@@ -90,6 +91,7 @@ def main() -> None:
             annual_tmax=metrics.annual_tmax,
             temp_anomaly=metrics.temp_anomaly,
             cell_lat=metrics.cell_lat,
+            cell_lon=metrics.cell_lon,
             **{f"country_{country}": mask for country, mask in metrics.country_masks.items()},
         )
         all_manifest_rows.append(
@@ -184,6 +186,7 @@ def build_metrics(
         union_mask = classify_countries_matrix(latitude, longitude, WESTERN_CENTRAL_EUROPE)
         lon_grid, lat_grid = np.meshgrid(longitude, latitude)
         cell_lat = lat_grid[union_mask]
+        cell_lon = lon_grid[union_mask]
         daily_tmax = _load_daily_tmax_for_mask(
             dataset.variables["tasAdjust"],
             dates_3h,
@@ -212,6 +215,7 @@ def build_metrics(
         annual_tmax=annual_tmax,
         temp_anomaly=temp_anomaly,
         cell_lat=cell_lat.astype(float),
+        cell_lon=cell_lon.astype(float),
         country_masks=country_masks,
     )
 

@@ -71,6 +71,58 @@ FILES = [
         "era5_current_heatwave/era5_de_fr_2003_2026_event_period_comparison.png",
         "figures/era5_2003_2026_event_period_comparison.png",
     ),
+    ("figures/scenario_hwmid_top2_de_fr.png", "figures/scenario_hwmid_top2_de_fr.png"),
+    ("ranking_from_config/ranked_years_core.csv", "rankings/ranked_years_core.csv"),
+    ("ranking_from_config/core_year_coverage.csv", "provenance/core_year_coverage.csv"),
+    (
+        "reviewer_revision/reanalysis_comparison/reanalysis_top10_rankings.csv",
+        "tables/historical_data_product_top10_with_core.csv",
+    ),
+    (
+        "reviewer_revision/reanalysis_comparison/historical_product_pairwise_agreement.csv",
+        "tables/historical_data_product_pairwise_agreement.csv",
+    ),
+    (
+        "reviewer_revision/reanalysis_comparison/reanalysis_period_coverage.csv",
+        "provenance/historical_data_product_period_coverage.csv",
+    ),
+    (
+        "reviewer_revision/reanalysis_comparison/historical_product_top10_matrix_with_without_2026.png",
+        "figures/historical_data_product_top10_matrix_with_core.png",
+    ),
+    (
+        "reviewer_revision/threshold_sensitivity/threshold_quantile_top_years.csv",
+        "sensitivity/threshold_quantile_top_years.csv",
+    ),
+    (
+        "reviewer_revision/threshold_sensitivity/threshold_quantile_top2_summary.csv",
+        "sensitivity/threshold_quantile_top2_summary.csv",
+    ),
+    ("reviewer_revision/figures/threshold_quantile_sensitivity.png", "figures/threshold_quantile_sensitivity.png"),
+    (
+        "reviewer_revision/humidity_metrics/era5_humidity_metrics_top10.csv",
+        "sensitivity/era5_humidity_metrics_top10.csv",
+    ),
+    (
+        "reviewer_revision/humidity_metrics/era5_humidity_metrics_summary.csv",
+        "sensitivity/era5_humidity_metrics_summary.csv",
+    ),
+    (
+        "reviewer_revision/humidity_metrics/era5_humidity_metrics_top10_matrix.png",
+        "figures/era5_humidity_metrics_top10_matrix.png",
+    ),
+    (
+        "reviewer_revision/ssp_population/ssp_population_weighting_top_years.csv",
+        "sensitivity/ssp_population_weighting_top_years.csv",
+    ),
+    (
+        "reviewer_revision/ssp_population/ssp_population_weighting_top2_summary.csv",
+        "sensitivity/ssp_population_weighting_top2_summary.csv",
+    ),
+    (
+        "reviewer_revision/figures/ssp_population_weighting_top2_heatmap.png",
+        "figures/ssp_population_weighting_top2_heatmap.png",
+    ),
 ]
 
 SANITIZED_CSVS = {
@@ -97,14 +149,38 @@ python scripts/snapshot_public_results.py
 
 Contents:
 
-- `rankings/`: primary scenario-year rankings.
-- `sensitivity/`: country-mask, weighting and ranking-criterion sensitivity outputs.
+- `rankings/`: primary scenario-year rankings, including the NOAA CORe comparison product.
+- `sensitivity/`: country-mask, weighting, ranking-criterion, population, threshold and
+  humidity-metric sensitivity outputs.
 - `ensemble/`: Copernicus raw-data ensemble sensitivity summaries.
 - `cmip6/`: CORDEX-CMIP6 group/file inventories and top-year rankings.
-- `tables/`: appendix-ready compact tables, including the E-OBS/ERA5 historical data-product comparison.
+- `tables/`: appendix-ready compact tables, including the E-OBS/ERA5/NOAA CORe historical data-product comparison.
 - `figures/`: manuscript and supplementary figures.
 - `validation/`: TYNDP 2024 PEMMDB capacity cross-check tables.
 - `provenance/`: sanitized input and software manifests with file names and checksums where available.
+
+Manuscript figures (Climate Services article):
+
+| Figure | File in `figures/` |
+| --- | --- |
+| 1 | `hwmid_workflow_example_2003.png` |
+| 2 | `hwmid_timeseries_example_2003.png` |
+| 3 | `climate_data_top10_rank_matrix_with_cmip6.png` |
+| 4 | `climate_data_top10_rank_curve_faceted_with_cmip6.png` |
+| 5 | `scenario_hwmid_top2_de_fr.png` |
+| 6 | `era5_2003_2026_event_period_comparison.png` |
+| 7 | `climate_data_heatwave_magnitude_timing_with_cmip6.png` |
+| 8 | `country_mask_top2_heatmap.png` |
+| 9 | `technology_weighting_top2_heatmap.png` |
+| 10 | `ranking_criteria_top2_heatmap_de_fr.png` |
+| B.1 | `ssp_population_weighting_top2_heatmap.png` |
+| C.1 | `n_minus_1_top2_heatmap.png` |
+| D.1 | `era5_humidity_metrics_top10_matrix.png` |
+| E.1 | `historical_data_product_top10_matrix_with_core.png` |
+| E.2 | `threshold_quantile_sensitivity.png` |
+
+The workflow writes a matching SVG next to each PNG under `outputs/`; only PNG
+files are versioned here.
 """
 
 

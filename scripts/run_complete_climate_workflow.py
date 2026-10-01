@@ -1,4 +1,4 @@
-"""Run the complete manuscript workflow for E-OBS, ERA5, CMIP5 and CMIP6."""
+"""Run the complete manuscript workflow for E-OBS, ERA5, NOAA CORe, CMIP5 and CMIP6."""
 
 from __future__ import annotations
 
@@ -15,6 +15,10 @@ DEFAULT_ERA5 = Path(os.environ.get("HEATWAVE_ERA5_ROOT", "data/era5/t2m_europe")
 DEFAULT_CMIP5 = Path(os.environ.get("HEATWAVE_CMIP5_ROOT", "data/cordex_cmip5"))
 DEFAULT_CMIP6 = Path(os.environ.get("HEATWAVE_CMIP6_ROOT", "data/cordex_cmip6/netcdf"))
 DEFAULT_TYNDP = Path(os.environ.get("HEATWAVE_TYNDP_PEMMDB_ROOT", "data/tyndp2024/PEMMDB2"))
+DEFAULT_CORE = Path(os.environ.get("HEATWAVE_CORE_ROOT", "data/core/t2m_max_europe"))
+DEFAULT_ERA5_DEWPOINT = Path(os.environ.get("HEATWAVE_ERA5_DEWPOINT_ROOT", "data/era5/d2m_de_fr"))
+DEFAULT_SSP_POPULATION = Path(os.environ.get("HEATWAVE_SSP_POPULATION_ROOT", "data/population/isimip2b_ssp_0p5deg"))
+DEFAULT_CMIP5_GRID = Path(os.environ.get("HEATWAVE_CMIP5_GRID_FILE", "data/cordex_cmip5/grid_tasAdjust.nc"))
 DEFAULT_WEIGHTS = REPO / "outputs" / "sensitivity" / "country_weights_from_tyndp2024_pemmdb_nt2040.csv"
 
 
@@ -22,6 +26,10 @@ def main(argv: list[str] | None = None) -> None:
     args = parse_args(argv)
     require(args.eobs_file, "E-OBS v33.0e raw file")
     require(args.era5_root, "ERA5 root directory")
+    require(args.core_root, "NOAA CORe daily maximum temperature directory")
+    require(args.era5_dewpoint_root, "ERA5 Germany-France dewpoint directory")
+    require(args.ssp_population_root, "ISIMIP2b SSP population directory")
+    require(args.cmip5_grid_file, "CORDEX-CMIP5 tasAdjust grid file")
     if not args.skip_cmip5:
         require(args.cmip5_root, "CORDEX-CMIP5 root directory")
     else:
@@ -155,6 +163,53 @@ def main(argv: list[str] | None = None) -> None:
             command.append("--resume")
         run(command)
 
+    run([sys.executable, "scripts/rank_core_t2m.py", str(args.core_root)])
+    run(
+        [
+            sys.executable,
+            "scripts/compare_reanalysis_rankings.py",
+            str(args.era5_root),
+            str(args.core_root),
+            str(args.eobs_file),
+            "--current-cutoff",
+            str(args.era5_current_max_date),
+        ]
+    )
+    run(
+        [
+            sys.executable,
+            "scripts/sensitivity_threshold_quantiles.py",
+            str(args.eobs_file),
+            str(args.era5_root),
+            "--core-dir",
+            str(args.core_root),
+            "--current-cutoff",
+            str(args.era5_current_max_date),
+        ]
+    )
+    run(
+        [
+            sys.executable,
+            "scripts/sensitivity_era5_humidity_metrics.py",
+            str(args.era5_root),
+            str(args.era5_dewpoint_root),
+            "--output-dir",
+            "outputs/reviewer_revision/humidity_metrics",
+            "--current-cutoff",
+            f"{args.era5_current_max_date} 23:00:00",
+        ]
+    )
+    run(
+        [
+            sys.executable,
+            "scripts/sensitivity_ssp_population_weighting.py",
+            "--population-dir",
+            str(args.ssp_population_root),
+            "--grid-file",
+            str(args.cmip5_grid_file),
+        ]
+    )
+
     run([sys.executable, "scripts/summarize_scenario_selection.py"])
     run([sys.executable, "scripts/build_appendix_tables.py"])
     run(
@@ -258,6 +313,15 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--cmip5-root", type=Path, default=DEFAULT_CMIP5)
     parser.add_argument("--cmip6-root", type=Path, default=DEFAULT_CMIP6)
     parser.add_argument("--tyndp-root", type=Path, default=DEFAULT_TYNDP)
+    parser.add_argument("--core-root", type=Path, default=DEFAULT_CORE)
+    parser.add_argument("--era5-dewpoint-root", type=Path, default=DEFAULT_ERA5_DEWPOINT)
+    parser.add_argument("--ssp-population-root", type=Path, default=DEFAULT_SSP_POPULATION)
+    parser.add_argument(
+        "--cmip5-grid-file",
+        type=Path,
+        default=DEFAULT_CMIP5_GRID,
+        help="Any IPSL-WRF RCP4.5 tasAdjust file; defines the grid of the cached CMIP5 cell metrics.",
+    )
     parser.add_argument("--era5-start-year", type=int, default=1950)
     parser.add_argument("--era5-end-year", type=int, default=2026)
     parser.add_argument("--historical-common-end-year", type=int, default=2025)

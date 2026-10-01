@@ -50,13 +50,17 @@ artifacts listed in that script to `results/`.
 - E-OBS: v33.0e, complete years 1950-2025.
 - ERA5 completed-year comparison: 1950-2025.
 - ERA5 current-year event: data frozen through 1 July 2026.
+- NOAA CORe: 1950-2025 and 2026 through 1 July 2026 (19 May 2026 missing).
+- ERA5 dewpoint for the humidity sensitivity: Germany-France, 1980-2026.
+- Population: WorldPop 2020 (historical) and ISIMIP2b SSP1-SSP5 for 2040.
 - CMIP5: eight discovered full-period `tasAdjust` files.
 - CMIP6: ten eligible model/experiment groups from two complete chains; a
   separately discovered partial MIROC6 chain is inventoried but not ranked.
 - HWMId reference period: 1981-2010.
 - Calendar convention: 365 days; 29 February is excluded before threshold and
   event calculation.
-- Threshold: calendar-day 90th percentile in a 31-day window.
+- Threshold: calendar-day 90th percentile in a 31-day window (95th and 99th
+  percentiles as sensitivity).
 - Minimum event duration: three consecutive days.
 - Reference spatial domain: Germany and France.
 

@@ -27,6 +27,7 @@ from heatwave_definition.plot_style import (
     TEXT_COLOR,
     TITLE_SIZE,
     apply_manuscript_style,
+    save_manuscript_figure,
 )
 from heatwave_definition.ranking import rank_years_by_hwmid
 from heatwave_definition.regions import classify_countries_matrix
@@ -81,7 +82,7 @@ def main(argv: list[str] | None = None) -> None:
         score=score,
         rank=rank,
     )
-    figure.savefig(args.output, dpi=220)
+    save_manuscript_figure(figure, args.output)
     plt.close(figure)
     print(args.output)
 
@@ -222,6 +223,7 @@ def plot_temperature_map(ax, lon2d, lat2d, values, cmap, norm, title: str):
         norm=norm,
         transform=ccrs.PlateCarree(),
         shading="auto",
+        rasterized=True,
         zorder=1,
     )
     if title:
@@ -239,6 +241,7 @@ def plot_hwmid_map(ax, lon2d, lat2d, values, cmap, norm, country_mask, title: st
         norm=norm,
         transform=ccrs.PlateCarree(),
         shading="auto",
+        rasterized=True,
         zorder=1,
     )
     if not outside_mask:

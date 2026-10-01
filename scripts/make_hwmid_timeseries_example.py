@@ -32,6 +32,7 @@ from heatwave_definition.plot_style import (
     TEXT_COLOR,
     TITLE_SIZE,
     apply_manuscript_style,
+    save_manuscript_figure,
 )
 from heatwave_definition.regions import classify_countries_matrix
 
@@ -101,7 +102,7 @@ def main(argv: list[str] | None = None) -> None:
         threshold_quantile=args.threshold_quantile,
         ref_period=args.ref_period,
     )
-    figure.savefig(args.output, dpi=220)
+    save_manuscript_figure(figure, args.output)
     plt.close(figure)
     print(args.output)
 

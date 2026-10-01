@@ -3,8 +3,10 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from pathlib import Path
 
 from matplotlib.colors import BoundaryNorm, ListedColormap
+from matplotlib.figure import Figure
 from matplotlib.patches import Patch
 import matplotlib.pyplot as plt
 
@@ -46,6 +48,7 @@ ANNOTATION_SIZE = 7.8
 SMALL_TEXT_SIZE = 7.3
 TEXT_COLOR = "#172033"
 SECONDARY_TEXT_COLOR = "#555555"
+RASTER_DPI = 450
 
 
 @dataclass(frozen=True)
@@ -114,10 +117,21 @@ def apply_manuscript_style() -> None:
             "legend.fontsize": LEGEND_SIZE,
             "figure.titlesize": TITLE_SIZE,
             "figure.dpi": 120,
-            "savefig.dpi": 220,
+            "savefig.dpi": RASTER_DPI,
             "savefig.bbox": "tight",
+            "svg.fonttype": "none",
         }
     )
+
+
+def save_manuscript_figure(figure: Figure, output: str | Path) -> Path:
+    """Save a high-resolution PNG and a matching SVG for publication."""
+
+    output = Path(output)
+    output.parent.mkdir(parents=True, exist_ok=True)
+    figure.savefig(output, dpi=RASTER_DPI)
+    figure.savefig(output.with_suffix(".svg"), format="svg", metadata={"Date": None})
+    return output
 
 
 def classify_top2_stability(reference_top2: tuple[int, int], candidate_top2: tuple[int, int]) -> StabilityCategory:
@@ -144,4 +158,3 @@ def stability_legend_handles() -> list[Patch]:
         )
         for category in STABILITY_CATEGORIES
     ]
-

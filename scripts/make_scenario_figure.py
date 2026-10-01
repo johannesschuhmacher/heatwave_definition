@@ -19,6 +19,7 @@ from heatwave_definition.plot_style import (
     PANEL_TITLE_SIZE,
     TITLE_SIZE,
     apply_manuscript_style,
+    save_manuscript_figure,
 )
 from heatwave_definition.ranking import rank_years_by_hwmid
 
@@ -81,6 +82,7 @@ def main(argv: list[str] | None = None) -> None:
                 cmap=HWMID_CMAP,
                 norm=HWMID_NORM,
                 transform=ccrs.PlateCarree(),
+                rasterized=True,
             )
             ax.coastlines(linewidth=0.5)
             ax.set_extent([-12, 44, 33, 72], crs=ccrs.PlateCarree())
@@ -123,7 +125,8 @@ def main(argv: list[str] | None = None) -> None:
         "Top heatwave years ranked by summed grid-cell HWMId over Germany and France",
         fontsize=TITLE_SIZE,
     )
-    fig.savefig(output, dpi=220)
+    save_manuscript_figure(fig, output)
+    plt.close(fig)
     print(output)
 
 

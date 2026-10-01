@@ -41,6 +41,37 @@ python scripts/download_era5_t2m.py --output-dir data/era5/t2m_europe --start-da
 Expected names are `t2m_era5_<year>.nc`. The downloader is resumable and does
 not embed credentials in files or command lines.
 
+### ERA5 dewpoint for the humidity-aware sensitivity
+
+- Variable: `2m_dewpoint_temperature` (`d2m`), all 24 hours.
+- Area: Germany and France (north 55.25, west -5.50, south 41.25, east 15.50).
+- Period: 1980-2026, with 2026 through 1 July 2026.
+
+```text
+python scripts/download_era5_dewpoint.py --output-dir data/era5/d2m_de_fr --start-year 1980 --end-year 2026
+```
+
+`scripts/extract_era5_dewpoint_subset.py` writes the same `d2m_era5_<year>.nc`
+layout from an existing local ERA5 archive.
+
+## NOAA CORe
+
+- Provider: NOAA NCEP Conventional Observation Reanalysis (CORe).
+- Variable: ensemble-mean daily maximum 2 m temperature from the daily `flx`
+  GRIB files (`TMP:2 m above ground:8@3 hour max`).
+- Period used: 1950-2025 and 2026 through 1 July 2026.
+- Access: NOAA Open Data Dissemination (NODD) bucket
+  <https://storage.googleapis.com/noaa-nws-ncep-core/grib/day/flx>.
+
+```text
+python scripts/download_core_t2m_max.py --output-dir data/core --start-date 1950-01-01 --end-date 2026-07-01 --wgrib2 <path-to-wgrib2> --allow-missing
+```
+
+The script downloads only the required GRIB message, needs a local `wgrib2`
+executable and writes annual `core_t2m_max_europe_<year>.nc` files to
+`data/core/europe_netcdf/`. Days missing from the archive are listed in
+`missing_days.txt`; for the release snapshot this is only 19 May 2026.
+
 ## CORDEX-CMIP5
 
 - Product family: CORDEX-Adjust EUR-25 simulations tailored for the European
@@ -112,6 +143,17 @@ Germany and France files through the WorldPop API. Files are cached under
 `data/worldpop/` and excluded from Git. Exact source URLs and assigned
 population totals are recorded in
 `results/sensitivity/population_weighting_diagnostics.csv`.
+
+## ISIMIP2b SSP population sensitivity
+
+- Product: ISIMIP2b secondary input data, gridded population 2006-2100,
+  0.5 degree, SSP1-SSP5 (`population_ssp<N>soc_0p5deg_annual_2006-2100.nc4`).
+- DOI: <https://doi.org/10.48364/ISIMIP.432399>.
+- Year used: 2040 for all SSPs.
+
+`scripts/sensitivity_ssp_population_weighting.py` reads the five files from
+`--population-dir` and regrids population density to the cached CORDEX-CMIP5
+cells. `--grid-file` must be a `tasAdjust` file of the RCP4.5 / IPSL-WRF run.
 
 ## Integrity and licences
 

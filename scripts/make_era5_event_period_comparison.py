@@ -20,6 +20,7 @@ from heatwave_definition.plot_style import (
     SUBTITLE_SIZE,
     TITLE_SIZE,
     apply_manuscript_style,
+    save_manuscript_figure,
 )
 
 
@@ -158,7 +159,7 @@ def plot_comparison(records: dict[int, tuple[pd.DataFrame, pd.DataFrame]], outpu
     )
     fig.tight_layout(rect=[0, 0.055, 1, 0.91])
     output.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(output, dpi=220)
+    save_manuscript_figure(fig, output)
     plt.close(fig)
 
 

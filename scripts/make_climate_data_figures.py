@@ -19,6 +19,7 @@ from heatwave_definition.plot_style import (
     PANEL_TITLE_SIZE,
     TEXT_COLOR,
     apply_manuscript_style,
+    save_manuscript_figure,
 )
 
 
@@ -35,6 +36,7 @@ GROUP_ORDER = {
 CHAIN_ORDER = {
     "E-OBS": 0,
     "ERA5": 1,
+    "NOAA CORe": 2,
     "CNRM-ALADIN": 10,
     "IPSL-WRF": 11,
     "MPI-CLM": 12,
@@ -56,7 +58,8 @@ SCENARIO_ORDER = {
 
 CHAIN_SCENARIO_COLORS = {
     ("E-OBS", "HISTORICAL"): "#232323",
-    ("ERA5", "HISTORICAL"): "#6F6F6F",
+    ("ERA5", "HISTORICAL"): "#009E73",
+    ("NOAA CORe", "HISTORICAL"): "#0072B2",
     ("CNRM-ALADIN", "RCP26"): "#9ACAE1",
     ("CNRM-ALADIN", "RCP85"): "#0072B2",
     ("IPSL-WRF", "RCP45"): "#F2A43A",
@@ -79,7 +82,8 @@ CHAIN_SCENARIO_COLORS = {
 
 CHAIN_FALLBACK_COLORS = {
     "E-OBS": "#232323",
-    "ERA5": "#6F6F6F",
+    "ERA5": "#009E73",
+    "NOAA CORe": "#0072B2",
     "CNRM-ALADIN": "#0072B2",
     "IPSL-WRF": "#D55E00",
     "MPI-CLM": "#7B3294",
@@ -112,8 +116,14 @@ def main(argv: list[str] | None = None) -> None:
     primary_top10 = pd.read_csv(args.primary_top10)
     copernicus_top_years = pd.read_csv(args.copernicus_top_years)
     cmip6_top = pd.read_csv(args.cmip6_top_years)
+    historical_top10 = pd.read_csv(args.historical_top10) if args.historical_top10.exists() else None
 
-    combined_top10 = build_combined_top10(primary_top10, copernicus_top_years, cmip6_top)
+    combined_top10 = build_combined_top10(
+        primary_top10,
+        copernicus_top_years,
+        cmip6_top,
+        historical_top10=historical_top10,
+    )
     combined_top2 = combined_top10[combined_top10["rank"] <= 2].copy()
 
     combined_top10.to_csv(args.output_dir / "climate_data_top10_with_cmip6.csv", index=False)
@@ -145,13 +155,24 @@ def build_combined_top10(
     primary_top10: pd.DataFrame,
     copernicus_top_years: pd.DataFrame,
     cmip6_top: pd.DataFrame,
+    historical_top10: pd.DataFrame | None = None,
 ) -> pd.DataFrame:
-    historical = primary_top10[primary_top10["dataset"].str.startswith("Historical")].copy()
+    if historical_top10 is None:
+        historical = primary_top10[primary_top10["dataset"].str.startswith("Historical")].copy()
+        historical["chain_key"] = historical["dataset"].map(
+            lambda value: "E-OBS" if "E-OBS" in value else "ERA5"
+        )
+    else:
+        historical = historical_top10.copy()
+        if "comparison" in historical.columns:
+            historical = historical[historical["comparison"].eq("including_2026")].copy()
+        historical = historical[historical["rank"].astype(int).between(1, 10)].copy()
+        historical["dataset"] = "Historical / " + historical["product"].astype(str)
+        historical["chain_key"] = historical["product"].astype(str)
     historical["data_family"] = "Historical"
     historical["group_label"] = "Historical observations and reanalysis"
     historical["scenario"] = "HISTORICAL"
     historical["gcm"] = ""
-    historical["chain_key"] = historical["dataset"].map(lambda value: "E-OBS" if "E-OBS" in value else "ERA5")
     historical["plot_label"] = historical["chain_key"]
 
     copernicus = copernicus_top_years.copy()
@@ -288,37 +309,61 @@ def plot_top10_lines(top10: pd.DataFrame, output: Path) -> Path:
         ncol=3,
     )
 
-    fig.savefig(output, dpi=220)
+    save_manuscript_figure(fig, output)
     plt.close(fig)
     return output
 
 
 def plot_top10_facets(top10: pd.DataFrame, output: Path) -> Path:
     top10 = top10[top10["rank"].between(1, 10)].copy()
+    historical = top10[top10["data_family"].eq("Historical")].copy()
     panel_specs = [
         (
-            "Historical data products\nE-OBS and ERA5",
-            top10["data_family"].eq("Historical"),
+            "Historical data products\nE-OBS, ERA5 and NOAA CORe",
+            historical,
         ),
         (
             "CORDEX-CMIP5 projection chains\nRCP scenarios",
-            top10["data_family"].eq("CORDEX-CMIP5"),
+            top10[top10["data_family"].eq("CORDEX-CMIP5")],
         ),
         (
             "CORDEX-CMIP6 CNRM-driven ICON-CLM\nHistorical and SSP scenarios",
-            top10["group_label"].eq("CORDEX-CMIP6 / CNRM-driven ICON-CLM"),
+            top10[top10["group_label"].eq("CORDEX-CMIP6 / CNRM-driven ICON-CLM")],
         ),
         (
             "CORDEX-CMIP6 MPI-driven ICON-CLM\nHistorical and SSP scenarios",
-            top10["group_label"].eq("CORDEX-CMIP6 / MPI-driven ICON-CLM"),
+            top10[top10["group_label"].eq("CORDEX-CMIP6 / MPI-driven ICON-CLM")],
         ),
     ]
     fig, axes = plt.subplots(2, 2, figsize=(11.4, 8.3), sharex=True, sharey=False)
     axes_flat = axes.ravel()
-    fig.subplots_adjust(left=0.085, right=0.985, top=0.86, bottom=0.17, wspace=0.20, hspace=0.34)
+    fig.subplots_adjust(left=0.085, right=0.93, top=0.86, bottom=0.17, wspace=0.29, hspace=0.34)
 
-    for ax, (title, mask) in zip(axes_flat, panel_specs):
-        subset = top10[mask].copy()
+    historical_ax = axes_flat[0]
+    historical_main = historical[~historical["chain_key"].eq("NOAA CORe")].copy()
+    historical_core = historical[historical["chain_key"].eq("NOAA CORe")].copy()
+    draw_rank_curves(historical_ax, historical_main, show_legend=False)
+    core_ax = historical_ax.twinx()
+    draw_rank_curves(core_ax, historical_core, show_legend=False)
+    historical_ax.set_title(panel_specs[0][0], fontsize=9.6, pad=8)
+    historical_ax.set_ylim(0, historical_main["hwmid_sum"].max() * 1.12)
+    core_ax.set_ylim(0, historical_core["hwmid_sum"].max() * 1.12)
+    core_ax.set_ylabel("NOAA CORe HWMId sum", fontsize=7.8, color=CHAIN_FALLBACK_COLORS["NOAA CORe"])
+    core_ax.tick_params(axis="y", labelsize=7.0, colors=CHAIN_FALLBACK_COLORS["NOAA CORe"])
+    core_ax.spines["right"].set_color(CHAIN_FALLBACK_COLORS["NOAA CORe"])
+    core_ax.spines["top"].set_visible(False)
+    core_ax.grid(False)
+    main_handles, main_labels = historical_ax.get_legend_handles_labels()
+    core_handles, core_labels = core_ax.get_legend_handles_labels()
+    historical_ax.legend(
+        handles=main_handles + core_handles,
+        labels=main_labels + core_labels,
+        frameon=False,
+        fontsize=6.6,
+        loc="upper right",
+    )
+
+    for ax, (title, subset) in zip(axes_flat[1:], panel_specs[1:]):
         draw_rank_curves(ax, subset, show_legend=True)
         ax.set_title(title, fontsize=9.6, pad=8)
         if not subset.empty:
@@ -356,7 +401,7 @@ def plot_top10_facets(top10: pd.DataFrame, output: Path) -> Path:
         fontsize=PANEL_TITLE_SIZE + 1.2,
         y=0.965,
     )
-    fig.savefig(output, dpi=220)
+    save_manuscript_figure(fig, output)
     plt.close(fig)
     return output
 
@@ -489,7 +534,7 @@ def plot_top10_matrix(top10: pd.DataFrame, output: Path) -> Path:
     cbar.set_label("Relative HWMId within each data product", fontsize=8.2)
     cbar.ax.tick_params(labelsize=7.5)
 
-    fig.savefig(output, dpi=220)
+    save_manuscript_figure(fig, output)
     plt.close(fig)
     return output
 
@@ -567,7 +612,7 @@ def plot_timing(top2: pd.DataFrame, output: Path) -> Path:
         fontsize=LEGEND_SIZE,
     )
 
-    fig.savefig(output, dpi=220)
+    save_manuscript_figure(fig, output)
     plt.close(fig)
     return output
 
@@ -728,6 +773,11 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         "--cmip6-top-years",
         type=Path,
         default=REPO / "outputs" / "climate_data" / "cmip6_de_fr_top_years.csv",
+    )
+    parser.add_argument(
+        "--historical-top10",
+        type=Path,
+        default=REPO / "outputs" / "reviewer_revision" / "reanalysis_comparison" / "reanalysis_top10_rankings.csv",
     )
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
     return parser.parse_args(argv)

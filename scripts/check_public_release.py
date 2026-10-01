@@ -195,6 +195,10 @@ def check_result_metadata() -> list[str]:
         "results/tables/climate_data_top10_with_cmip6.csv",
         "results/tables/climate_data_timing_top2_with_cmip6.csv",
         "results/tables/era5_event_period_summary.csv",
+        "results/rankings/ranked_years_core.csv",
+        "results/tables/historical_data_product_top10_with_core.csv",
+        "results/sensitivity/threshold_quantile_top_years.csv",
+        "results/sensitivity/threshold_quantile_top2_summary.csv",
     )
     for relative in method_result_files:
         path = REPO / relative

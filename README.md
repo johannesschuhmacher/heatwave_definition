@@ -8,7 +8,10 @@ This repository identifies heatwave scenario years for energy-system stress
 tests. It implements the Heat Wave Magnitude Index daily (HWMId) following
 Russo et al. (2015), ranks annual events over configurable country domains and
 provides the scripts, derived results and provenance records used by the
-associated manuscript.
+associated article:
+
+> A transparent workflow for selecting heatwave stress-test years for energy
+> system modelling. *Climate Services* (accepted 2026).
 
 The versioned Germany-France reference results are:
 
@@ -16,11 +19,13 @@ The versioned Germany-France reference results are:
 | --- | ---: | ---: | ---: | ---: |
 | E-OBS v33.0e | 2003 | 25,287.00 | 2019 | 10,910.80 |
 | ERA5 | 2003 | 24,925.65 | 2026* | 24,441.56 |
+| NOAA CORe | 2003 | 3,195.58 | 2026* | 3,001.12 |
 | CORDEX-CMIP5 RCP4.5 / IPSL-WRF | 2043 | 30,298.39 | 2070 | 27,049.08 |
 | CORDEX-CMIP5 RCP8.5 / MPI-CLM | 2092 | 57,152.09 | 2082 | 50,744.86 |
 
-`2026*` is an incomplete ERA5 current-year result based on data through
-1 July 2026. It is an event comparison, not a completed annual ranking.
+`2026*` is an incomplete current-year result based on data through
+1 July 2026. It is an event comparison, not a completed annual ranking; for
+completed years 1950-2025, ERA5 ranks 2025 and NOAA CORe 2019 second.
 Absolute grid-cell sums are used to rank years within one data product. They
 must not be interpreted as directly comparable physical magnitudes across
 products with different grids or spatial coverage.
@@ -96,12 +101,13 @@ python scripts/rank_cmip6_tas.py --root <cordex-cmip6-directory> --top-years 10
 The complete raw-data-to-results command is:
 
 ```text
-python scripts/run_complete_climate_workflow.py --eobs-file <eobs-v33-tx.nc> --era5-root <era5-directory> --cmip5-root <cordex-cmip5-directory> --cmip6-root <cordex-cmip6-directory> --tyndp-root <extracted-PEMMDB2-directory>
+python scripts/run_complete_climate_workflow.py --eobs-file <eobs-v33-tx.nc> --era5-root <era5-directory> --core-root <core-netcdf-directory> --era5-dewpoint-root <era5-d2m-directory> --cmip5-root <cordex-cmip5-directory> --cmip5-grid-file <ipsl-wrf-rcp45-tasAdjust.nc> --cmip6-root <cordex-cmip6-directory> --tyndp-root <extracted-PEMMDB2-directory> --ssp-population-root <isimip2b-population-directory>
 ```
 
 The same paths can be supplied through `HEATWAVE_EOBS_FILE`,
-`HEATWAVE_ERA5_ROOT`, `HEATWAVE_CMIP5_ROOT`, `HEATWAVE_CMIP6_ROOT` and
-`HEATWAVE_TYNDP_PEMMDB_ROOT`.
+`HEATWAVE_ERA5_ROOT`, `HEATWAVE_CORE_ROOT`, `HEATWAVE_ERA5_DEWPOINT_ROOT`,
+`HEATWAVE_CMIP5_ROOT`, `HEATWAVE_CMIP5_GRID_FILE`, `HEATWAVE_CMIP6_ROOT`,
+`HEATWAVE_TYNDP_PEMMDB_ROOT` and `HEATWAVE_SSP_POPULATION_ROOT`.
 
 `--skip-cmip5`, `--skip-cmip6` and `--reuse-derived-weights` are resume
 options. They require the corresponding existing files under `outputs/`; they
@@ -114,8 +120,19 @@ The workflow performs the following steps:
 3. derive TYNDP 2024 country-capacity weights and rerun all sensitivities;
 4. download/cache WorldPop data and calculate population weighting;
 5. rank all discovered CORDEX-CMIP5 and CORDEX-CMIP6 chains;
-6. regenerate tables, figures and data/software manifests;
-7. refresh `results/` and run the public-release check.
+6. compare E-OBS, ERA5 and NOAA CORe and run the threshold (90th/95th/99th
+   percentile), humidity-aware ERA5 and ISIMIP2b SSP population sensitivities;
+7. regenerate tables, figures and data/software manifests;
+8. refresh `results/` and run the public-release check.
+
+The additional sensitivities can also be run individually:
+
+```text
+python scripts/compare_reanalysis_rankings.py <era5-directory> <core-netcdf-directory> <eobs-v33-tx.nc>
+python scripts/sensitivity_threshold_quantiles.py <eobs-v33-tx.nc> <era5-directory> --core-dir <core-netcdf-directory>
+python scripts/sensitivity_era5_humidity_metrics.py <era5-directory> <era5-d2m-directory> --output-dir outputs/reviewer_revision/humidity_metrics
+python scripts/sensitivity_ssp_population_weighting.py --population-dir <isimip2b-population-directory> --grid-file <ipsl-wrf-rcp45-tasAdjust.nc>
+```
 
 The final release command is intentionally data intensive. The archived inputs
 used here comprise approximately 0.9 GB E-OBS, 33 GB ERA5, 351 GiB CMIP5 and
@@ -131,10 +148,14 @@ requests, file naming conventions and licences are documented in
 
 - E-OBS v33.0e daily maximum temperature, 1950-2025;
 - ERA5 hourly 2 m temperature, 1950-2026, converted to daily maximum;
+- ERA5 hourly 2 m dewpoint temperature over Germany and France, 1980-2026,
+  for the humidity-aware sensitivity;
+- NOAA CORe daily maximum 2 m temperature, 1950-2026;
 - bias-adjusted CORDEX-CMIP5 3-hourly `tasAdjust`;
 - CORDEX-CMIP6 hourly `tas`, converted to daily maximum;
 - TYNDP 2024 PEMMDB 2.5 National Trends capacities for 2040;
-- WorldPop 2020 1 km UN-adjusted population counts.
+- WorldPop 2020 1 km UN-adjusted population counts;
+- ISIMIP2b SSP1-SSP5 gridded population for 2040.
 
 Sanitized input inventories are recorded under `results/provenance/` and
 `results/cmip6/`. They retain provider file names, sizes and available
@@ -158,7 +179,10 @@ For every grid cell, the implementation:
 
 The reference ranking is an unweighted sum over Germany and France. Alternative
 country domains, area-weighted means, population weighting, TYNDP capacity
-weighting and alternative ranking criteria are included as sensitivities.
+weighting, alternative ranking criteria, 95th/99th-percentile thresholds,
+alternative historical products and humidity-aware ERA5 variables (Humidex,
+Stull wet-bulb temperature and a no-solar-load WBGT proxy, see
+`heatwave_definition/humidity.py`) are included as sensitivities.
 Country masks use Natural Earth administrative boundaries and assign grid cells
 by their center coordinates.
 Manuscript colors and line styles are defined centrally in
